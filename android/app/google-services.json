@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "807321300133",
+    "firebase_url": "https://proapp-cd9cd.firebaseio.com",
+    "project_id": "proapp-cd9cd",
+    "storage_bucket": "proapp-cd9cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807321300133:android:5ebac88117f7a8077d714c",
+        "android_client_info": {
+          "package_name": "com.example.ProApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807321300133-b33lishl2qs9e1h7k949ep4f7q64sk10.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ProApp",
+            "certificate_hash": "3968ac72f3b4ce8bf2583dcd913d775d8e063af5"
+          }
+        },
+        {
+          "client_id": "807321300133-nbrd9d823skv46gqhrbpedjh92nmlul8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN_XW8omYRJ9sQZLW6ki40hj0y_dHljgg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807321300133-nbrd9d823skv46gqhrbpedjh92nmlul8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807321300133:android:a6d408cb4703ef0b7d714c",
+        "android_client_info": {
+          "package_name": "com.pro.proapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807321300133-nbrd9d823skv46gqhrbpedjh92nmlul8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN_XW8omYRJ9sQZLW6ki40hj0y_dHljgg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807321300133-nbrd9d823skv46gqhrbpedjh92nmlul8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

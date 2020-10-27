@@ -1,0 +1,425 @@
+import 'package:fleva_icons/fleva_icons.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/Tag.dart';
+import 'package:proapp/Widgets/themes.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
+
+class Filter extends StatefulWidget {
+  @override
+  _FilterState createState() => _FilterState();
+}
+
+class _FilterState extends State<Filter> {
+  DateTime fromDate = DateTime.now();
+  DateTime toDate = DateTime.now();
+  Color wProgress = Colors.black;
+  Color wRaised = Colors.black;
+  Color wCompleted = Colors.black;
+  Color cRaised = Color(0xffF7FAFC);
+  Color cProgress = Color(0xffF7FAFC);
+  Color cCompleted = Color(0xffF7FAFC);
+  Color cRecent = Color(0xffF7FAFC);
+  Color cPopular = Color(0xffF7FAFC);
+  final List<String> _department = [
+    'Department 1',
+    'Department 2',
+    'Department 3'
+  ];
+  final List<String> _complaint = [
+    'Complaint 101',
+    'Complaint 012',
+    'Complaint 201'
+  ];
+  Map<String, String> selectedValueMap = Map();
+
+ List _onTapColor(Color currentColor){
+    if (currentColor != primaryorange) {
+     return [primaryorange,Colors.white] ;
+    } else {
+
+      return[Color(0xffF7FAFC),Colors.black];
+    }
+  }
+
+  @override
+  void initState() {
+    selectedValueMap["department"] = null;
+    selectedValueMap["complaint"] = null;
+    super.initState();
+  }
+
+  Future<void> _selectDate(BuildContext context, int ch) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2020, 8),
+        lastDate: DateTime.now());
+    if (picked != null && ch == 0) {
+      setState(() {
+        fromDate = picked;
+      });
+    } else if (picked != null && ch == 1) {
+      setState(() {
+        toDate = picked;
+      });
+    }
+  }
+
+  Widget getSearchableDropdown(List<String> listData, mapKey) {
+    List<DropdownMenuItem> items = [];
+    for (int i = 0; i < listData.length; i++) {
+      items.add(DropdownMenuItem(
+        child: Text(
+          listData[i],
+        ),
+        value: listData[i],
+      ));
+    }
+    return SearchableDropdown(
+      items: items,
+      value: selectedValueMap[mapKey],
+      isExpanded: true,
+      isCaseSensitiveSearch: false,
+      closeButton: 'Close',
+      hint: Text(
+        'Select ' + mapKey,
+      ),
+      searchHint: Text(
+        'Select ' + mapKey,
+        style: TextStyle(fontSize: 20),
+      ),
+      onChanged: (value) {
+        setState(() {
+          selectedValueMap[mapKey] = value;
+        });
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        child: Text(
+          'Filters',
+          //style: blackBoldLargeStyle,
+        ),
+        elevation: true,
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Department",
+              //style: complaintCardHeading,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            getSearchableDropdown(_department, "department"),
+            SizedBox(height: 24),
+            Text(
+              "Type of Complaint",
+              //style: complaintCardHeading,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            getSearchableDropdown(_complaint, "complaint"),
+            Divider(
+              thickness: 1,
+              height: 24,
+            ),
+            Text(
+              "Status",
+              //style: complaintCardHeading,
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                InkWell(
+                    onTap: () {
+                      setState(() {
+                        List temp = [];
+                        temp =_onTapColor(cRaised);
+                        cRaised = temp[0];
+                        wRaised=temp[1];
+                      });
+
+                    },
+                    child: Tag(
+                      color: cRaised,
+                      text: "RAISED",
+                      textColor: wRaised,
+                      type: TagType.DEFAULT,
+                    )),
+                Spacer(),
+                InkWell(
+                    onTap: () {
+                     setState(() {
+                       List temp = [];
+                       temp =_onTapColor(cProgress);
+                       cProgress = temp[0];
+                       wProgress = temp[1];
+
+                     });
+                    },
+                    child: Tag(
+                      color: cProgress,
+                      text: "IN PROGRESS",
+                      textColor: wProgress,
+                      type: TagType.DEFAULT,
+                    )),
+                Spacer(),
+                InkWell(
+                    onTap: () {
+                     setState(() {
+                       List temp = [];
+                       temp =_onTapColor(cCompleted);
+                       cCompleted = temp[0];
+                       wCompleted=temp[1];
+                     });
+                    },
+                    child: Tag(
+                      color: cCompleted,
+                      text: "COMPLETED",
+                      textColor: wCompleted,
+                      type: TagType.DEFAULT,
+                    ))
+              ],
+            ),
+            Divider(
+              thickness: 1,
+              height: 32,
+            ),
+            Text(
+              "Date",
+              //style: complaintCardHeading,
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "From",
+                  style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Text(
+                  "To",
+                  style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                Spacer()
+              ],
+            ),
+            SizedBox(
+              height: 4,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  height: 46,
+                  width: 139,
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        side: BorderSide(color: Color(0xffCBD5E0), width: 0.5)),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Icon(
+                          FlevaIcons.calendar_outline,
+                          color: Color(0xff231F20),
+                        ),
+                        Spacer(),
+                        Text(
+                            fromDate.toString().substring(8, 10) +
+                                fromDate.toString().substring(4, 8) +
+                                fromDate.toString().substring(0, 4),
+                            style: GoogleFonts.inter(
+                                textStyle: TextStyle(
+                                    fontFamily: 'Intern',
+                                    fontSize: 14,
+                                    color: Color.fromRGBO(0, 0, 0, 0.45)))),
+                      ],
+                    ),
+                    onPressed: () {
+                      _selectDate(context, 0);
+                    },
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  height: 46,
+                  width: 139,
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        side: BorderSide(color: Color(0xffCBD5E0), width: 0.5)),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Icon(FlevaIcons.calendar_outline,
+                            color: Color(0xff231F20)),
+                        Spacer(),
+                        Text(
+                            toDate.toString().substring(8, 10) +
+                                toDate.toString().substring(4, 8) +
+                                toDate.toString().substring(0, 4),
+                            style: GoogleFonts.inter(
+                                textStyle: TextStyle(
+                                    fontFamily: 'Intern',
+                                    fontSize: 14,
+                                    color: Color.fromRGBO(0, 0, 0, 0.45)))),
+                      ],
+                    ),
+                    onPressed: () {
+                      _selectDate(context, 1);
+                    },
+                  ),
+                ),
+                Spacer(),
+              ],
+            ),
+            Divider(
+              thickness: 1,
+              height: 32,
+            ),
+            Text(
+              "Sort by",
+              //style: complaintCardHeading,
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                InkWell(
+                    onTap: () {
+                      if (cRecent == Color(0xffF7FAFC)) {
+                        setState(() {
+                          cRecent = Color(0xffFCBD5E0);
+                        });
+                      } else {
+                        setState(() {
+                          cRecent = Color(0xffF7FAFC);
+                        });
+                      }
+                    },
+                    child: Tag(
+                      color: cRecent,
+                      text: "Most Recent",
+                      textColor: Color(0xff252A31),
+                      type: TagType.Sort,
+                    )),
+                SizedBox(
+                  width: 28,
+                ),
+                InkWell(
+                    onTap: () {
+                      if (cPopular == Color(0xffF7FAFC)) {
+                        setState(() {
+                          cPopular = Color(0xffFCBD5E0);
+                        });
+                      } else {
+                        setState(() {
+                          cPopular = Color(0xffF7FAFC);
+                        });
+                      }
+                    },
+                    child: Tag(
+                      color: cPopular,
+                      text: "Most Popular",
+                      textColor: Color(0xff252A31),
+                      type: TagType.Sort,
+                    )),
+              ],
+            ),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Spacer(),
+                Container(
+                  height: 44,
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                        side: BorderSide(color: primarygreen)),
+                    color: primarygreen,
+                    child: Row(
+                      children: [
+                        Icon(FlevaIcons.checkmark, color: Colors.white),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text("APPLY",
+                            style: GoogleFonts.inter(
+                                textStyle: TextStyle(
+                                    fontFamily: 'Intern',
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600))),
+                      ],
+                    ),
+                    onPressed: () {
+                      //apply
+                    },
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  height: 44,
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                        side: BorderSide(color: Color(0xff718096))),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Icon(FlevaIcons.close, color: Color(0xff718096)),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text("CANCEL",
+                            style: GoogleFonts.inter(
+                                textStyle: TextStyle(
+                                    fontFamily: 'Intern',
+                                    fontSize: 14,
+                                    color: Color(0xff718096),
+                                    fontWeight: FontWeight.w600))),
+                      ],
+                    ),
+                    onPressed: () {
+                      //cancel
+                    },
+                  ),
+                ),
+                Spacer()
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
