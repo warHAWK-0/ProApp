@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'ExpandedTextImagePost.dart';
-import 'file:///E:/Flutter/proapp/lib/Screens/SignedIn/Feed/PostLayout/readmore.dart';
+//import 'file:///E:/Flutter/proapp/lib/Screens/SignedIn/Feed/PostLayout/readmore.dart';
+import 'readmore.dart';
 
 class TextImagePost extends StatefulWidget {
   @override

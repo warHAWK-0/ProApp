@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 //colors
 Color primarygreen = Color(0xFF20BAA2);
 Color primaryorange=Color(0xffFF4128);
+Color progressYellow=Color(0xFFFFD400);
 
 //textstyle with fontsize 20
 TextStyle Heading1(Color color) => GoogleFonts.inter(

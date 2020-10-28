@@ -102,7 +102,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 color: Colors.white,
               )
             : Icon(
-                Icons.filter_alt_outlined,
+                FlevaIcons.npm_outline,
                 color: Colors.white,
               ),
         onPressed: () {

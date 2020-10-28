@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
 import 'package:proapp/Screens/Wrapper.dart';
 import 'package:proapp/Services/authentication.dart';
 
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
         //primarySwatch: Colors.blue,
         //visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home:Wrapper(auth: _baseAuth,),
+      //home:Wrapper(auth: _baseAuth,),
+      home:Filter(),
     );
   }
 }

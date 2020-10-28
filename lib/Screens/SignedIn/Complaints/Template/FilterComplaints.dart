@@ -35,12 +35,25 @@ class _FilterState extends State<Filter> {
   ];
   Map<String, String> selectedValueMap = Map();
 
- List _onTapColor(Color currentColor){
-    if (currentColor != primaryorange) {
-     return [primaryorange,Colors.white] ;
+ List _onTapColorStatus(Color currentColor,Color selectedColor){
+    if (currentColor != selectedColor) {
+      return [selectedColor,Colors.white] ;
     } else {
 
       return[Color(0xffF7FAFC),Colors.black];
+    }
+  }
+  List _onTapColorSort(Color current,Color other){
+    if (current == Color(0xffF7FAFC)) {
+      if (other ==Color(0xffFCBD5E0)){
+        return [Color(0xffFCBD5E0),Color(0xffF7FAFC)] ;
+      }
+      else{
+        return [Color(0xffFCBD5E0),Color(0xffF7FAFC)] ;
+      }
+    } else {
+
+      return[Color(0xffF7FAFC),Color(0xffF7FAFC)];
     }
   }
 
@@ -148,7 +161,7 @@ class _FilterState extends State<Filter> {
                     onTap: () {
                       setState(() {
                         List temp = [];
-                        temp =_onTapColor(cRaised);
+                        temp =_onTapColorStatus(cRaised,primaryorange);
                         cRaised = temp[0];
                         wRaised=temp[1];
                       });
@@ -165,7 +178,7 @@ class _FilterState extends State<Filter> {
                     onTap: () {
                      setState(() {
                        List temp = [];
-                       temp =_onTapColor(cProgress);
+                       temp =_onTapColorStatus(cProgress,progressYellow);
                        cProgress = temp[0];
                        wProgress = temp[1];
 
@@ -182,7 +195,7 @@ class _FilterState extends State<Filter> {
                     onTap: () {
                      setState(() {
                        List temp = [];
-                       temp =_onTapColor(cCompleted);
+                       temp =_onTapColorStatus(cCompleted,primarygreen);
                        cCompleted = temp[0];
                        wCompleted=temp[1];
                      });
@@ -315,15 +328,12 @@ class _FilterState extends State<Filter> {
               children: [
                 InkWell(
                     onTap: () {
-                      if (cRecent == Color(0xffF7FAFC)) {
-                        setState(() {
-                          cRecent = Color(0xffFCBD5E0);
-                        });
-                      } else {
-                        setState(() {
-                          cRecent = Color(0xffF7FAFC);
-                        });
-                      }
+                      setState(() {
+                        List temp = [];
+                        temp =_onTapColorSort(cRecent,cPopular);
+                        cRecent = temp[0];
+                        cPopular=temp[1];
+                      });
                     },
                     child: Tag(
                       color: cRecent,
@@ -336,15 +346,12 @@ class _FilterState extends State<Filter> {
                 ),
                 InkWell(
                     onTap: () {
-                      if (cPopular == Color(0xffF7FAFC)) {
-                        setState(() {
-                          cPopular = Color(0xffFCBD5E0);
-                        });
-                      } else {
-                        setState(() {
-                          cPopular = Color(0xffF7FAFC);
-                        });
-                      }
+                      setState(() {
+                        List temp = [];
+                        temp =_onTapColorSort(cPopular,cRecent);
+                        cPopular = temp[0];
+                        cRecent=temp[1];
+                      });
                     },
                     child: Tag(
                       color: cPopular,

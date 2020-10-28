@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'file:///E:/Flutter/proapp/lib/Screens/SignedIn/Feed/PostLayout/readmore.dart';
+//import 'file:///E:/Flutter/proapp/lib/Screens/SignedIn/Feed/PostLayout/readmore.dart';
+import 'readmore.dart';
 
 class PollPost extends StatefulWidget {
   @override
