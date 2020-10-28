@@ -15,13 +15,12 @@ class CustomAppBar extends PreferredSize {
     @required this.child,
     this.elevation = true
   }) : assert(child != null),
-        preferredSize = Size.fromHeight(62.0);
+        preferredSize = Size.fromHeight(56.0);
 
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
       child: Container(
-
         padding: EdgeInsets.only(left: 10,bottom: 5),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -30,7 +29,7 @@ class CustomAppBar extends PreferredSize {
               color: Colors.grey.withOpacity(0.5),
               //spreadRadius: 0.5,
               blurRadius: 2,
-              offset: Offset(0, 2), // changes position of shadow
+              offset: Offset(0, 1), // changes position of shadow
             ),
           ],
         ),
@@ -52,7 +51,7 @@ class CustomAppBar extends PreferredSize {
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Icon(Icons.arrow_back_ios,color: primarygreen,),
+                  child: Icon(Icons.arrow_back_ios,color: primarygreen,size: 20,),
                 ),
               ) : Container(                          //logo
                 width: 38,

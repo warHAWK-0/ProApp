@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/CreateComplaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
@@ -23,9 +22,10 @@ class _ComplaintMainState extends State<ComplaintMain> {
       appBar: CustomAppBar(
         child: Text(
           'Complaints',
-          // style: blackBoldLargeStyle,
+          style: Heading2(Colors.black,letterSpace: 1.25),
         ),
         elevation: true,
+        backIcon: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -50,12 +50,13 @@ class _ComplaintMainState extends State<ComplaintMain> {
                         });
                       },
                       child: Container(
+                        color: _myComplaint ? Colors.grey[50] : Colors.white,
                         width: (MediaQuery.of(context).size.width - 1) / 2,
                         height: 60,
                         child: Center(
                             child: Text(
                           'My Complaints',
-                          //style: _myComplaint ? subHeadingSelected : subHeadingBlack,
+                          style: _myComplaint ? Heading3(primarygreen,fontWeight: FontWeight.w500) : Heading3(Colors.black,fontWeight: FontWeight.w400),
                         )),
                       ),
                     ),
@@ -73,12 +74,13 @@ class _ComplaintMainState extends State<ComplaintMain> {
                         });
                       },
                       child: Container(
+                        color: !_myComplaint ? Colors.grey[50] : Colors.white,
                         width: (MediaQuery.of(context).size.width - 1) / 2,
                         height: 60,
                         child: Center(
                           child: Text(
                             'All',
-                            //style: !_myComplaint ? subHeadingSelected : subHeadingBlack,
+                            style: !_myComplaint ? Heading3(primarygreen,fontWeight: FontWeight.w500) : Heading3(Colors.black,fontWeight: FontWeight.w400),
                           ),
                         ),
                       ),

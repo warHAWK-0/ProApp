@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
+import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/themes.dart';
 
 class ProfileMain extends StatefulWidget {
   @override
@@ -15,13 +17,13 @@ class _ProfileMainState extends State<ProfileMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-            child: Text("Profile",
-                style: GoogleFonts.inter(
-                    textStyle: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w500)))),
-        backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        child: Text(
+          'Profile',
+          style: Heading2(Colors.black,letterSpace: 1.25),
+        ),
+        elevation: false,
+        backIcon: false,
       ),
       body: Builder(
         builder: (context) {

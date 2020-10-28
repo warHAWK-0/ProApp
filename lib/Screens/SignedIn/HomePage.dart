@@ -44,16 +44,16 @@ class _HomePageState extends State<HomePage> {
 
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.star,size: 22,),
-              title:Text( 'Feed')
+            icon: Icon(Icons.star_border_outlined,size: 22,),
+            label: 'Feed'
           ),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.alertCircleOutline,size: 22,),
-              title:Text( 'Complaints')
+              label: 'Complaints'
           ),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.personOutline,size: 22,),
-              title:Text( 'User Profile')
+              label: 'Feed'
           ),
         ],
       ),

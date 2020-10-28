@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/TextImagePost.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/themes.dart';
 
 class FeedMain extends StatefulWidget {
   @override
@@ -14,8 +15,10 @@ class _FeedMainState extends State<FeedMain> {
       appBar: CustomAppBar(
         child: Text(
           'Feed',
-          //style: ,
+          style: Heading2(Colors.black,letterSpace: 1.25),
         ),
+        elevation: true,
+        backIcon: false,
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
