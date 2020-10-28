@@ -508,7 +508,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("icons/Icon.png"),
+            Image.asset("Assets/icons/Icon.png"),
             Text(
               '  SIGN UP with GOOGLE',
               style: TextStyle(
