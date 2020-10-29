@@ -37,7 +37,7 @@ class _ProfileMainState extends State<ProfileMain> {
                 children: [
                   Image(image: AssetImage('Assets/img/profilepic.png')),
                   SizedBox(height: 16),
-                  Text("Name here", ),
+                  Text("Name here", style: Heading1(Colors.black),),
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -89,9 +89,7 @@ class _ProfileMainState extends State<ProfileMain> {
                               Text("Change Password", )),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Divider(color: Color.fromRGBO(0, 0, 0, 0.25)),
-                  SizedBox(height: 16),
+                  Divider(color: Color.fromRGBO(0, 0, 0, 0.25),height: 32,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -137,9 +135,7 @@ class _ProfileMainState extends State<ProfileMain> {
                           child: Text("About",)),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Divider(color: Color.fromRGBO(0, 0, 0, 0.25)),
-                  SizedBox(height: 16),
+                  Divider(color: Color.fromRGBO(0, 0, 0, 0.25),height: 32,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [

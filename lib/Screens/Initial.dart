@@ -66,7 +66,7 @@ class _initialScreenState extends State<initialScreen> {
                             height: 64,
                           ),
                           Image(
-                            image: AssetImage('Assets/Initial.png'),
+                            image: AssetImage('Assets/img/Initial.png'),
                           ),
                           SizedBox(
                             height: 77,

@@ -440,7 +440,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             InkWell(
               autofocus: false,
               child: Text(
-                'Reset here',
+                'reset here',
                 style: TextStyle(color: Colors.blue),
               ),
               onTap: () {
@@ -475,9 +475,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("icons/Icon.png"),
+            Image.asset("Assets/icons/Icon.png"),
             Text(
-              '  SIGN UP with GOOGLE',
+              '  SIGN UP WITH GOOGLE',
               style: TextStyle(
                   fontFamily: 'Intern',
                   fontSize: 14,
@@ -497,10 +497,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: CustomAppBar(
         child: Text(
-          'LOGIN',
-          // style: blackBoldLargeStyle,
+          'Login',
+          style: Heading2(Colors.black,letterSpace: 1.25),
         ),
-        backIcon: false,
+        backIcon: true,
         elevation: false,
       ),
       backgroundColor: Colors.white,

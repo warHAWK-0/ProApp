@@ -119,7 +119,7 @@ class _FilterState extends State<Filter> {
       appBar: CustomAppBar(
         child: Text(
           'Filters',
-          //style: blackBoldLargeStyle,
+          style: Heading2(Colors.black,letterSpace: 1.0),
         ),
         elevation: true,
       ),

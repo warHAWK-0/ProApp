@@ -7,10 +7,10 @@ import 'readmore.dart';
 
 class PollPost extends StatefulWidget {
   @override
-  _TextPostState createState() => _TextPostState();
+  _PollPostState createState() => _PollPostState();
 }
 
-class _TextPostState extends State<PollPost> {
+class _PollPostState extends State<PollPost> {
   bool isPressed = false;
   bool isPressed1 = false;
   @override
