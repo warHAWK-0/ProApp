@@ -246,7 +246,7 @@ class _Otp2State extends State<Otp2> {
           ),
           backIcon: true,
           elevation: true,
-        ),
+        ),//
         backgroundColor: Colors.white,
         body: Builder(
           builder: (context) {
