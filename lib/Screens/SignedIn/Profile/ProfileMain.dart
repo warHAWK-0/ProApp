@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
+import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 
@@ -63,6 +64,11 @@ class _ProfileMainState extends State<ProfileMain> {
                           splashColor: Colors.lightBlueAccent,
                           onTap: () {
                             //nav to edit profile page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditProfile()),
+                            );
                           },
                           child: Text("Edit Profile",)),
                     ],

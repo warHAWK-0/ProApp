@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/ToastMessage.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
@@ -238,13 +239,13 @@ class _Otp2State extends State<Otp2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Center(
-              child: Text(titleText,
-                  style: GoogleFonts.inter(
-                      textStyle: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w500)))),
-          backgroundColor: Colors.white,
+        appBar:CustomAppBar(
+          child: Text(
+            titleText,
+            style: Heading2(Colors.black,letterSpace: 1.25),
+          ),
+          backIcon: true,
+          elevation: true,
         ),
         backgroundColor: Colors.white,
         body: Builder(
@@ -391,19 +392,20 @@ class _Confirmation2State extends State<Confirmation2> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 32),
+        padding: EdgeInsets.only(left: 16, right: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
                 child: Text(
               'Password Changed!',
-              //style: blackBoldLargeStyle,
+              style: Heading1(Colors.black),
             )),
             SizedBox(
               height: 64,
             ),
             Container(
-              child: Image.asset("Assets/confirmation.png"),
+              child: Image.asset("Assets/img/confirmation.png"),
             ),
             SizedBox(
               height: 32.0,
