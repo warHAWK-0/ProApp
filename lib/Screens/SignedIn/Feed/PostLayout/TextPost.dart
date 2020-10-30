@@ -1,18 +1,17 @@
+
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'ExpandedTextImagePost.dart';
-//import 'file:///E:/Flutter/proapp/lib/Screens/SignedIn/Feed/PostLayout/readmore.dart';
-import 'readmore.dart';
+import 'package:proapp/Screens/SignedIn/Feed/PostLayout/readmore.dart';
 
-class TextImagePost extends StatefulWidget {
+class TextPost extends StatefulWidget {
   @override
   _TextPostState createState() => _TextPostState();
 }
 
-class _TextPostState extends State<TextImagePost> {
+class _TextPostState extends State<TextPost> {
   bool isPressed = false;
   bool isPressed1 = false;
   @override
@@ -48,38 +47,6 @@ class _TextPostState extends State<TextImagePost> {
             ],
           ),
           SizedBox(height: 10,),
-          ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network("https://t8x8a5p2.stackpathcdn.com/wp-content/uploads/2018/05/Birthday-Cake-Recipe-Image-720x720.jpg")
-          ),
-          SizedBox(height: 10,),
-          Row(
-            children: <Widget>[
-              // Toggle the up, down button and fill the box
-              IconButton(icon: Icon(EvaIcons.arrowIosUpwardOutline),
-                color: (isPressed)? Colors.green: Colors.grey,
-                onPressed: (){
-                  setState(() {
-                    isPressed=true;
-                  });
-                },),
-              Text("9999", style: GoogleFonts.inter(letterSpacing: 1, fontSize: 14,fontWeight: FontWeight.w600, color: Color.fromRGBO(0,0,0,0.65))),
-              IconButton(icon: Icon(EvaIcons.arrowIosDownwardOutline),
-                color: (isPressed1)? Colors.red: Colors.grey,
-                onPressed: (){
-                  setState(() {
-                    isPressed1=true;
-                  });
-                },),
-              Spacer(),
-              GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Postdetails()));
-                },
-                  child: Text("View Comments", style: GoogleFonts.inter(letterSpacing: .5, fontSize: 12,fontWeight: FontWeight.w600, color: Color(0XFF20BAA2)))),
-
-            ],
-          ),
           ReadMoreText(
             'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\n',
             style: GoogleFonts.inter(letterSpacing: .25, fontSize: 14, fontWeight: FontWeight.w400, color: Color.fromRGBO(0, 0, 0, 0.65)),
@@ -89,7 +56,32 @@ class _TextPostState extends State<TextImagePost> {
             trimCollapsedText: '....\nRead More',
             trimExpandedText: 'Read less',
           ),
+
           SizedBox(height: 10,),
+          Row(
+            children: <Widget>[
+              // Toggle the up, down button and fill the box
+              IconButton(icon: Icon(EvaIcons.arrowIosUpwardOutline),
+              color: (isPressed)? Colors.green: Colors.grey,
+              onPressed: (){
+                setState(() {
+                  isPressed=true;
+                });
+              },),
+              Text("9999", style: GoogleFonts.inter(letterSpacing: 1, fontSize: 14,fontWeight: FontWeight.w600, color: Color.fromRGBO(0,0,0,0.65))),
+              IconButton(icon: Icon(EvaIcons.arrowIosDownwardOutline),
+                color: (isPressed1)? Colors.red: Colors.grey,
+                onPressed: (){
+                  setState(() {
+                    isPressed1=true;
+                  });
+                },),
+              Spacer(),
+              Text("View Comments", style: GoogleFonts.inter(letterSpacing: .5, fontSize: 12,fontWeight: FontWeight.w600, color: Color(0XFF20BAA2))),
+
+            ],
+          ),
+          SizedBox(height: 8,),
           Align(
             alignment: Alignment.centerLeft,
             child: new Text("28th September 2020",
@@ -100,6 +92,7 @@ class _TextPostState extends State<TextImagePost> {
                     fontWeight: FontWeight.w400,
                     color: Color.fromRGBO(0, 0, 0, 0.65))),
           ),
+
           Divider(height: 35,)
         ],
       ),

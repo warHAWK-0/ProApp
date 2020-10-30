@@ -45,15 +45,16 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(EvaIcons.starOutline,size: 22,),
-            title: Text('Feed')
+            title : Text("Feed")
           ),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.alertCircleOutline,size: 22,),
-    title: Text( 'Complaints')
+              title : Text("Complaints")
           ),
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.personOutline,size: 22,),
-    title: Text( 'Feed')
+              title : Text("User Profile")
+
           ),
         ],
       ),
