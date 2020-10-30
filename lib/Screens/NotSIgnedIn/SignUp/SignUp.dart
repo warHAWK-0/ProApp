@@ -289,7 +289,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -325,7 +325,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -376,7 +376,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -426,7 +426,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -451,13 +451,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Already have an Account?",
+          "Already have an account?",
           //style: blackSmallStyle
         ),
         InkWell(
           autofocus: false,
           child: Text(
-            ' LOGIN IN',
+            ' Login',
             style: TextStyle(color: Colors.blue),
           ),
           onTap: () {
@@ -486,8 +486,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
         color: primarygreen,
         textColor: Colors.white,
         child: Text(
-          'SIGNUP',
-          style: new TextStyle(fontSize: 20.0, color: Colors.white),
+          'SIGN UP',
+          //style: new TextStyle(fontSize: 20.0, color: Colors.white),
         ),
         onPressed: _submit,
       ),
@@ -510,7 +510,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           children: [
             Image.asset("Assets/icons/Icon.png"),
             Text(
-              '  SIGN UP with GOOGLE',
+              '  SIGN UP WITH GOOGLE',
               style: TextStyle(
                   fontFamily: 'Intern',
                   fontSize: 14,
@@ -528,12 +528,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       appBar: CustomAppBar(
         child: Text(
-          'SignUp',
-          // style: blackBoldLargeStyle
+          'Sign Up',
+          style: Heading2(Colors.black,letterSpace: 1.25),
         ),
-        backIcon: false,
+        backIcon: true,
         elevation: false,
       ),
+      backgroundColor: Colors.white,
       key: scaffoldKey,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,

@@ -16,6 +16,7 @@ class _PostdetailsState extends State<Postdetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         //title: Center(child: Text("Feed",style: TextStyle(color: Colors.black,),)),
         backgroundColor: Colors.white,

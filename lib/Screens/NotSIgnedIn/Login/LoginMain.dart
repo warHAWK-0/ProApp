@@ -298,7 +298,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -366,7 +366,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -416,7 +416,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           autofocus: false,
           child: Text(
             'Sign Up',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: primarygreen),
           ),
           onTap: () {
             Navigator.of(context).push(PageNavigate(auth: widget.auth));
@@ -441,7 +441,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               autofocus: false,
               child: Text(
                 'reset here',
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(color: primarygreen),
               ),
               onTap: () {
                 var authen = Auth();

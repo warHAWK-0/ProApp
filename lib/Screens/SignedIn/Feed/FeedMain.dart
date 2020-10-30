@@ -14,6 +14,7 @@ class _FeedMainState extends State<FeedMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CustomAppBar(
         child: Text(
           'Feed',
