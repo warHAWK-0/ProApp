@@ -36,13 +36,72 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       try {
         await widget.auth.resetPassword(_emailpassword);
         print("tried");
-
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierLabel:
+              MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black45,
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (BuildContext buildContext, Animation animation,
+              Animation secondaryAnimation) {
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width - 30,
+                height: 150,
+                margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(45, 55, 72, 0.9),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Password Reset Email Sent',
+                      textAlign: TextAlign.justify,
+                      softWrap: true,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                        color: Color(0xFFFFFFFF),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: RaisedButton(
+                        elevation: 0.2,
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Dismiss"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          transitionBuilder: (context, anim1, anim2, child) {
+            return SlideTransition(
+              position:
+                  Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+              child: child,
+            );
+          },
+        );
         // AlertDialog(
         //   title: Text("Password Reset Email Sent"),
         // );
         // final snackBar = SnackBar(content: Text("Password Reset Email Sent"));
         // scaffoldKey.currentState.showSnackBar(snackBar);
-        Navigator.of(context).pushNamed('/ForgotPassConfirm');
+        //Navigator.of(context).pushNamed('/ForgotPassConfirm');
         print('conf');
       } catch (e) {
         // Fluttertoast.showToast(
@@ -90,7 +149,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           child: TextFormField(
                             onSaved: (val) => _emailpassword = val,
                             validator: (val) =>
-                            !val.contains('@') ? "Invalid Email" : null,
+                                !val.contains('@') ? "Invalid Email" : null,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
@@ -100,12 +159,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
+                                      BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
+                                      BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
@@ -114,7 +173,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
+                                      BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 hintText: 'Email ID',
                                 hintStyle: TextStyle(
@@ -138,12 +197,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: loading
                                 ? Loading()
                                 : Text(
-                              'Change Password',
-                              style: TextStyle(
-                                  fontFamily: 'Intern',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600),
-                            ),
+                                    'Change Password',
+                                    style: TextStyle(
+                                        fontFamily: 'Intern',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                             onPressed: () {
                               _passwordReset();
                             },

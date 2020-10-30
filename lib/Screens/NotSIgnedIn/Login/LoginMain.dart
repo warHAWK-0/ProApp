@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             context: context,
             barrierDismissible: false,
             barrierLabel:
-            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+                MaterialLocalizations.of(context).modalBarrierDismissLabel,
             barrierColor: Colors.black45,
             transitionDuration: const Duration(milliseconds: 500),
             pageBuilder: (BuildContext buildContext, Animation animation,
@@ -139,7 +139,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               );
             },
           );
-
           await Future.delayed(Duration(milliseconds: 1001));
           await widget.auth.signOut();
         }
@@ -218,7 +217,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     onPressed: () {
                       Navigator.of(context).pop(context);
                       widget.auth.sendEmailVerification().then(
-                            (user) async {
+                        (user) async {
                           widget.auth.signOut();
 
                           // Fluttertoast.showToast(
@@ -246,7 +245,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       transitionBuilder: (context, anim1, anim2, child) {
         return SlideTransition(
           position:
-          Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+              Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
           child: child,
         );
       },
@@ -475,7 +474,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("icons/Icon.png"),
+            Image(
+              image: AssetImage('Assets/icons/Icon.png'),
+            ),
             Text(
               '  SIGN UP with GOOGLE',
               style: TextStyle(
@@ -553,16 +554,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Future<FirebaseUser> _signInWithGoogle() async {
     try {
       final GoogleSignInAccount googleSignInAccount =
-      await _googleSignIn.signIn();
+          await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount.authentication;
+          await googleSignInAccount.authentication;
 
       final AuthCredential authCredential = GoogleAuthProvider.getCredential(
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken);
 
       final AuthResult authResult =
-      await auth.signInWithCredential(authCredential);
+          await auth.signInWithCredential(authCredential);
       final FirebaseUser user = authResult.user;
 
       assert(user.email != null);
@@ -589,10 +590,10 @@ class PageNavigate extends CupertinoPageRoute {
   final BaseAuth auth;
   PageNavigate({this.auth})
       : super(
-    builder: (BuildContext context) => RegistrationPage(
-      auth: auth,
-    ),
-  );
+          builder: (BuildContext context) => RegistrationPage(
+            auth: auth,
+          ),
+        );
 }
 
 FirebaseAuth auth = FirebaseAuth.instance;
