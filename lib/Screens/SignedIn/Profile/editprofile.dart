@@ -36,7 +36,7 @@ class _EditProfileState extends State<EditProfile> {
         appBar:CustomAppBar(
       child: Text(
       titleText,
-        style: GoogleFonts.inter(textStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+        style: Heading2(Colors.black,letterSpace: 1.25),
     ),
     backIcon: true,
     elevation: true,
@@ -284,7 +284,7 @@ class _EditProfileState extends State<EditProfile> {
         CircleAvatar(
           radius: 32.0,
           backgroundImage: _imageFile == null
-              ? AssetImage('Assets/profilepic.png')
+              ? AssetImage('Assets/img/profilepic.png')
               : FileImage(File(_imageFile.path)),
         ),
         Positioned(

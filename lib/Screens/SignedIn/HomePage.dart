@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(EvaIcons.personOutline,size: 22,),
               title : Text("User Profile")
+
           ),
         ],
       ),
