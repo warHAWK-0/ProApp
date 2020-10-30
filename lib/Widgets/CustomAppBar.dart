@@ -50,7 +50,7 @@ class CustomAppBar extends PreferredSize {
                   Navigator.pop(context);
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: const EdgeInsets.only(bottom: 14,left: 12),
                   child: Icon(Icons.arrow_back_ios,color: primarygreen,size: 20,),
                 ),
               ) : Container(                          //logo

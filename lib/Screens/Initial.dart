@@ -42,75 +42,108 @@ class _initialScreenState extends State<initialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double _height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: primarygreen,
         body: Builder(
           builder: (context) {
             return Center(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Container(
-                    padding: EdgeInsets.only(
-                        left: 20,
-                        right: 20,
-                        top: MediaQuery.of(context).size.height / 15),
-                    width: double.infinity,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          showLogo(),
-                          SizedBox(
-                            height: 64,
-                          ),
-                          Image(
-                            image: AssetImage('Assets/Initial.png'),
-                          ),
-                          SizedBox(
-                            height: 77,
-                          ),
-                          Container(
-                            //Sign up button
-                            width: double.infinity,
-                            height: 46,
-                            child: FlatButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                side: BorderSide(color: Colors.white),
-                              ),
-                              color: Colors.white,
-                              textColor: primarygreen,
-                              child: loading
-                                  ? Loading()
-                                  : Text(
-                                      'GET STARTED',
-                                      style: TextStyle(
-                                        fontFamily: 'Intern',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Wrapper(
-                                      auth: new Auth(),
+              child: Container(
+                  padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      //top: MediaQuery.of(context).size.height / 15
+                  ),
+                  width: double.infinity,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          height: _height/10,
+                        ),
+                        showLogo(),
+                        Spacer(),
+                        Image(
+                          image: AssetImage('Assets/img/Initial.png'),
+                        ),
+                        Spacer(),
+                        SizedBox(height: _height/15,),
+                        Container(
+                          //Sign up button
+                          width: double.infinity,
+                          height: 46,
+                          child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                              side: BorderSide(color: Colors.white),
+                            ),
+                            color: Colors.white,
+                            textColor: primarygreen,
+                            child: loading
+                                ? Loading()
+                                : Text(
+                                    'SIGN UP',
+                                    style: TextStyle(
+                                      fontFamily: 'Intern',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                );
-                              },
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Wrapper(
+                                    auth: new Auth(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: _height/60,),
+                        Container(
+                          //Sign up button
+                          width: double.infinity,
+                          height: 46,
+                          child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                              side: BorderSide(color: Colors.white),
                             ),
+                            color: primarygreen,
+                            child: loading
+                                ? Loading()
+                                : Text(
+                              'ALREADY AN USER? LOGIN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Intern',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Wrapper(
+                                    auth: new Auth(),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                          SizedBox(
-                            height: 16.0,
-                          ),
-                        ],
-                      ),
-                    )),
-              ),
+                        ),
+                        SizedBox(
+                          height: _height/8,
+                        ),
+                      ],
+                    ),
+                  )),
             );
           },
         ));

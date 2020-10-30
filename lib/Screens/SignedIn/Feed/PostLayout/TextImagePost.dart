@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'ExpandedTextImagePost.dart';
 //import 'file:///E:/Flutter/proapp/lib/Screens/SignedIn/Feed/PostLayout/readmore.dart';
 import 'readmore.dart';
@@ -56,21 +57,7 @@ class _TextPostState extends State<TextImagePost> {
           Row(
             children: <Widget>[
               // Toggle the up, down button and fill the box
-              IconButton(icon: Icon(EvaIcons.arrowIosUpwardOutline),
-                color: (isPressed)? Colors.green: Colors.grey,
-                onPressed: (){
-                  setState(() {
-                    isPressed=true;
-                  });
-                },),
-              Text("9999", style: GoogleFonts.inter(letterSpacing: 1, fontSize: 14,fontWeight: FontWeight.w600, color: Color.fromRGBO(0,0,0,0.65))),
-              IconButton(icon: Icon(EvaIcons.arrowIosDownwardOutline),
-                color: (isPressed1)? Colors.red: Colors.grey,
-                onPressed: (){
-                  setState(() {
-                    isPressed1=true;
-                  });
-                },),
+              VoteTemplate(type: VoteType.feed, upvoteCount: 234,downvoteCount: 15,),
               Spacer(),
               GestureDetector(
                 onTap: (){

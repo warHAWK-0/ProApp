@@ -45,7 +45,7 @@ TextStyle Heading4(Color color,{fontWeight = FontWeight.w500}) => GoogleFonts.in
 );
 
 //textstyle with fontsize 12
-TextStyle Heading(Color color,{fontSize = 12,fontWeight = FontWeight.w500}) => GoogleFonts.inter(
+TextStyle Heading({Color color,fontSize = 12,fontWeight = FontWeight.w500}) => GoogleFonts.inter(
     textStyle:TextStyle(
       color: color,
       fontSize: fontSize,

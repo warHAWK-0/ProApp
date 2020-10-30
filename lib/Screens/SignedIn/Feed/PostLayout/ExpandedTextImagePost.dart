@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/comment.dart';
+import 'package:proapp/Widgets/VoteTemplate.dart';
 
 class Postdetails extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _PostdetailsState extends State<Postdetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         //title: Center(child: Text("Feed",style: TextStyle(color: Colors.black,),)),
         backgroundColor: Colors.white,
@@ -32,6 +34,7 @@ class _PostdetailsState extends State<Postdetails> {
           margin: EdgeInsets.only(top: 15, bottom: 15),
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               new Row(
                 children: <Widget>[
@@ -78,35 +81,9 @@ class _PostdetailsState extends State<Postdetails> {
               SizedBox(
                 height: 10,
               ),
-              Row(
-                children: <Widget>[
-                  // Toggle the up, down button and fill the box
-                  IconButton(
-                    icon: Icon(EvaIcons.arrowIosUpwardOutline),
-                    color: (isPressed) ? Colors.green : Colors.grey,
-                    onPressed: () {
-                      setState(() {
-                        isPressed = true;
-                      });
-                    },
-                  ),
-                  Text("9999",
-                      style: GoogleFonts.inter(
-                          letterSpacing: 1,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color.fromRGBO(0, 0, 0, 0.65))),
-                  IconButton(
-                    icon: Icon(EvaIcons.arrowIosDownwardOutline),
-                    color: (isPressed1) ? Colors.red : Colors.grey,
-                    onPressed: () {
-                      setState(() {
-                        isPressed1 = true;
-                      });
-                    },
-                  ),
-
-                ],
+              VoteTemplate(type: VoteType.feed, upvoteCount: 234),
+              SizedBox(
+                height: 10,
               ),
               Text(
                 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',

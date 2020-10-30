@@ -1,3 +1,4 @@
+import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
@@ -47,6 +48,9 @@ class _CreateComplaintState extends State<CreateComplaint> {
       closeButton: 'Close',
       hint: Text(
         'Select ' + mapKey,
+        style: Heading3(
+          Color.fromRGBO(0, 0, 0, 0.45),
+        ),
       ),
       searchHint: Text(
         'Select ' + mapKey,
@@ -78,6 +82,8 @@ class _CreateComplaintState extends State<CreateComplaint> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8,16, 8, 12),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: _height/45,),
               Container(
@@ -90,7 +96,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
                 ),
                 child: getSearchableDropdown(_department, "department"),
               ),
-              SizedBox(height: _height/60,),
+              SizedBox(height: _height/50,),
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -101,9 +107,77 @@ class _CreateComplaintState extends State<CreateComplaint> {
                 ),
                 child: getSearchableDropdown(_complaint,"complaint"),
               ),
-              SizedBox(height: _height/60,),
+              SizedBox(height: _height/50,),
               Container(
-
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey[350],
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                child: TextField(
+                  maxLines: 4,
+                  keyboardType: TextInputType.multiline,
+                  maxLength: 1000,
+                  maxLengthEnforced: true,
+                  decoration: InputDecoration(
+                    hintStyle: Heading3(
+                      Color.fromRGBO(0, 0, 0, 0.45),
+                    ),
+                    border: InputBorder.none,
+                    hintText: 'Description',
+                  ),
+                ),
+              ),
+              SizedBox(height: _height/50,),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 4,vertical: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey[350],
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(FlevaIcons.upload,size: 24,color: Color.fromRGBO(0, 0, 0, 0.45),),
+                    SizedBox(width: 4,),
+                    Text(
+                      'Upload',
+                      style: Heading3(
+                        Color.fromRGBO(0, 0, 0, 0.45),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 6,left: 4),
+                child: Text(
+                  'File Size condition',
+                  style: Heading(
+                    color: Color.fromRGBO(0, 0, 0, 0.45),
+                    fontSize: 13.0,
+                  )
+                ),
+              ),
+              SizedBox(height: _height/50,),
+              Container(
+                width: _width,
+                decoration: BoxDecoration(
+                  color: primarygreen,
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                child: Center(
+                  child: FlatButton(
+                    onPressed: (){},
+                    child: Text('CREATE',style: Heading4(Colors.white),)
+                  ),
+                ),
               ),
             ],
           ),

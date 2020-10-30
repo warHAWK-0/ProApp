@@ -21,13 +21,13 @@ class _changePasswordState extends State<changePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Center(
-              child: Text("Change your password",
-                  style: GoogleFonts.inter(
-                      textStyle: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w500)))),
-          backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          child: Text(
+            'Change your password',
+            style: Heading2(Colors.black,letterSpace: 1.1),
+          ),
+          elevation: true,
+          backIcon: true,
         ),
         backgroundColor: Colors.white,
         body: Builder(
@@ -168,7 +168,7 @@ class _changePasswordState extends State<changePassword> {
                             textColor: Colors.white,
                             child: loading
                                 ? Loading()
-                                : Text('Save',
+                                : Text('SAVE',
                                     style: GoogleFonts.inter(
                                       textStyle: TextStyle(
                                           fontFamily: 'Intern',
@@ -239,14 +239,15 @@ class _Otp2State extends State<Otp2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:CustomAppBar(
+        appBar: CustomAppBar(
           child: Text(
-            titleText,
-            style: Heading2(Colors.black,letterSpace: 1.25),
+            'Enter OTP',
+            style: Heading2(Colors.black,letterSpace: 1.1),
           ),
-          backIcon: true,
           elevation: true,
-        ),//
+          backIcon: true,
+        ),
+
         backgroundColor: Colors.white,
         body: Builder(
           builder: (context) {
@@ -396,19 +397,20 @@ class _Confirmation2State extends State<Confirmation2> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 80,
+            ),
             Center(
                 child: Text(
-              'Password Changed!',
-              style: Heading1(Colors.black),
+              'Password changed!',
+              style: Heading(color: Colors.black,fontSize: 26.0,fontWeight: FontWeight.w500),
             )),
-            SizedBox(
-              height: 64,
-            ),
+            Spacer(),
             Container(
               child: Image.asset("Assets/img/confirmation.png"),
             ),
             SizedBox(
-              height: 32.0,
+              height: 48.0,
             ),
             Container(
               //Sign in button
@@ -433,6 +435,7 @@ class _Confirmation2State extends State<Confirmation2> {
                 },
               ),
             ),
+            Spacer(),
           ],
         ),
       ),

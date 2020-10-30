@@ -1,4 +1,3 @@
-
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +22,7 @@ class _TextPostState extends State<TextPost> {
         children: <Widget>[
           new Row(
             children: <Widget>[
+
               CircleAvatar(radius: 16,backgroundImage: NetworkImage("https://www.woolha.com/media/2020/03/flutter-circleavatar-minradius-maxradius.jpg") ,),
               SizedBox(width: 10,),
               new Text("Anonymous Name", style: GoogleFonts.inter( letterSpacing: .25,fontSize: 16,
@@ -36,7 +36,6 @@ class _TextPostState extends State<TextPost> {
                   borderRadius: BorderRadius.circular(13),
                   color: Color(0xFF189F98),
                 ),
-
                 child: Center(
                   child: Text("TAGS", style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
                       fontWeight: FontWeight.w500, color: Colors.white) ),
@@ -92,14 +91,9 @@ class _TextPostState extends State<TextPost> {
                     fontWeight: FontWeight.w400,
                     color: Color.fromRGBO(0, 0, 0, 0.65))),
           ),
-
           Divider(height: 35,)
         ],
       ),
     );
   }
 }
-
-//void doSomething(String buttonName){
-//  if(buttonName)
-//}

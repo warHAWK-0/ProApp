@@ -1,4 +1,5 @@
 import 'package:fleva_icons/fleva_icons.dart';
+import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintCard.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/CreateComplaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
@@ -93,18 +94,20 @@ class _ComplaintMainState extends State<ComplaintMain> {
               height: 10,
             ),
             _myComplaint ? MyComplaint() : AllComplaint(),
+            ComplaintCard(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: primarygreen,
-        child: _myComplaint
+        label: _myComplaint ? Text('CREATE') : Text('FILTER',style: TextStyle(color: Colors.white),),
+        icon: _myComplaint
             ? Icon(
                 Icons.add,
                 color: Colors.white,
               )
             : Icon(
-                FlevaIcons.npm_outline,
+                Icons.filter_alt_outlined,
                 color: Colors.white,
               ),
         onPressed: () {
