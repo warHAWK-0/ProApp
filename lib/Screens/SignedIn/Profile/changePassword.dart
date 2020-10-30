@@ -247,6 +247,7 @@ class _Otp2State extends State<Otp2> {
           elevation: true,
           backIcon: true,
         ),
+
         backgroundColor: Colors.white,
         body: Builder(
           builder: (context) {
@@ -392,8 +393,9 @@ class _Confirmation2State extends State<Confirmation2> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 32),
+        padding: EdgeInsets.only(left: 16, right: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               height: 80,

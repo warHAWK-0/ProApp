@@ -208,7 +208,7 @@ class _ConfirmationState extends State<Confirmation> {
                 height: 64,
               ),
               Container(
-                child: Image.asset("Assets/confirmation.png"),
+                child: Image.asset("Assets/img/confirmation.png"),
               ),
               SizedBox(
                 height: 32.0,
