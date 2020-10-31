@@ -35,25 +35,23 @@ class _FilterState extends State<Filter> {
   ];
   Map<String, String> selectedValueMap = Map();
 
- List _onTapColorStatus(Color currentColor,Color selectedColor){
+  List _onTapColorStatus(Color currentColor, Color selectedColor) {
     if (currentColor != selectedColor) {
-      return [selectedColor,Colors.white] ;
+      return [selectedColor, Colors.white];
     } else {
-
-      return[Color(0xffF7FAFC),Colors.black];
+      return [Color(0xffF7FAFC), Colors.black];
     }
   }
-  List _onTapColorSort(Color current,Color other){
+
+  List _onTapColorSort(Color current, Color other) {
     if (current == Color(0xffF7FAFC)) {
-      if (other ==Color(0xffFCBD5E0)){
-        return [Color(0xffFCBD5E0),Color(0xffF7FAFC)] ;
-      }
-      else{
-        return [Color(0xffFCBD5E0),Color(0xffF7FAFC)] ;
+      if (other == Color(0xffFCBD5E0)) {
+        return [Color(0xffFCBD5E0), Color(0xffF7FAFC)];
+      } else {
+        return [Color(0xffFCBD5E0), Color(0xffF7FAFC)];
       }
     } else {
-
-      return[Color(0xffF7FAFC),Color(0xffF7FAFC)];
+      return [Color(0xffF7FAFC), Color(0xffF7FAFC)];
     }
   }
 
@@ -119,7 +117,7 @@ class _FilterState extends State<Filter> {
       appBar: CustomAppBar(
         child: Text(
           'Filters',
-          //style: blackBoldLargeStyle,
+          style: Heading2(Colors.black, letterSpace: 1.0),
         ),
         elevation: true,
       ),
@@ -161,11 +159,10 @@ class _FilterState extends State<Filter> {
                     onTap: () {
                       setState(() {
                         List temp = [];
-                        temp =_onTapColorStatus(cRaised,primaryorange);
+                        temp = _onTapColorStatus(cRaised, primaryorange);
                         cRaised = temp[0];
-                        wRaised=temp[1];
+                        wRaised = temp[1];
                       });
-
                     },
                     child: Tag(
                       color: cRaised,
@@ -176,13 +173,12 @@ class _FilterState extends State<Filter> {
                 Spacer(),
                 InkWell(
                     onTap: () {
-                     setState(() {
-                       List temp = [];
-                       temp =_onTapColorStatus(cProgress,progressYellow);
-                       cProgress = temp[0];
-                       wProgress = temp[1];
-
-                     });
+                      setState(() {
+                        List temp = [];
+                        temp = _onTapColorStatus(cProgress, progressYellow);
+                        cProgress = temp[0];
+                        wProgress = temp[1];
+                      });
                     },
                     child: Tag(
                       color: cProgress,
@@ -193,12 +189,12 @@ class _FilterState extends State<Filter> {
                 Spacer(),
                 InkWell(
                     onTap: () {
-                     setState(() {
-                       List temp = [];
-                       temp =_onTapColorStatus(cCompleted,primarygreen);
-                       cCompleted = temp[0];
-                       wCompleted=temp[1];
-                     });
+                      setState(() {
+                        List temp = [];
+                        temp = _onTapColorStatus(cCompleted, primarygreen);
+                        cCompleted = temp[0];
+                        wCompleted = temp[1];
+                      });
                     },
                     child: Tag(
                       color: cCompleted,
@@ -330,9 +326,9 @@ class _FilterState extends State<Filter> {
                     onTap: () {
                       setState(() {
                         List temp = [];
-                        temp =_onTapColorSort(cRecent,cPopular);
+                        temp = _onTapColorSort(cRecent, cPopular);
                         cRecent = temp[0];
-                        cPopular=temp[1];
+                        cPopular = temp[1];
                       });
                     },
                     child: Tag(
@@ -348,9 +344,9 @@ class _FilterState extends State<Filter> {
                     onTap: () {
                       setState(() {
                         List temp = [];
-                        temp =_onTapColorSort(cPopular,cRecent);
+                        temp = _onTapColorSort(cPopular, cRecent);
                         cPopular = temp[0];
-                        cRecent=temp[1];
+                        cRecent = temp[1];
                       });
                     },
                     child: Tag(
@@ -416,8 +412,8 @@ class _FilterState extends State<Filter> {
                                     fontWeight: FontWeight.w600))),
                       ],
                     ),
-                    onPressed: () {
-                      //cancel
+                    onPressed: (){
+                      Navigator.pop(context);
                     },
                   ),
                 ),

@@ -30,16 +30,16 @@ Dialog signOutDialog = Dialog(
                 side: BorderSide(color: Color(0xFFFF4128))),
             color: Color(0xFFFF4128),
             textColor: Colors.white,
-            child: Text(
-              'SIG OUT',
-              style: GoogleFonts.inter(
-                textStyle: TextStyle(
-                    fontFamily: 'Intern',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-            onPressed: () {},
+            child: Text('SIGN OUT',
+                style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                        fontFamily: 'Intern',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600))),
+            onPressed: () {
+              //CODE TO SIGN OUT
+              dialogueExitCode = 1;
+            },
           ),
         ),
         SizedBox(height: 8),

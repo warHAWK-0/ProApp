@@ -134,7 +134,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   padding: EdgeInsets.only(
                       left: 20,
                       right: 20,
-                      top: MediaQuery.of(context).size.height / 10),
+                      top: MediaQuery.of(context).size.height / 20),
                   width: double.infinity,
                   child: Form(
                     key: _formKey,
@@ -163,8 +163,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
+                                  borderSide: BorderSide(color: primarygreen),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
@@ -197,12 +196,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: loading
                                 ? Loading()
                                 : Text(
-                                    'Change Password',
-                                    style: TextStyle(
-                                        fontFamily: 'Intern',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600),
-                                  ),
+                              'SEND OTP',
+                              style: TextStyle(
+                                  fontFamily: 'Intern',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
+                            ),
                             onPressed: () {
                               _passwordReset();
                             },
@@ -267,7 +266,7 @@ class _ConfirmationState extends State<Confirmation> {
                 height: 64,
               ),
               Container(
-                child: Image.asset("Assets/confirmation.png"),
+                child: Image.asset("Assets/img/confirmation.png"),
               ),
               SizedBox(
                 height: 32.0,

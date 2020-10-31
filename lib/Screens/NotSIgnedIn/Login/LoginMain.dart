@@ -297,7 +297,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -365,7 +365,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+            borderSide: BorderSide(color: primarygreen),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
@@ -415,7 +415,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           autofocus: false,
           child: Text(
             'Sign Up',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: primarygreen),
           ),
           onTap: () {
             Navigator.of(context).push(PageNavigate(auth: widget.auth));
@@ -439,8 +439,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             InkWell(
               autofocus: false,
               child: Text(
-                'Reset here',
-                style: TextStyle(color: Colors.blue),
+                'reset here',
+                style: TextStyle(color: primarygreen),
               ),
               onTap: () {
                 var authen = Auth();
@@ -478,7 +478,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               image: AssetImage('Assets/icons/Icon.png'),
             ),
             Text(
-              '  SIGN UP with GOOGLE',
+              '  SIGN UP WITH GOOGLE',
               style: TextStyle(
                   fontFamily: 'Intern',
                   fontSize: 14,
@@ -498,10 +498,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: CustomAppBar(
         child: Text(
-          'LOGIN',
-          // style: blackBoldLargeStyle,
+          'Login',
+          style: Heading2(Colors.black,letterSpace: 1.25),
         ),
-        backIcon: false,
+        backIcon: true,
         elevation: false,
       ),
       backgroundColor: Colors.white,

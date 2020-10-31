@@ -42,6 +42,7 @@ class _initialScreenState extends State<initialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double _height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: primarygreen,
         body: Builder(
@@ -100,17 +101,58 @@ class _initialScreenState extends State<initialScreen> {
                                       auth: new Auth(),
                                     ),
                                   ),
-                                );
-                              },
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Wrapper(
+                                    auth: new Auth(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: _height/60,),
+                        Container(
+                          //Sign up button
+                          width: double.infinity,
+                          height: 46,
+                          child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                              side: BorderSide(color: Colors.white),
                             ),
+                            color: primarygreen,
+                            child: loading
+                                ? Loading()
+                                : Text(
+                              'ALREADY AN USER? LOGIN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Intern',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Wrapper(
+                                    auth: new Auth(),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                          SizedBox(
-                            height: 16.0,
-                          ),
-                        ],
-                      ),
-                    )),
-              ),
+                        ),
+                        SizedBox(
+                          height: _height/8,
+                        ),
+                      ],
+                    ),
+                  )),
             );
           },
         ));

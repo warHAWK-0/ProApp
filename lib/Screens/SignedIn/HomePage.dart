@@ -83,24 +83,18 @@ class _HomePageState extends State<HomePage> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.star_border,
-              size: 22,
-            ),
-            title: Text('Feed'),
+            icon: Icon(EvaIcons.starOutline,size: 22,),
+            title : Text("Feed")
           ),
           BottomNavigationBarItem(
-              icon: Icon(
-                EvaIcons.alertCircleOutline,
-                size: 22,
-              ),
-              title: Text('Complaints')),
+              icon: Icon(EvaIcons.alertCircleOutline,size: 22,),
+              title : Text("Complaints")
+          ),
           BottomNavigationBarItem(
-              icon: Icon(
-                EvaIcons.personOutline,
-                size: 22,
-              ),
-              title: Text('profile')),
+              icon: Icon(EvaIcons.personOutline,size: 22,),
+              title : Text("User Profile")
+
+          ),
         ],
       ),
     );

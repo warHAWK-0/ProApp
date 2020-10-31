@@ -13,12 +13,14 @@ class VoteTemplate extends StatefulWidget {
   final bool upvote;
   final bool downvote;
   final int upvoteCount;
+  final int downvoteCount;
 
   const VoteTemplate({
     @required this.type,
     this.upvote = false,
     this.downvote = false,
-    @required this.upvoteCount
+    @required this.upvoteCount,
+    this.downvoteCount = 0,
   });
 
   @override
@@ -32,6 +34,7 @@ class _VoteTemplateState extends State<VoteTemplate> {
       upvote: widget.upvote,
       downvote: widget.downvote,
       upvoteCount: widget.upvoteCount,
+      downvoteCount: widget.downvoteCount,
     ) : Complaint(
       upvoteCount: widget.upvoteCount,
       upvote: widget.upvote,
@@ -43,11 +46,13 @@ class Feed extends StatefulWidget {
   bool upvote;
   bool downvote;
   int upvoteCount;
+  int downvoteCount;
 
   Feed({
     this.upvote = false,
     this.downvote = false,
-    @required this.upvoteCount
+    @required this.upvoteCount,
+    @required this.downvoteCount,
   });
 
 
@@ -58,7 +63,15 @@ class Feed extends StatefulWidget {
 class _FeedState extends State<Feed> {
   void _onClickUpvote(){
     setState(() {
-      widget.upvoteCount = widget.upvote ? widget.upvoteCount-1 : widget.upvoteCount+1;
+      if(widget.upvote == false && widget.downvote == false)
+        widget.upvoteCount += 1;
+      else if(widget.upvote == true && widget.downvote == false){
+        widget.upvoteCount -= 1;
+      }
+      else{
+        widget.upvoteCount += 1;
+        widget.downvoteCount -= 1;
+      }
       widget.upvote = !widget.upvote;
       widget.downvote = false;
     });
@@ -66,7 +79,15 @@ class _FeedState extends State<Feed> {
 
   void _onClickDownvote(){
     setState(() {
-      widget.upvoteCount = widget.upvote ? widget.upvoteCount-1 : widget.upvoteCount;
+      if(widget.upvote == false && widget.downvote == false)
+        widget.downvoteCount += 1;
+      else if(widget.upvote == false && widget.downvote == true){
+        widget.downvoteCount -= 1;
+      }
+      else{
+        widget.downvoteCount += 1;
+        widget.upvoteCount -= 1;
+      }
       widget.downvote = !widget.downvote;
       widget.upvote = false;
     });
@@ -99,7 +120,7 @@ class _FeedState extends State<Feed> {
           ),
           Spacer(),
           Text(
-            widget.upvoteCount.toString(),
+            (widget.upvoteCount+widget.downvoteCount).toString(),
             style: TextStyle(
               fontSize: 14,
               letterSpacing: 1.25,

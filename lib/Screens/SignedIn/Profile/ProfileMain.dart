@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/NotSIgnedIn/Login/LoginMain.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Services/authentication.dart';
+import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 
@@ -59,10 +60,11 @@ class _ProfileMainState extends State<ProfileMain> {
     await auth.signOut();
     return Future.value(true);
   }
-
   @override
   Widget build(BuildContext context) {
+    final double _height = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CustomAppBar(
         child: Text(
           'Profile',
@@ -87,6 +89,7 @@ class _ProfileMainState extends State<ProfileMain> {
                   SizedBox(height: 16),
                   Text(
                     "Name here",
+                    style: Heading1(Colors.black),
                   ),
                   SizedBox(height: 16),
                   Row(
@@ -105,12 +108,23 @@ class _ProfileMainState extends State<ProfileMain> {
                     ],
                   ),
                   SizedBox(height: 9),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FlevaIcons.edit_2,
-                        color: Color(0xFFCBD5E0),
+                  InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {},
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            FlevaIcons.edit_2,
+                            color: Color(0xFFCBD5E0),
+                          ),
+                          SizedBox(width: 16),
+                          Text(
+                            "Edit Profile",
+                          ),
+                        ],
                       ),
                       SizedBox(width: 16),
                       InkWell(
@@ -150,9 +164,37 @@ class _ProfileMainState extends State<ProfileMain> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Divider(color: Color.fromRGBO(0, 0, 0, 0.25)),
-                  SizedBox(height: 16),
+                  SizedBox(height: 8),
+                  InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => changePassword()),
+                      );
+                    },
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            FlevaIcons.eye_off,
+                            color: Color(0xFFCBD5E0),
+                          ),
+                          SizedBox(width: 16),
+                          Text(
+                            "Change Password",
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    color: Color.fromRGBO(0, 0, 0, 0.25),
+                    height: 32,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -169,32 +211,44 @@ class _ProfileMainState extends State<ProfileMain> {
                     ],
                   ),
                   SizedBox(height: 9),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FlevaIcons.question_mark_circle,
-                        color: Color(0xFFCBD5E0),
+                  InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {},
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            FlevaIcons.question_mark_circle,
+                            color: Color(0xFFCBD5E0),
+                          ),
+                          SizedBox(width: 16),
+                          Text(
+                            "FAQs",
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 16),
-                      InkWell(
-                        splashColor: Colors.lightBlueAccent,
-                        onTap: () {
-                          //FAQS
-                        },
-                        child: Text(
-                          "FAQs",
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FlevaIcons.people,
-                        color: Color(0xFFCBD5E0),
+                  InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {},
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            FlevaIcons.people,
+                            color: Color(0xFFCBD5E0),
+                          ),
+                          SizedBox(width: 16),
+                          Text(
+                            "About",
+                          ),
+                        ],
                       ),
                       SizedBox(width: 16),
                       InkWell(
@@ -335,32 +389,6 @@ class _ProfileMainState extends State<ProfileMain> {
           );
         },
       ),
-
-//      bottomNavigationBar: BottomNavigationBar(
-//        currentIndex: _currentIndex,
-//        selectedItemColor: primarygreen,
-//        items: [
-//          BottomNavigationBarItem(
-//            icon: Icon(EvaIcons.star),
-//            title: Text("Feed"),
-//
-//          ),
-//          BottomNavigationBarItem(
-//            icon: Icon(EvaIcons.alertCircleOutline),
-//            title: Text("Complaints"),
-//
-//          ),
-//          BottomNavigationBarItem(
-//            icon: Icon(EvaIcons.person),
-//            title: Text("User Profile"),
-//          )
-//        ],
-//        onTap: (index){
-//          setState(() {
-//            _currentIndex=index;
-//          });
-//        },
-//      ),
     );
   }
 }
