@@ -8,7 +8,6 @@ import 'Feed/FeedMain.dart';
 import 'Profile/ProfileMain.dart';
 
 class HomePage extends StatefulWidget {
-
   final BaseAuth auth;
   final VoidCallback onSignedOut;
   final String uid;
@@ -20,11 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  static List<Widget> _pages = [
-    FeedMain(),
-    ComplaintMain(),
-    ProfileMain()
-  ];
+  static List<Widget> _pages = [FeedMain(), ComplaintMain(), ProfileMain()];
 
   @override
   Widget build(BuildContext context) {
@@ -33,30 +28,60 @@ class _HomePageState extends State<HomePage> {
         index: _selectedIndex,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: primarygreen,
-        onTap: (index){
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(EvaIcons.starOutline,size: 22,),
-            title : Text("Feed")
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(EvaIcons.alertCircleOutline,size: 22,),
-              title : Text("Complaints")
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(EvaIcons.personOutline,size: 22,),
-              title : Text("User Profile")
-
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(color: Colors.black)
+          ]
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          currentIndex: _selectedIndex,
+          selectedItemColor: primarygreen,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: _selectedIndex != 0
+                  ? Icon(
+                      EvaIcons.starOutline,
+                      size: 22,
+                    )
+                  : Icon(
+                      EvaIcons.star,
+                      size: 22,
+                    ),
+              label: 'Feed',
+            ),
+            BottomNavigationBarItem(
+              icon: _selectedIndex != 1
+                  ? Icon(
+                      EvaIcons.alertCircleOutline,
+                      size: 22,
+                    )
+                  : Icon(
+                      EvaIcons.alertCircle,
+                      size: 22,
+                    ),
+              label: 'Complaints',
+            ),
+            BottomNavigationBarItem(
+              icon: _selectedIndex != 2
+                  ? Icon(
+                      EvaIcons.personOutline,
+                      size: 22,
+                    )
+                  : Icon(
+                      EvaIcons.person,
+                      size: 22,
+                    ),
+              label: 'User Profile',
+            ),
+          ],
+        ),
       ),
     );
   }
