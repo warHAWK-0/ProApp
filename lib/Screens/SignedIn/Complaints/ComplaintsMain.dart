@@ -107,7 +107,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 color: Colors.white,
               )
             : Icon(
-                Icons.filter_alt_outlined,
+                Icons.filter,
                 color: Colors.white,
               ),
         onPressed: () {

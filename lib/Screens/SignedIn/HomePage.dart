@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                       EvaIcons.star,
                       size: 22,
                     ),
-              label: 'Feed',
+              title: Text("Feed")
             ),
             BottomNavigationBarItem(
               icon: _selectedIndex != 1
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                       EvaIcons.alertCircle,
                       size: 22,
                     ),
-              label: 'Complaints',
+                title: Text("Complaints")
             ),
             BottomNavigationBarItem(
               icon: _selectedIndex != 2
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                       EvaIcons.person,
                       size: 22,
                     ),
-              label: 'User Profile',
+                title: Text("User Profile")
             ),
           ],
         ),
