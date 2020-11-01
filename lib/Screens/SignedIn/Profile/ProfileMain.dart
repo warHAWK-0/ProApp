@@ -59,7 +59,13 @@ class _ProfileMainState extends State<ProfileMain> {
                   InkWell(
                     highlightColor: Colors.transparent,
                     splashColor: Colors.transparent,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditProfile()),
+                      );
+                    },
                     child: Container(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -73,21 +79,8 @@ class _ProfileMainState extends State<ProfileMain> {
                             "Edit Profile",
                           ),
                         ],
-                      ),
-                      SizedBox(width: 16),
-                      InkWell(
-                          splashColor: Colors.lightBlueAccent,
-                          onTap: () {
-                            //nav to edit profile page
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProfile()),
-                            );
-                          },
-                          child: Text("Edit Profile",)),
-                    ],
-                  ),
+                      ),)),
+
                   SizedBox(height: 8),
                   InkWell(
                     highlightColor: Colors.transparent,

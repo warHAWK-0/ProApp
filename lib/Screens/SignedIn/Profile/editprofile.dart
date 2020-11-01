@@ -248,26 +248,28 @@ class _EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 32.0,
                         ),
-                        Container(
-                          //Sign up button
-                          width: double.infinity,
-                          height: 46,
-                          child: FlatButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                side: BorderSide(color: primarygreen)),
-                            color: primarygreen,
-                            textColor: Colors.white,
+                        InkWell(
+                          onTap: _btnEnabled ? () => _nav() : null,
+                          child: Container(
+                            //Sign up button
+                            width: double.infinity,
+                            height: 46,
+                            decoration: BoxDecoration(
+                              color: primarygreen,
+                              borderRadius: BorderRadius.circular(6.0),
+                            ),
                             child: loading
                                 ? Loading()
-                                : Text(
-                                    'SAVE',
-                                    style: TextStyle(
-                                        fontFamily: 'Intern',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                            onPressed: _btnEnabled ? () => _nav() : null,
+                                : Center(
+                                  child: Text(
+                              'SAVE',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Intern',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
+                            ),
+                                ),
                           ),
                         ),
                       ],
@@ -331,19 +333,23 @@ class _EditProfileState extends State<EditProfile> {
             height: 20,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            FlatButton.icon(
-              icon: Icon(Icons.camera),
-              onPressed: () {
-                takePhoto(ImageSource.camera);
-              },
-              label: Text("Camera"),
+            Expanded(
+              child: FlatButton.icon(
+                icon: Icon(Icons.camera),
+                onPressed: () {
+                  takePhoto(ImageSource.camera);
+                },
+                label: Text("Camera"),
+              ),
             ),
-            FlatButton.icon(
-              icon: Icon(Icons.image),
-              onPressed: () {
-                takePhoto(ImageSource.gallery);
-              },
-              label: Text("Gallery"),
+            Expanded(
+              child: FlatButton.icon(
+                icon: Icon(Icons.image),
+                onPressed: () {
+                  takePhoto(ImageSource.gallery);
+                },
+                label: Text("Gallery"),
+              ),
             ),
           ])
         ],
