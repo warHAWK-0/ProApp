@@ -1,4 +1,3 @@
-import 'package:fleva_icons/fleva_icons.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintCard.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/CreateComplaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
@@ -28,74 +27,77 @@ class _ComplaintMainState extends State<ComplaintMain> {
         elevation: true,
         backIcon: false,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 60,
-              decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  blurRadius: 1,
-                  offset: Offset(0, 1),
-                )
-              ]),
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          _myComplaint = true;
-                        });
-                      },
-                      child: Container(
-                        color: _myComplaint ? Colors.grey[50] : Colors.white,
-                        width: (MediaQuery.of(context).size.width - 1) / 2,
-                        height: 60,
-                        child: Center(
-                            child: Text(
-                          'My Complaints',
-                          style: _myComplaint ? Heading3(primarygreen,fontWeight: FontWeight.w500) : Heading3(Colors.black,fontWeight: FontWeight.w400),
-                        )),
+      body: Padding(
+        padding: EdgeInsets.only(bottom: 8),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: 60,
+                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 1,
+                    offset: Offset(0, 1),
+                  )
+                ]),
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _myComplaint = true;
+                          });
+                        },
+                        child: Container(
+                          color: _myComplaint ? Colors.grey[50] : Colors.white,
+                          width: (MediaQuery.of(context).size.width - 1) / 2,
+                          height: 60,
+                          child: Center(
+                              child: Text(
+                            'My Complaints',
+                            style: _myComplaint ? Heading3(primarygreen,fontWeight: FontWeight.w500) : Heading3(Colors.black,fontWeight: FontWeight.w400),
+                          )),
+                        ),
                       ),
                     ),
-                  ),
-                  VerticalDivider(
-                    width: 1,
-                    thickness: 1,
-                    color: Colors.grey.withOpacity(0.5),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          _myComplaint = false;
-                        });
-                      },
-                      child: Container(
-                        color: !_myComplaint ? Colors.grey[50] : Colors.white,
-                        width: (MediaQuery.of(context).size.width - 1) / 2,
-                        height: 60,
-                        child: Center(
-                          child: Text(
-                            'All',
-                            style: !_myComplaint ? Heading3(primarygreen,fontWeight: FontWeight.w500) : Heading3(Colors.black,fontWeight: FontWeight.w400),
+                    VerticalDivider(
+                      width: 1,
+                      thickness: 1,
+                      color: Colors.grey.withOpacity(0.5),
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _myComplaint = false;
+                          });
+                        },
+                        child: Container(
+                          color: !_myComplaint ? Colors.grey[50] : Colors.white,
+                          width: (MediaQuery.of(context).size.width - 1) / 2,
+                          height: 60,
+                          child: Center(
+                            child: Text(
+                              'All',
+                              style: !_myComplaint ? Heading3(primarygreen,fontWeight: FontWeight.w500) : Heading3(Colors.black,fontWeight: FontWeight.w400),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            _myComplaint ? MyComplaint() : AllComplaint(),
-            ComplaintCard(),
-          ],
+              SizedBox(
+                height: 10,
+              ),
+              _myComplaint ? MyComplaint() : AllComplaint(),
+              ComplaintCard(),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

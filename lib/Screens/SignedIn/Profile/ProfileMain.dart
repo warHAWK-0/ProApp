@@ -4,19 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
+import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class ProfileMain extends StatefulWidget {
+  ProfileMain({this.auth, this.onSignedOut, Key key, this.uid});
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
+  final String uid;
   @override
-  _ProfileMainState createState() => _ProfileMainState();
+  _ProfileMainState createState() => _ProfileMainState(uid);
 }
 
 class _ProfileMainState extends State<ProfileMain> {
-  int _currentIndex = 2;
+  final String uid;
+  _ProfileMainState(this.uid);
+
+  void onSignOut() async {
+    try {
+      await widget.auth.signOut();
+      print("Signed Out");
+      widget.onSignedOut();
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double _height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -226,7 +242,11 @@ class _ProfileMainState extends State<ProfileMain> {
                                                   FontWeight
                                                       .w600))),
                                       onPressed: () {
-                                        //CODE TO SIGN OUT
+                                        Navigator.of(context).pop();
+                                        onSignOut();
+                                        Navigator.of(context,
+                                            rootNavigator: true)
+                                            .pop(context);
                                       },
                                     ),
                                   ),
