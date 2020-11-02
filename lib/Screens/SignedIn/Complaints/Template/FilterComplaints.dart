@@ -23,6 +23,7 @@ class _FilterState extends State<Filter> {
   Color cCompleted = Color(0xffF7FAFC);
   Color cRecent = Color(0xffF7FAFC);
   Color cPopular = Color(0xffF7FAFC);
+  Color _dateColor = Color.fromRGBO(0, 0, 0, 0.45);
   final List<String> _department = [
     'Department 1',
     'Department 2',
@@ -60,23 +61,6 @@ class _FilterState extends State<Filter> {
     selectedValueMap["department"] = null;
     selectedValueMap["complaint"] = null;
     super.initState();
-  }
-
-  Future<void> _selectDate(BuildContext context, int ch) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2020, 8),
-        lastDate: DateTime.now());
-    if (picked != null && ch == 0) {
-      setState(() {
-        fromDate = picked;
-      });
-    } else if (picked != null && ch == 1) {
-      setState(() {
-        toDate = picked;
-      });
-    }
   }
 
   Widget getSearchableDropdown(List<String> listData, mapKey) {
@@ -244,71 +228,110 @@ class _FilterState extends State<Filter> {
               height: 4,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  height: 46,
-                  width: 139,
-                  child: FlatButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        side: BorderSide(color: Color(0xffCBD5E0), width: 0.5)),
-                    color: Colors.white,
-                    child: Row(
-                      children: [
-                        Icon(
-                          FlevaIcons.calendar_outline,
-                          color: Color(0xff231F20),
-                        ),
-                        Spacer(),
-                        Text(
-                            fromDate.toString().substring(8, 10) +
-                                fromDate.toString().substring(4, 8) +
-                                fromDate.toString().substring(0, 4),
-                            style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                    fontFamily: 'Intern',
-                                    fontSize: 14,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45)))),
-                      ],
-                    ),
-                    onPressed: () {
-                      _selectDate(context, 0);
+                Theme(
+                data: Theme.of(context).copyWith(
+                    colorScheme:
+                    Theme.of(context).colorScheme.copyWith(primary: primarygreen)),
+                child: Builder(
+                  builder: (context) {
+                    return InkWell(
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2020, 8),
+                              lastDate: DateTime.now());
+                          if(picked != null){
+                            setState(() {
+                              fromDate = picked;
+                              _dateColor = Colors.black;
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: 45,
+                          width: MediaQuery.of(context).size.width/3.15,
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(3)),
+                            border: Border.all(color: Color(0xffCBD5E0), width: 0.5),
+                            color: Colors.white,
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 13),
+                          child: Row(
+                            children: [
+                              Icon(
+                                FlevaIcons.calendar_outline,
+                                color: Color(0xff231F20),
+                              ),
+                              SizedBox(width: 8,),
+                              Text(fromDate.toString().substring(8, 10) +
+                                  fromDate.toString().substring(4, 8) +
+                                  fromDate.toString().substring(0, 4),
+                                  style: GoogleFonts.inter(
+                                      textStyle: TextStyle(
+                                          fontFamily: 'Intern',
+                                          fontSize: 14,
+                                          color: _dateColor))),
+                            ],
+                          ),
+                        ));
+                  },
+                ),
+              ),
+                SizedBox(width: MediaQuery.of(context).size.width/6,),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                      colorScheme:
+                      Theme.of(context).colorScheme.copyWith(primary: primarygreen)),
+                  child: Builder(
+                    builder: (context) {
+                      return InkWell(
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2020, 8),
+                                lastDate: DateTime.now());
+                            if(picked != null){
+                              setState(() {
+                                toDate = picked;
+                                _dateColor = Colors.black;
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: 45,
+                            width: MediaQuery.of(context).size.width/3.15,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(3)),
+                              border: Border.all(color: Color(0xffCBD5E0), width: 0.5),
+                              color: Colors.white,
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 13),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  FlevaIcons.calendar_outline,
+                                  color: Color(0xff231F20),
+                                ),
+                                SizedBox(width: 8,),
+                                Text(toDate.toString().substring(8, 10) +
+                                    toDate.toString().substring(4, 8) +
+                                    toDate.toString().substring(0, 4),
+                                    style: GoogleFonts.inter(
+                                        textStyle: TextStyle(
+                                            fontFamily: 'Intern',
+                                            fontSize: 14,
+                                            color: _dateColor))),
+                              ],
+                            ),
+                          ));
                     },
                   ),
-                ),
-                Spacer(),
-                Container(
-                  height: 46,
-                  width: 139,
-                  child: FlatButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                        side: BorderSide(color: Color(0xffCBD5E0), width: 0.5)),
-                    color: Colors.white,
-                    child: Row(
-                      children: [
-                        Icon(FlevaIcons.calendar_outline,
-                            color: Color(0xff231F20)),
-                        Spacer(),
-                        Text(
-                            toDate.toString().substring(8, 10) +
-                                toDate.toString().substring(4, 8) +
-                                toDate.toString().substring(0, 4),
-                            style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                    fontFamily: 'Intern',
-                                    fontSize: 14,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45)))),
-                      ],
-                    ),
-                    onPressed: () {
-                      _selectDate(context, 1);
-                    },
-                  ),
-                ),
-                Spacer(),
-              ],
+                ),],
             ),
             Divider(
               thickness: 1,
@@ -412,14 +435,14 @@ class _FilterState extends State<Filter> {
                                     fontWeight: FontWeight.w600))),
                       ],
                     ),
-                    onPressed: (){
+                    onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
                 ),
                 Spacer()
               ],
-            )
+            ),
           ],
         ),
       ),

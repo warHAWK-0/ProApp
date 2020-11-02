@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
         //primarySwatch: Colors.blue,
         //visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      //home:Wrapper(auth: _baseAuth,),
-      home:HomePage(),
+      home: initialScreen(),
+      // home:HomePage(),
     );
   }
 }

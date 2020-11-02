@@ -48,9 +48,9 @@ class _CreateComplaintState extends State<CreateComplaint> {
       closeButton: 'Close',
       hint: Text(
         'Select ' + mapKey,
-        style: Heading3(
-          Color.fromRGBO(0, 0, 0, 0.45),
-        ),
+        // style: Heading3(
+        //   Color.fromRGBO(0, 0, 0, 0.45),
+        // ),
       ),
       searchHint: Text(
         'Select ' + mapKey,
@@ -118,7 +118,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
                   borderRadius: BorderRadius.circular(6.0),
                 ),
                 child: TextField(
-                  maxLines: 4,
+                  maxLines: 5,
                   keyboardType: TextInputType.multiline,
                   maxLength: 1000,
                   maxLengthEnforced: true,
@@ -166,16 +166,18 @@ class _CreateComplaintState extends State<CreateComplaint> {
                 ),
               ),
               SizedBox(height: _height/50,),
-              Container(
-                width: _width,
-                decoration: BoxDecoration(
-                  color: primarygreen,
-                  borderRadius: BorderRadius.circular(6.0),
-                ),
-                child: Center(
-                  child: FlatButton(
-                    onPressed: (){},
-                    child: Text('CREATE',style: Heading4(Colors.white),)
+              InkWell(
+                splashColor: Colors.transparent,
+                onTap: (){},
+                child: Container(
+                  height: 45,
+                  width: _width,
+                  decoration: BoxDecoration(
+                    color: primarygreen,
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  child: Center(
+                    child: Text('CREATE',style: Heading4(Colors.white),),
                   ),
                 ),
               ),
