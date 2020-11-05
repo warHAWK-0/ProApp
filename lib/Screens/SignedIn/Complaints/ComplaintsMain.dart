@@ -1,3 +1,4 @@
+import 'package:fleva_icons/fleva_icons.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintCard.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/CreateComplaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
@@ -109,7 +110,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 color: Colors.white,
               )
             : Icon(
-                Icons.filter_alt_outlined,
+                FlevaIcons.funnel_outline,
                 color: Colors.white,
               ),
         onPressed: () {

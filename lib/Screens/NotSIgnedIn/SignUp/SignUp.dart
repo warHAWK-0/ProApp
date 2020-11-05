@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
@@ -45,6 +46,24 @@ class _RegistrationPageState extends State<RegistrationPage> {
     try {
       String uid = await widget.auth.createUser(_email, _password);
       print("uid: $uid");
+      // creating user in db and initializing values
+      await Firestore.instance.collection("UserDetails").document(uid).setData({
+        "name":_name,
+        "email":_email,
+        "phoneNo":"",
+        "address":"",
+        "profilePicture":""
+      });
+//      await Firestore.instance.collection("userDetails").document(uid).collection("collectionPath").add(
+//          {
+//            "name":_name,
+//            "email":_email,
+//            "phoneNo":"",
+//            "address":"",
+//            "pinNo":"",
+//            "profilePicture":""
+//          });
+
       showGeneralDialog(
         context: context,
         barrierDismissible: true,

@@ -1,25 +1,52 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
+import 'package:proapp/Services/UserData.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
+
+
 class ProfileMain extends StatefulWidget {
-  ProfileMain({this.auth, this.onSignedOut, Key key, this.uid});
+
   final BaseAuth auth;
   final VoidCallback onSignedOut;
   final String uid;
+  ProfileMain({this.auth, this.onSignedOut, Key key, this.uid});
+ 
   @override
   _ProfileMainState createState() => _ProfileMainState(uid);
 }
 
 class _ProfileMainState extends State<ProfileMain> {
   final String uid;
-  _ProfileMainState(this.uid);
+  UserData user;
+  String Name="";
+  _ProfileMainState(this.uid){
+    print(1234);
+  //_getUserData(uid);
+
+  }
+//  void _getUserData(uid) async {
+//    print(1111);
+//    await Firestore.instance.collection("UserDetails").document("1TQz3Lavr8fql71eaYt4z68RwMl1").get().then((value) => _assignData(value.data));
+//    print(22222);
+//
+//
+//  }
+//  void _assignData(Map data){
+//    print(data["email"]);
+//    user=new UserData(email: data["email"],Name: data["name"],phoneNo: data["phoneNo"],address: data["address"]);
+//    Name=user.Name;
+//    print(user.Name);
+//
+//  }
 
   void onSignOut() async {
     try {
@@ -37,14 +64,20 @@ class _ProfileMainState extends State<ProfileMain> {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         child: Text(
-          'Profile',
+          "Profile",
           style: Heading2(Colors.black, letterSpace: 1.25),
         ),
         elevation: false,
         backIcon: false,
       ),
-      body: Builder(
-        builder: (context) {
+      body: StreamBuilder(
+        stream: Firestore.instance.collection('UserDetails').document("1TQz3Lavr8fql71eaYt4z68RwMl1").snapshots(),
+        builder: (context,snapshot){
+          if(!snapshot.hasData){
+            return Center(
+              child: Loading(),
+            );
+          }
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
@@ -56,7 +89,7 @@ class _ProfileMainState extends State<ProfileMain> {
                   Image(image: AssetImage('Assets/img/profilepic.png')),
                   SizedBox(height: 16),
                   Text(
-                    "Name here",
+                    snapshot.data["name"],
                     style: Heading1(Colors.black),
                   ),
                   SizedBox(height: 16),
@@ -143,7 +176,13 @@ class _ProfileMainState extends State<ProfileMain> {
                   InkWell(
                     highlightColor: Colors.transparent,
                     splashColor: Colors.transparent,
-                    onTap: () {},
+                    onTap: () {
+                      print("**************");
+                      print(snapshot.data["name"]);
+                      print("**************");
+                      //print(Name);
+
+                    },
                     child: Container(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -305,7 +344,7 @@ class _ProfileMainState extends State<ProfileMain> {
               ),
             ),
           );
-        },
+        }
       ),
     );
   }

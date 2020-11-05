@@ -21,9 +21,9 @@ class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
   String email = "email@emailid.com";
   String phone = "9289102820";
+  String name="Name";
   bool emailval = false;
-  String address =
-      "3/4 Spectrum Commercial C, Nr Relief Cinema Relief Road,Ahmedabad, Gujarat";
+  String address = "3/4 Spectrum Commercial C, Nr Relief Cinema Relief Road,Ahmedabad, Gujarat";
   bool loading = false;
   bool _btnEnabled = false;
   final ImagePicker _picker = ImagePicker();
@@ -54,12 +54,12 @@ class _EditProfileState extends State<EditProfile> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        imageProfile(),
+                        imageProfile(),             //image
                         SizedBox(
                           height: 7,
                         ),
-                        Text(
-                          'Name',
+                        Text(                       //name
+                          name,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Inter',
@@ -110,17 +110,13 @@ class _EditProfileState extends State<EditProfile> {
                                   borderSide:
                                       BorderSide(color: Color(0xffCBD5E0)),
                                 ),
-
-                                errorBorder: InputBorder
-                                    .none, //for error write code change color to red
+                                errorBorder: InputBorder.none, //for error write code change color to red
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
                                       BorderSide(color: Color(0xffCBD5E0)),
                                 ),
-                                hintStyle: TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45))),
+                                hintStyle: TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.45))),
                           ),
                         ),
                         SizedBox(
