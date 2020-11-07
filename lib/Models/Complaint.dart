@@ -1,6 +1,7 @@
 class Complaint{
   String complaintId;
   String departmentName;
+  String complaintType;
   String description;
   String attachmentURL;
   String status;
@@ -11,8 +12,8 @@ class Complaint{
   Complaint({
     this.complaintId,
     this.departmentName,
+    this.complaintType,
     this.description,
-    this.attachmentURL,
     this.status,
     this.uid,
     this.location,
@@ -25,8 +26,8 @@ class Complaint{
   Map<String, dynamic> toJson() => {
     'ComplaintId' : complaintId,
     'DepartmentName' : departmentName,
+    'ComplaintType' : complaintType,
     'Description' : description,
-    'Attachment' : attachmentURL,
     'Status' : status,
     'UID' : uid,
     'Location' : location,
