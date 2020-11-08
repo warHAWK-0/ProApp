@@ -1,15 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:proapp/Services/database.dart';
+import 'package:proapp/Modals/UserDetails.dart';
 
 class CreateComplaint extends StatefulWidget {
+   final UserDetails userinfo;
+   const CreateComplaint({Key key, this.userinfo}) : super(key: key);
   @override
   _CreateComplaintState createState() => _CreateComplaintState();
 }
 
 class _CreateComplaintState extends State<CreateComplaint> {
+  final myController3 = TextEditingController();
   final List<String> _department = [
     'Department 1',
     'Department 2',
@@ -118,6 +124,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
                   borderRadius: BorderRadius.circular(6.0),
                 ),
                 child: TextField(
+                  controller: myController3,
                   maxLines: 5,
                   keyboardType: TextInputType.multiline,
                   maxLength: 1000,
@@ -168,7 +175,16 @@ class _CreateComplaintState extends State<CreateComplaint> {
               SizedBox(height: _height/50,),
               InkWell(
                 splashColor: Colors.transparent,
-                onTap: (){},
+                onTap: () async{
+                  final CollectionReference Complaintref = Firestore.instance.collection('complaints');
+                  await Complaintref.document().setData({
+                    "department type":selectedValueMap["department"],
+                    "complaint type":selectedValueMap["complaint"],
+                    "description": myController3.text,
+                  });
+
+                  print(widget.userinfo.uid);
+                  },
                 child: Container(
                   height: 45,
                   width: _width,
@@ -187,4 +203,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
       ),
     );
   }
+
+
 }
+

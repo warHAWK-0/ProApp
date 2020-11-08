@@ -8,12 +8,14 @@ import '../NotSIgnedIn/Login/LoginMain.dart';
 import 'Complaints/ComplaintsMain.dart';
 import 'Feed/FeedMain.dart';
 import 'Profile/ProfileMain.dart';
+import 'package:proapp/Modals/UserDetails.dart';
 
 class HomePage extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignedOut;
   final String uid;
   HomePage({this.auth, this.onSignedOut, Key key, this.uid});
+  UserDetails userinfo = new UserDetails();
 
   @override
   _HomePageState createState() => _HomePageState(uid);
