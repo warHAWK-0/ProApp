@@ -85,7 +85,7 @@ class _initialScreenState extends State<initialScreen> {
                             child: loading
                                 ? Loading()
                                 : Text(
-                                    'SIGN UP',
+                                    'Get Started',
                                     style: TextStyle(
                                       fontFamily: 'Intern',
                                       fontSize: 14,
@@ -105,39 +105,7 @@ class _initialScreenState extends State<initialScreen> {
                           ),
                         ),
                         SizedBox(height: _height/60,),
-                        Container(
-                          //Sign up button
-                          width: double.infinity,
-                          height: 46,
-                          child: FlatButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6.0),
-                              side: BorderSide(color: Colors.white),
-                            ),
-                            color: primarygreen,
-                            child: loading
-                                ? Loading()
-                                : Text(
-                              'ALREADY AN USER? LOGIN',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Intern',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Wrapper(
-                                    auth: new Auth(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                       
                         SizedBox(
                           height: _height/8,
                         ),

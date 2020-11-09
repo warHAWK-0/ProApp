@@ -122,7 +122,7 @@ class _CommentState extends State<Comment> {
       opacity: _opacityNum,
       child: Container(
         margin: EdgeInsets.only(
-          top: 20,
+          top: 8,
         ),
         child: Column(
           children: <Widget>[
@@ -153,6 +153,7 @@ class _CommentState extends State<Comment> {
                         _buttoncolor = Color(0xffFF4128);
                         _splashcolor = Colors.red;
                         _showMyDialog();
+                        _unflagged=false;
                       } else {
                         _unflagged = true;
                         alertBoxOptions['title'] =
@@ -179,6 +180,23 @@ class _CommentState extends State<Comment> {
                     color: Color.fromRGBO(0, 0, 0, 0.65)),
               ),
             ),
+            SizedBox(height: 5,),
+            Container(
+              padding: EdgeInsets.only(left: 47),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: new Text("28th September 2020",
+                    textAlign: TextAlign.left,
+                    style: GoogleFonts.inter(
+                        letterSpacing: 1,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(0, 0, 0, 0.65))),
+              ),
+            ),
+            SizedBox(height: 10,),
+
+            Divider()
           ],
         ),
       ),

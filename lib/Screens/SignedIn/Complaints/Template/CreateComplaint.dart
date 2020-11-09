@@ -9,6 +9,8 @@ import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:proapp/Services/database.dart';
+import 'package:proapp/Modals/UserDetails.dart';
 
 class CreateComplaint extends StatefulWidget {
   BaseAuth baseAuth;
@@ -18,12 +20,12 @@ class CreateComplaint extends StatefulWidget {
 }
 
 class _CreateComplaintState extends State<CreateComplaint> {
-
   bool _loading = false;
   File _imageFile;
   final picker = ImagePicker();
   Map<String, String> selectedValueMap = Map();
   String _description;
+
   final List<String> _department = [
     'Department 1',
     'Department 2',
@@ -285,6 +287,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
                   borderRadius: BorderRadius.circular(6.0),
                 ),
                 child: TextField(
+                  controller: myController3,
                   maxLines: 5,
                   keyboardType: TextInputType.multiline,
                   maxLength: 1000,
@@ -355,5 +358,5 @@ class _CreateComplaintState extends State<CreateComplaint> {
       ),
     );
   }
-
 }
+
