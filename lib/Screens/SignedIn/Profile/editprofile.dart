@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,8 @@ import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class EditProfile extends StatefulWidget {
+  String uid ,name,email,phone,address;
+  EditProfile({this.uid,this.name,this.email,this.phone,this.address});
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -17,12 +20,13 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
   String email = "email@emailid.com";
-  String phone = "9289102820";
+  String phone ="1234567789";
   bool emailval = false;
   String address =
       "3/4 Spectrum Commercial C, Nr Relief Cinema Relief Road,Ahmedabad, Gujarat";
   bool loading = false;
   bool _btnEnabled = false;
+  TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
   String titleText = "Edit you profile";
@@ -33,8 +37,7 @@ class _EditProfileState extends State<EditProfile> {
         appBar: CustomAppBar(
           child: Text(
             titleText,
-            style: Heading2(Colors.black, letterSpace: 1.25),
-          ),
+            style: Heading2(Colors.black, letterSpace: 1.25),          ),
           backIcon: true,
           elevation: true,
         ),
@@ -56,7 +59,7 @@ class _EditProfileState extends State<EditProfile> {
                           height: 7,
                         ),
                         Text(
-                          'Name',
+                          widget.name,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Inter',
@@ -85,7 +88,7 @@ class _EditProfileState extends State<EditProfile> {
                           alignment: Alignment.centerLeft,
                           child: TextFormField(
                             enabled: false,
-                            initialValue: email,
+                            initialValue: widget.email,
                             autovalidate: true,
                             // ignore: missing_return
 
@@ -105,14 +108,14 @@ class _EditProfileState extends State<EditProfile> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
+                                  BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 errorBorder: InputBorder
                                     .none, //for error write code change color to red
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
+                                  BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 hintStyle: TextStyle(
                                     fontSize: 16,
@@ -142,10 +145,17 @@ class _EditProfileState extends State<EditProfile> {
                           alignment: Alignment.centerLeft,
                           child: TextFormField(
                             initialValue: phone,
+                           onChanged: (value){
+                             setState(() {
+                               phone=value;
+                             });
+
+                           },
+                            showCursor: true,
                             autovalidate: true,
                             // ignore: missing_return
                             validator: (String txt) {
-                              bool isValid = txt == phone;
+                              bool isValid = txt == widget.phone;
                               if (isValid == false) {
                                 WidgetsBinding.instance
                                     .addPostFrameCallback((_) {
@@ -164,14 +174,14 @@ class _EditProfileState extends State<EditProfile> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
+                                  BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 errorBorder: InputBorder
                                     .none, //for error write code change color to red
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
+                                  BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 hintStyle: TextStyle(
                                     fontSize: 16,
@@ -202,7 +212,7 @@ class _EditProfileState extends State<EditProfile> {
                           height: 81,
                           width: double.infinity,
                           child: TextFormField(
-                            initialValue: address,
+                            initialValue: widget.address,
                             autovalidate: true,
                             // ignore: missing_return
                             validator: (String txt) {
@@ -227,14 +237,14 @@ class _EditProfileState extends State<EditProfile> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
+                                  BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 errorBorder: InputBorder
                                     .none, //for error write code change color to red
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
+                                  BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 hintStyle: TextStyle(
                                     fontSize: 16,
@@ -257,15 +267,15 @@ class _EditProfileState extends State<EditProfile> {
                             child: loading
                                 ? Loading()
                                 : Center(
-                                    child: Text(
-                                      'SAVE',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Intern',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
+                              child: Text(
+                                'SAVE',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Intern',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -380,6 +390,14 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
   }
+  void _nav()async{
+    print(999);
+    print(phoneController.text);
+    await Firestore.instance.collection("UserDetails").document("1TQz3Lavr8fql71eaYt4z68RwMl1").updateData(
+        {
+          "phoneNo":phoneController.text
+        });
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
 
   void _nav() {
     Navigator.push(

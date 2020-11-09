@@ -78,6 +78,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         if (isVerified) {
           print("Verified");
           widget.onSignedIn();
+          //pass uid on
+
         } else {
           showGeneralDialog(
             context: context,
