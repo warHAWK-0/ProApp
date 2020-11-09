@@ -26,8 +26,8 @@ class ProfileMain extends StatefulWidget {
 
 class _ProfileMainState extends State<ProfileMain> {
   final String uid;
-  UserData user;
-  String Name="";
+  //UserData user;
+
   _ProfileMainState(this.uid){
     print(1234);
   //_getUserData(uid);
@@ -71,7 +71,7 @@ class _ProfileMainState extends State<ProfileMain> {
         backIcon: false,
       ),
       body: StreamBuilder(
-        stream: Firestore.instance.collection('UserDetails').document("1TQz3Lavr8fql71eaYt4z68RwMl1").snapshots(),
+        stream: Firestore.instance.collection('UserDetails').document('1TQz3Lavr8fql71eaYt4z68RwMl1').snapshots(),
         builder: (context,snapshot){
           if(!snapshot.hasData){
             return Center(
@@ -112,7 +112,7 @@ class _ProfileMainState extends State<ProfileMain> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EditProfile()),
+                            builder: (context) => EditProfile(uid: widget.uid,name: snapshot.data["name"],email: snapshot.data["email"],phone:snapshot.data["phoneNo"] ,address:snapshot.data["address"] ,)),
                       );
                     },
                     child: Container(
