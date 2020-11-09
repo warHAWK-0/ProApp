@@ -7,6 +7,7 @@ import 'package:proapp/Widgets/themes.dart';
 import 'Template/MyCmplaints.dart';
 import 'package:flutter/material.dart';
 import 'Template/AllComplaint.dart';
+import 'package:proapp/Modals/Complaint.dart';
 
 class ComplaintMain extends StatefulWidget {
   @override
@@ -15,6 +16,8 @@ class ComplaintMain extends StatefulWidget {
 
 class _ComplaintMainState extends State<ComplaintMain> {
   bool _myComplaint = true;
+  String dept, comp, desc;
+
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +113,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 color: Colors.white,
               )
             : Icon(
-                FlevaIcons.funnel_outline,
+                Icons.filter,
                 color: Colors.white,
               ),
         onPressed: () {

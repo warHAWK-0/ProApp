@@ -4,7 +4,6 @@ import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dar
 import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Screens/Wrapper.dart';
 import 'package:proapp/Services/authentication.dart';
-
 import 'Screens/SignedIn/HomePage.dart';
 
 void main() {
@@ -22,8 +21,9 @@ class MyApp extends StatelessWidget {
         //primarySwatch: Colors.blue,
         //visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: initialScreen(),
+      //home: MyHomePage(title: 'Bas yuhi',),
       // home:HomePage(),
+      home: initialScreen(),
     );
   }
 }

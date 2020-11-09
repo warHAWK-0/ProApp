@@ -20,7 +20,7 @@ class _TextPostState extends State<TextImagePost> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top:7),
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.only(left: 16, right: 16),
       child: Column(
         children: <Widget>[
           new Row(

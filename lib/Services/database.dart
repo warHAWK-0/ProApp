@@ -1,33 +1,27 @@
 import 'dart:io';
-
+import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase/firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Services/authentication.dart';
 
 class DatabaseService{
-  final BaseAuth _baseAuth;
+  final BaseAuth baseAuth;
 
-  DatabaseService(this._baseAuth);
+  DatabaseService(this.baseAuth);
 
-  CollectionReference complaint = Firestore.instance.collection("Complaint");
+  //db location for COMPLAINT table
+  CollectionReference complaintRef = Firestore.instance.collection("Complaint");
 
-  // Future<Widget> _getImage(BuildContext context, String image) async {
-  //   Image m;
-  //   await FireStorageService.loadFromStorage(context, image).then((downloadUrl) {
-  //     m = Image.network(
-  //       downloadUrl.toString(),
-  //       fit: BoxFit.scaleDown,
-  //     );
-  //   });
-  //
-  //   return m;
-  // }
-
-  Future<File> pickImagePath() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
-    return File(pickedFile.path);
+  //upload to firebase storage function
+  Future uploadImageToFirebase(BuildContext context,File _imageFile) async {
+    String fileName = basename(_imageFile.path);
+    StorageReference firebaseStorageRef =
+    FirebaseStorage.instance.ref().child('complaint/'+baseAuth.currentUser().toString()+'/'+fileName);
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_imageFile);
+    // StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    // taskSnapshot.ref.getDownloadURL().then(
+    //       (value) => print("Done: $value"),
+    // );
   }
 }

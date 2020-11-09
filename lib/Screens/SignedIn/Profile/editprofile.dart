@@ -4,10 +4,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:image_picker/image_picker.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/loading.dart';
@@ -32,16 +29,15 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
-  String titleText="Edit you profile";
+  String titleText = "Edit you profile";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar:CustomAppBar(
+        appBar: CustomAppBar(
           child: Text(
             titleText,
-            style: Heading2(Colors.black,letterSpace: 1.25),
-          ),
+            style: Heading2(Colors.black, letterSpace: 1.25),          ),
           backIcon: true,
           elevation: true,
         ),
@@ -114,7 +110,6 @@ class _EditProfileState extends State<EditProfile> {
                                   borderSide:
                                   BorderSide(color: Color(0xffCBD5E0)),
                                 ),
-
                                 errorBorder: InputBorder
                                     .none, //for error write code change color to red
                                 disabledBorder: OutlineInputBorder(
@@ -311,10 +306,13 @@ class _EditProfileState extends State<EditProfile> {
               );
             },
             child: Container(
-              decoration: BoxDecoration(shape: BoxShape.circle,color: primarygreen,),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: primarygreen,
+              ),
               child: Icon(
                 EvaIcons.edit,
-                color: Colors.black,                            //to change the picture
+                color: Colors.black, //to change the picture
                 size: 16.0,
               ),
             ),
@@ -334,35 +332,60 @@ class _EditProfileState extends State<EditProfile> {
       ),
       child: Column(
         children: <Widget>[
-          Text(
-            "Choose Profile photo",
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            Expanded(
-              child: FlatButton.icon(
-                icon: Icon(Icons.camera),
-                onPressed: () {
+          Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              InkWell(
+                onTap: (){
                   takePhoto(ImageSource.camera);
                 },
-                label: Text("Camera"),
+                child: Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        margin: EdgeInsets.only(bottom: 4),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: primarygreen),
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                      Text('CAMERA',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
+                    ],
+                  ),
+                ),
               ),
-            ),
-            Expanded(
-              child: FlatButton.icon(
-                icon: Icon(Icons.image),
-                onPressed: () {
+              InkWell(
+                onTap: (){
                   takePhoto(ImageSource.gallery);
                 },
-                label: Text("Gallery"),
+                child: Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        margin: EdgeInsets.only(bottom: 4),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: primarygreen),
+                        child: Icon(
+                          Icons.image,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                      Text('GALLERY',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ])
+            ]
+          ),
+          Spacer(),
         ],
       ),
     );
@@ -376,6 +399,11 @@ class _EditProfileState extends State<EditProfile> {
         });
     Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
 
+  void _nav() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Otp2()),
+    );
   }
 
   void takePhoto(ImageSource source) async {
