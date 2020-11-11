@@ -32,6 +32,7 @@ class ProfileMain extends StatefulWidget {
 class _ProfileMainState extends State<ProfileMain> {
   int _currentIndex = 2;
   final String uid;
+  String _email;
   //UserData user;
 
   _ProfileMainState(this.uid){

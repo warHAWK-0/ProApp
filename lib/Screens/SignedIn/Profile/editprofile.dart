@@ -399,11 +399,11 @@ class _EditProfileState extends State<EditProfile> {
         });
     Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
 
-  void _nav() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Otp2()),
-    );
+  // void _nav() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => Otp2()),
+  //   );
   }
 
   void takePhoto(ImageSource source) async {

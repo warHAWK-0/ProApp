@@ -287,7 +287,6 @@ class _CreateComplaintState extends State<CreateComplaint> {
                   borderRadius: BorderRadius.circular(6.0),
                 ),
                 child: TextField(
-                  controller: myController3,
                   maxLines: 5,
                   keyboardType: TextInputType.multiline,
                   maxLength: 1000,
