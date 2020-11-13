@@ -9,9 +9,7 @@ import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({this.auth, this.onSignedIn});
-  final BaseAuth auth;
-
+  LoginPage({this.onSignedIn});
   final VoidCallback onSignedIn;
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -22,6 +20,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Animation logoanimation;
   String _email, _password, _emailpassword;
   FocusNode focusNode;
+
+  final AuthService authService = AuthService();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -70,16 +70,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
+  bool signinCurr = false;
   void _login() async {
     try {
-      String uid = await widget.auth.signIn(_email, _password);
-      print("Signed in : $uid");
-      await widget.auth.isEmailVerified().then((isVerified) async {
+      dynamic result = await authService.signInWithEmailPassword(_email, _password);
+      String currentUid = await authService.getCurrentUID();
+      print("Signed in : "+ currentUid);
+      await authService.isEmailVerified().then((isVerified) async {
         if (isVerified) {
-          print("Verified");
-          widget.onSignedIn();
+          setState(() {
+            signinCurr = true;
+          });
           //pass uid on
-
         } else {
           showGeneralDialog(
             context: context,
@@ -143,35 +145,35 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           );
 
           await Future.delayed(Duration(milliseconds: 1001));
-          await widget.auth.signOut();
+          await authService.signOut();
         }
       });
     } catch (e) {
       print("Error: $e");
-      switch (e.code) {
-        case "ERROR_INVALID_EMAIL":
-          showErrorDialog(
-              context, "Your email address appears to be malformed.");
-          break;
-        case "ERROR_WRONG_PASSWORD":
-          showErrorDialog(context, "Your password is wrong.");
-          break;
-        case "ERROR_USER_NOT_FOUND":
-          showErrorDialog(context, "User with this email doesn't exist.");
-          break;
-        case "ERROR_USER_DISABLED":
-          showErrorDialog(context, "User with this email has been disabled.");
-          break;
-        case "ERROR_TOO_MANY_REQUESTS":
-          showErrorDialog(context, "Too many requests. Try again later.");
-          break;
-        case "ERROR_OPERATION_NOT_ALLOWED":
-          showErrorDialog(
-              context, "Signing in with Email and Password is not enabled.");
-          break;
-        default:
-          showErrorDialog(context, "An undefined Error happened.");
-      }
+      // switch (e.code) {
+      //   case "ERROR_INVALID_EMAIL":
+      //     showErrorDialog(
+      //         context, "Your email address appears to be malformed.");
+      //     break;
+      //   case "ERROR_WRONG_PASSWORD":
+      //     showErrorDialog(context, "Your password is wrong.");
+      //     break;
+      //   case "ERROR_USER_NOT_FOUND":
+      //     showErrorDialog(context, "User with this email doesn't exist.");
+      //     break;
+      //   case "ERROR_USER_DISABLED":
+      //     showErrorDialog(context, "User with this email has been disabled.");
+      //     break;
+      //   case "ERROR_TOO_MANY_REQUESTS":
+      //     showErrorDialog(context, "Too many requests. Try again later.");
+      //     break;
+      //   case "ERROR_OPERATION_NOT_ALLOWED":
+      //     showErrorDialog(
+      //         context, "Signing in with Email and Password is not enabled.");
+      //     break;
+      //   default:
+      //     showErrorDialog(context, "An undefined Error happened.");
+      // }
     }
   }
 
@@ -219,9 +221,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     color: Colors.white,
                     onPressed: () {
                       Navigator.of(context).pop(context);
-                      widget.auth.sendEmailVerification().then(
+                      authService.sendEmailVerification().then(
                             (user) async {
-                          widget.auth.signOut();
+                          authService.signOut();
 
                           // Fluttertoast.showToast(
                           //     msg: "Verification Email Sent!Verify to Login",
@@ -260,7 +262,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     if (form.validate()) {
       form.save();
       try {
-        await widget.auth.resetPassword(_emailpassword);
+        await authService.resetPassword(_emailpassword);
         Navigator.of(context).pop();
         final snackBar = SnackBar(content: Text("Password Reset Email Sent"));
         scaffoldKey.currentState.showSnackBar(snackBar);
@@ -421,7 +423,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             style: TextStyle(color: primarygreen),
           ),
           onTap: () {
-            Navigator.of(context).push(PageNavigate(auth: widget.auth));
+            Navigator.of(context).push(PageNavigate(auth: authService));
+            // Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage()));
           },
         ),
       ],
@@ -446,11 +449,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 style: TextStyle(color: primarygreen),
               ),
               onTap: () {
-                var authen = Auth();
-                Navigator.push(
+                  Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ForgotPassword(auth: authen)),
+                      builder: (context) => ForgotPassword(auth: authService,)),
                 );
               },
             ),
@@ -588,34 +590,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 }
 
 class PageNavigate extends CupertinoPageRoute {
-  final BaseAuth auth;
+  final AuthService auth;
   PageNavigate({this.auth})
       : super(
-    builder: (BuildContext context) => RegistrationPage(
-      auth: auth,
-    ),
+    builder: (BuildContext context) => RegistrationPage(),
   );
 }
 
 FirebaseAuth auth = FirebaseAuth.instance;
 final gooleSignIn = GoogleSignIn();
-
-// Future<bool> googleSignIn() async {
-//   GoogleSignInAccount googleSignInAccount = await gooleSignIn.signIn();
-
-//   if (googleSignInAccount != null) {
-//     GoogleSignInAuthentication googleSignInAuthentication =
-//         await googleSignInAccount.authentication;
-
-//     AuthCredential credential = GoogleAuthProvider.getCredential(
-//         idToken: googleSignInAuthentication.idToken,
-//         accessToken: googleSignInAuthentication.accessToken);
-
-//     AuthResult result = await auth.signInWithCredential(credential);
-
-//     FirebaseUser user = await auth.currentUser();
-//     print(user.uid);
-
-//     return Future.value(true);
-//   }
-// }

@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:proapp/Services/authentication.dart';
 
 class DatabaseService{
-  final BaseAuth baseAuth;
 
-  DatabaseService(this.baseAuth);
+  final String uid;
+  DatabaseService({this.uid});
 
   //db location for COMPLAINT table
   CollectionReference complaintRef = Firestore.instance.collection("Complaint");
@@ -17,7 +17,7 @@ class DatabaseService{
   Future uploadImageToFirebase(BuildContext context,File _imageFile) async {
     String fileName = basename(_imageFile.path);
     StorageReference firebaseStorageRef =
-    FirebaseStorage.instance.ref().child('complaint/'+baseAuth.currentUser().toString()+'/'+fileName);
+    FirebaseStorage.instance.ref().child('complaint/'+uid+'/'+fileName);
     StorageUploadTask uploadTask = firebaseStorageRef.putFile(_imageFile);
     // StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     // taskSnapshot.ref.getDownloadURL().then(

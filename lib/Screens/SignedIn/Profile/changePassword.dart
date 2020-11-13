@@ -8,8 +8,9 @@ import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class ChangePassword extends StatefulWidget {
-  ChangePassword({this.auth});
-  final BaseAuth auth;
+  final AuthService auth;
+
+  const ChangePassword({Key key,@required  this.auth}) : super(key: key);
 
   @override
   _ChangePasswordState createState() => _ChangePasswordState();

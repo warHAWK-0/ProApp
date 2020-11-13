@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:proapp/Screens/Initial.dart';
+import 'package:proapp/Models/user.dart';
+import 'package:proapp/Screens/InitialScreen.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
 import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Screens/Wrapper.dart';
 import 'package:proapp/Services/authentication.dart';
+import 'package:provider/provider.dart';
 import 'Screens/SignedIn/HomePage.dart';
 
 void main() {
@@ -11,19 +13,14 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final BaseAuth _baseAuth = Auth();
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        //primarySwatch: Colors.blue,
-        //visualDensity: VisualDensity.adaptivePlatformDensity,
+    return StreamProvider<User>.value(
+      value: AuthService().user,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Wrapper(),
       ),
-      //home: MyHomePage(title: 'Bas yuhi',),
-      // home:HomePage(),
-      home: initialScreen(),
     );
   }
 }

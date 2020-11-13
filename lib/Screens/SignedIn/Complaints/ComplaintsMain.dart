@@ -2,14 +2,20 @@ import 'package:fleva_icons/fleva_icons.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintCard.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/CreateComplaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
+import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'Template/MyCmplaints.dart';
 import 'package:flutter/material.dart';
 import 'Template/AllComplaint.dart';
-import 'package:proapp/Modals/Complaint.dart';
 
 class ComplaintMain extends StatefulWidget {
+
+  final AuthService auth;
+
+  const ComplaintMain({this.auth});
+
+
   @override
   _ComplaintMainState createState() => _ComplaintMainState();
 }

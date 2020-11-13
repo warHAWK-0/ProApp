@@ -1,18 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:proapp/Screens/NotSIgnedIn/Login/LoginMain.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 import '../../Wrapper.dart';
 
 class RegistrationPage extends StatefulWidget {
-  RegistrationPage({this.auth});
-  final BaseAuth auth;
+  // RegistrationPage({@required this.auth});
+  // final AuthService auth;
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  AuthService auth = new AuthService();
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _pass = TextEditingController();
@@ -44,7 +46,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   void _register() async {
     try {
-      String uid = await widget.auth.createUser(_email, _password);
+      String uid = await auth.createUserWithEmailPassword(_email, _password);
       print("uid: $uid");
       // creating user in db and initializing values
       await Firestore.instance.collection("UserDetails").document(uid).setData({
@@ -107,9 +109,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       color: Colors.white,
                       onPressed: () {
                         Navigator.of(context).pop();
-                        widget.auth.sendEmailVerification().then(
+                        auth.sendEmailVerification().then(
                               (user) async {
-                            widget.auth.signOut();
+                            auth.signOut();
 
                             // Fluttertoast.showToast(
                             //     msg: "Verification Email Sent!Verify to Login",
@@ -117,11 +119,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             //     toastLength: Toast.LENGTH_LONG
                             // );
 
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                    Wrapper(auth: widget.auth)),
-                                    (Route<dynamic> route) => false);
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
                           },
                         );
                       },
@@ -142,18 +140,19 @@ class _RegistrationPageState extends State<RegistrationPage> {
         },
       );
     } catch (e) {
-      print(e.code);
-      switch (e.code) {
-        case 'ERROR_EMAIL_ALREADY_IN_USE':
-          showErrorDialog(context, "Email Already Exists");
-          break;
-        case 'ERROR_INVALID_EMAIL':
-          showErrorDialog(context, "Invalid Email Address");
-          break;
-        case 'ERROR_WEAK_PASSWORD':
-          showErrorDialog(context, "Please Choose a stronger password");
-          break;
-      }
+      // print(e.code);
+      // switch (e.code) {
+      //   case 'ERROR_EMAIL_ALREADY_IN_USE':
+      //     showErrorDialog(context, "Email Already Exists");
+      //     break;
+      //   case 'ERROR_INVALID_EMAIL':
+      //     showErrorDialog(context, "Invalid Email Address");
+      //     break;
+      //   case 'ERROR_WEAK_PASSWORD':
+      //     showErrorDialog(context, "Please Choose a stronger password");
+      //     break;
+      // }
+      showErrorDialog(context, e.toString());
     }
   }
 
@@ -201,9 +200,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     color: Colors.white,
                     onPressed: () {
                       Navigator.of(context).pop(context);
-                      widget.auth.sendEmailVerification().then(
+                      auth.sendEmailVerification().then(
                             (user) async {
-                          widget.auth.signOut();
+                          auth.signOut();
 
                           // Fluttertoast.showToast(
                           //     msg: "Verification Email Sent!Verify to Login",
@@ -211,11 +210,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           //     toastLength: Toast.LENGTH_LONG
                           // );
 
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                  Wrapper(auth: widget.auth)),
-                                  (Route<dynamic> route) => false);
+
                         },
                       );
                     },
@@ -480,12 +475,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             style: TextStyle(color: Colors.blue),
           ),
           onTap: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                  Wrapper(auth: widget.auth),
-                ),
-                    (Route<dynamic> route) => false);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => LoginPage()));
           },
         ),
       ],

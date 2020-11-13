@@ -5,25 +5,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:proapp/Screens/NotSIgnedIn/Login/LoginMain.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
-import 'package:proapp/Services/UserData.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
-
-
 class ProfileMain extends StatefulWidget {
 
-  final BaseAuth auth;
+  final AuthService auth;
   final VoidCallback onSignedOut;
   final String uid;
-  ProfileMain({this.auth, this.onSignedOut, Key key, this.uid});
+  ProfileMain({@required this.auth, this.onSignedOut, Key key, this.uid});
  
   @override
   _ProfileMainState createState() => _ProfileMainState(uid);
@@ -68,7 +63,7 @@ class _ProfileMainState extends State<ProfileMain> {
   @override
   void initState() {
     super.initState();
-    widget.auth.currentUser().then((user) {
+    widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null)
           _email = user.email.toString();
@@ -79,12 +74,12 @@ class _ProfileMainState extends State<ProfileMain> {
   }
 
   Future<bool> signOutUser() async {
-    FirebaseUser user = await auth.currentUser();
+    FirebaseUser user = await widget.auth.getCurrentUser();
     print(user.providerData[1].providerId);
     if (user.providerData[1].providerId == 'google.com') {
-      await gooleSignIn.disconnect();
+      await widget.auth.googleDisconnect();
     }
-    await auth.signOut();
+    await widget.auth.signOut();
     return Future.value(true);
   }
 

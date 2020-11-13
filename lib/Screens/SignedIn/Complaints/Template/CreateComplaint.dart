@@ -4,17 +4,16 @@ import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/Complaint.dart';
-import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-import 'package:proapp/Services/database.dart';
-import 'package:proapp/Modals/UserDetails.dart';
+import 'package:proapp/Services/authentication.dart';
+
 
 class CreateComplaint extends StatefulWidget {
-  BaseAuth baseAuth;
-  CreateComplaint({Key key, this.baseAuth}) : super(key: key);
+  final AuthService auth;
+  const CreateComplaint({Key key,@required this.auth}) : super(key: key);
   @override
   _CreateComplaintState createState() => _CreateComplaintState();
 }
@@ -98,7 +97,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
     );
   }
 
-  DatabaseService _initiateDBService() => new DatabaseService(widget.baseAuth);
+  DatabaseService _initiateDBService() => new DatabaseService();
 
   Widget createComplaintButton(DatabaseService db){
     return InkWell(
@@ -116,7 +115,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
           complaintType: selectedValueMap['complaint'],
           description: _description,
           status: 'RAISED',
-          uid: widget.baseAuth.currentUser().toString(),
+          uid: widget.auth.getCurrentUID().toString(),
           location: null,
           start: null,
           end: null,
@@ -125,7 +124,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
         );
 
         //creating document for new complaint in DATABASE
-        await db.complaintRef.document(widget.baseAuth.currentUser().toString()).setData(_complaint.toJson());
+        await db.complaintRef.document(widget.auth.getCurrentUID().toString()).setData(_complaint.toJson());
         //adding image to STORAGE
         db.uploadImageToFirebase(context,_imageFile);
 
@@ -287,6 +286,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
                   borderRadius: BorderRadius.circular(6.0),
                 ),
                 child: TextField(
+                  //controller: myController3,
                   maxLines: 5,
                   keyboardType: TextInputType.multiline,
                   maxLength: 1000,
