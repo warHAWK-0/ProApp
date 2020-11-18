@@ -124,7 +124,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
         );
 
         //creating document for new complaint in DATABASE
-        await db.complaintRef.document(widget.auth.getCurrentUID().toString()).setData(_complaint.toJson());
+        await db.complaint.document(widget.auth.getCurrentUID().toString()).setData(_complaint.toJson());
         //adding image to STORAGE
         db.uploadImageToFirebase(context,_imageFile);
 

@@ -119,7 +119,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             //     toastLength: Toast.LENGTH_LONG
                             // );
 
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
                           },
                         );
                       },
@@ -475,7 +475,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             style: TextStyle(color: Colors.blue),
           ),
           onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => LoginPage()));
+            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => LoginPage()));
           },
         ),
       ],

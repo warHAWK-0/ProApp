@@ -6,6 +6,7 @@ import 'package:proapp/Screens/NotSIgnedIn/SignUp/SignUp.dart';
 import 'package:proapp/Screens/NotSIgnedIn/forgetPass.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+  bool _isLoading = false;
   AnimationController animationController;
   Animation logoanimation;
   String _email, _password, _emailpassword;
@@ -70,111 +72,159 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  bool signinCurr = false;
   void _login() async {
-    try {
+    setState(() {
+      _isLoading = true;
+    });
+    try{
       dynamic result = await authService.signInWithEmailPassword(_email, _password);
-      String currentUid = await authService.getCurrentUID();
-      print("Signed in : "+ currentUid);
-      await authService.isEmailVerified().then((isVerified) async {
-        if (isVerified) {
-          setState(() {
-            signinCurr = true;
-          });
-          //pass uid on
-        } else {
-          showGeneralDialog(
-            context: context,
-            barrierDismissible: false,
-            barrierLabel:
-            MaterialLocalizations.of(context).modalBarrierDismissLabel,
-            barrierColor: Colors.black45,
-            transitionDuration: const Duration(milliseconds: 500),
-            pageBuilder: (BuildContext buildContext, Animation animation,
-                Animation secondaryAnimation) {
-              return Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 30,
-                  height: 150,
-                  margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(45, 55, 72, 0.9),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Email Not Verified!',
-                        textAlign: TextAlign.justify,
-                        softWrap: true,
-                        style: TextStyle(
-                          decoration: TextDecoration.none,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                          color: Color(0xFFFFFFFF),
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: RaisedButton(
-                          elevation: 0.2,
-                          color: Colors.white,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text("Dismiss"),
-                        ),
-                      ),
-                    ],
-                  ),
+      if(result == null){
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierLabel:
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black45,
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (BuildContext buildContext, Animation animation,
+              Animation secondaryAnimation) {
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width - 30,
+                height: 150,
+                margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(45, 55, 72, 0.9),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              );
-            },
-            transitionBuilder: (context, anim1, anim2, child) {
-              return SlideTransition(
-                position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
-                    .animate(anim1),
-                child: child,
-              );
-            },
-          );
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Incorrect Email/Password.',
+                      textAlign: TextAlign.justify,
+                      softWrap: true,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                        color: Color(0xFFFFFFFF),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: RaisedButton(
+                        elevation: 0.2,
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Dismiss"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          transitionBuilder: (context, anim1, anim2, child) {
+            return SlideTransition(
+              position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                  .animate(anim1),
+              child: child,
+            );
+          },
+        );
+      }
+      else{
+        await authService.isEmailVerified().then((isVerified) async {
+          if (isVerified) {
+            // verified user can log in sucessfully
+          } else {
+            //user is not verified
+            // ping him to verify again
+            showGeneralDialog(
+              context: context,
+              barrierDismissible: false,
+              barrierLabel:
+              MaterialLocalizations.of(context).modalBarrierDismissLabel,
+              barrierColor: Colors.black45,
+              transitionDuration: const Duration(milliseconds: 500),
+              pageBuilder: (BuildContext buildContext, Animation animation,
+                  Animation secondaryAnimation) {
+                return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 30,
+                    height: 150,
+                    margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(45, 55, 72, 0.9),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Email Not Verified!',
+                          textAlign: TextAlign.justify,
+                          softWrap: true,
+                          style: TextStyle(
+                            decoration: TextDecoration.none,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                            color: Color(0xFFFFFFFF),
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.maxFinite,
+                          child: RaisedButton(
+                            elevation: 0.2,
+                            color: Colors.white,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("Dismiss"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              transitionBuilder: (context, anim1, anim2, child) {
+                return SlideTransition(
+                  position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                      .animate(anim1),
+                  child: child,
+                );
+              },
+            );
 
-          await Future.delayed(Duration(milliseconds: 1001));
-          await authService.signOut();
-        }
-      });
-    } catch (e) {
-      print("Error: $e");
-      // switch (e.code) {
-      //   case "ERROR_INVALID_EMAIL":
-      //     showErrorDialog(
-      //         context, "Your email address appears to be malformed.");
-      //     break;
-      //   case "ERROR_WRONG_PASSWORD":
-      //     showErrorDialog(context, "Your password is wrong.");
-      //     break;
-      //   case "ERROR_USER_NOT_FOUND":
-      //     showErrorDialog(context, "User with this email doesn't exist.");
-      //     break;
-      //   case "ERROR_USER_DISABLED":
-      //     showErrorDialog(context, "User with this email has been disabled.");
-      //     break;
-      //   case "ERROR_TOO_MANY_REQUESTS":
-      //     showErrorDialog(context, "Too many requests. Try again later.");
-      //     break;
-      //   case "ERROR_OPERATION_NOT_ALLOWED":
-      //     showErrorDialog(
-      //         context, "Signing in with Email and Password is not enabled.");
-      //     break;
-      //   default:
-      //     showErrorDialog(context, "An undefined Error happened.");
-      // }
+            await Future.delayed(Duration(milliseconds: 1001));
+            await authService.signOut();
+          }
+        });
+      }
     }
+    catch(e){
+      print(e.toString());
+      print(e.runtimeType);
+      print(e.hashCode);
+    }
+    finally{
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
   }
 
   showErrorDialog(BuildContext context, String err) {
@@ -388,7 +438,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   Widget showPrimaryButton() {
-    return Container(
+    return _isLoading ? Loading() : Container(
       //Sign in button
       width: double.infinity,
       height: 46,

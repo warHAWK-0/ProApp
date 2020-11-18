@@ -7,17 +7,25 @@ import 'package:proapp/Services/authentication.dart';
 
 class DatabaseService{
 
-  final String uid;
-  DatabaseService({this.uid});
+  Auth _auth = new AuthService();
 
-  //db location for COMPLAINT table
-  CollectionReference complaintRef = Firestore.instance.collection("Complaint");
+  static var firestore = Firestore.instance;
+  //db references
+  CollectionReference complaint = firestore.collection("Complaint");
+  CollectionReference userDetails = firestore.collection("UserDetails");
+
+  //get username for profile
+  Future getUserName() async{
+    String uid = await _auth.getCurrentUID();
+    return  await userDetails.document(uid.toString()).get();
+  }
 
   //upload to firebase storage function
   Future uploadImageToFirebase(BuildContext context,File _imageFile) async {
+    String uid = await _auth.getCurrentUID();
     String fileName = basename(_imageFile.path);
     StorageReference firebaseStorageRef =
-    FirebaseStorage.instance.ref().child('complaint/'+uid+'/'+fileName);
+    FirebaseStorage.instance.ref().child('complaint/'+uid.toString()+'/'+fileName);
     StorageUploadTask uploadTask = firebaseStorageRef.putFile(_imageFile);
     // StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     // taskSnapshot.ref.getDownloadURL().then(

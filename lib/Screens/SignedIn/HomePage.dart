@@ -25,40 +25,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _pages = [
       FeedMain(),
       ComplaintMain(),
-      // ProfileMain(),
-      // Container(child: Text('feed'),),
-      // Container(child: Text('comp'),),
-      Container(child: SafeArea(
-        child: Container(
-          child: InkWell(
-            onTap: () async{
-              String currentUid = await _authService.getCurrentUID();
-              print('SIgning out as - ' + currentUid);
-              _authService.signOut();
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  FlevaIcons.log_out,
-                  color: Color(0xFFCBD5E0),
-                ),
-                SizedBox(width: 16),
-                Text(
-                  "Sign Out",
-                  style: GoogleFonts.inter(
-                    textStyle: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Color(0xFFFF4128),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),),
+      ProfileMain(),
     ];
 
     return Scaffold(
