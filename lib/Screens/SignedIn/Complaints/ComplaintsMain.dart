@@ -1,8 +1,5 @@
-import 'package:fleva_icons/fleva_icons.dart';
-import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintCard.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/CreateComplaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
-import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'Template/MyCmplaints.dart';
@@ -10,12 +7,9 @@ import 'package:flutter/material.dart';
 import 'Template/AllComplaint.dart';
 
 class ComplaintMain extends StatefulWidget {
+  final String uid;
 
-  final AuthService auth;
-
-  const ComplaintMain({this.auth});
-
-
+  const ComplaintMain({Key key, this.uid}) : super(key: key);
   @override
   _ComplaintMainState createState() => _ComplaintMainState();
 }
@@ -104,8 +98,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
               SizedBox(
                 height: 10,
               ),
-              _myComplaint ? MyComplaint() : AllComplaint(),
-              ComplaintCard(),
+              _myComplaint ? MyComplaint(uid: widget.uid,) : AllComplaint(),
             ],
           ),
         ),
@@ -123,6 +116,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 color: Colors.white,
               ),
         onPressed: () {
+          print(widget.uid);
           _myComplaint
               ? Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CreateComplaint()))

@@ -47,24 +47,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void _register() async {
     try {
       String uid = await auth.createUserWithEmailPassword(_email, _password);
-      print("uid: $uid");
+
       // creating user in db and initializing values
       await Firestore.instance.collection("UserDetails").document(uid).setData({
         "name":_name,
         "email":_email,
-        "phoneNo":"",
+        "mobileNo":"",
         "address":"",
         "profilePicture":""
       });
-//      await Firestore.instance.collection("userDetails").document(uid).collection("collectionPath").add(
-//          {
-//            "name":_name,
-//            "email":_email,
-//            "phoneNo":"",
-//            "address":"",
-//            "pinNo":"",
-//            "profilePicture":""
-//          });
 
       showGeneralDialog(
         context: context,

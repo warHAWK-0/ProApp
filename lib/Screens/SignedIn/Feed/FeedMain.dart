@@ -6,6 +6,9 @@ import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class FeedMain extends StatefulWidget {
+  final String uid;
+
+  const FeedMain({Key key, this.uid}) : super(key: key);
   @override
   _FeedMainState createState() => _FeedMainState();
 }

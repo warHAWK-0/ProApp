@@ -35,7 +35,7 @@ class _VoteTemplateState extends State<VoteTemplate> {
       downvote: widget.downvote,
       upvoteCount: widget.upvoteCount,
       downvoteCount: widget.downvoteCount,
-    ) : Complaint(
+    ) : ComplaintVote(
       upvoteCount: widget.upvoteCount,
       upvote: widget.upvote,
     );
@@ -149,19 +149,19 @@ class _FeedState extends State<Feed> {
   }
 }
 
-class Complaint extends StatefulWidget {
+class ComplaintVote extends StatefulWidget {
   bool upvote;
   int upvoteCount;
 
-  Complaint({
+  ComplaintVote({
     this.upvote = false,
     @required this.upvoteCount
   });
   @override
-  _ComplaintState createState() => _ComplaintState();
+  _ComplaintVoteState createState() => _ComplaintVoteState();
 }
 
-class _ComplaintState extends State<Complaint> {
+class _ComplaintVoteState extends State<ComplaintVote> {
   @override
   Widget build(BuildContext context) {
     return InkWell(

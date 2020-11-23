@@ -2,6 +2,7 @@ import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/UserDetails.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
 import 'package:proapp/Services/authentication.dart';
@@ -11,6 +12,9 @@ import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class ProfileMain extends StatefulWidget {
+  final String uid;
+
+  const ProfileMain({Key key, this.uid}) : super(key: key);
   @override
   _ProfileMainState createState() => _ProfileMainState();
 }
@@ -19,6 +23,8 @@ class _ProfileMainState extends State<ProfileMain> {
 
   Auth auth = new AuthService();
   DatabaseService db = new DatabaseService();
+
+  UserDetails userDetails = UserDetails();
 
   void onSignOut() async {
     try {
@@ -33,12 +39,18 @@ class _ProfileMainState extends State<ProfileMain> {
       future: db.getUserName(),
       builder: (context, snapshot){
         if(snapshot.connectionState == ConnectionState.waiting)
+          // TODO: edit this to remove background color and edit font style
           return Loading();
-        else
+        else{
+            userDetails.email = snapshot.data['email'];
+            userDetails.name = snapshot.data['name'];
+            userDetails.mobileNo = snapshot.data['mobileNo'];
+            userDetails.address = snapshot.data['address'];
           return Text(
             snapshot.data['name'],
             style: Heading1(Colors.black),
           );
+        }
       },
     );
   }
@@ -89,7 +101,9 @@ class _ProfileMainState extends State<ProfileMain> {
                   highlightColor: Colors.transparent,
                   splashColor: Colors.transparent,
                   onTap: () {
-
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile(
+                      userDetails: userDetails,
+                    )));
                   },
                   child: Container(
                     child: Row(

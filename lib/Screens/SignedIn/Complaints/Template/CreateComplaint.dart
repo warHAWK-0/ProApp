@@ -6,24 +6,26 @@ import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/ToastMessage.dart';
+import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:proapp/Services/authentication.dart';
 
 
 class CreateComplaint extends StatefulWidget {
-  final AuthService auth;
-  const CreateComplaint({Key key,@required this.auth}) : super(key: key);
   @override
   _CreateComplaintState createState() => _CreateComplaintState();
 }
 
 class _CreateComplaintState extends State<CreateComplaint> {
+  Auth _auth = AuthService();
   bool _loading = false;
   File _imageFile;
   final picker = ImagePicker();
   Map<String, String> selectedValueMap = Map();
   String _description;
+  Color descColor = Colors.grey[300];
 
   final List<String> _department = [
     'Department 1',
@@ -100,41 +102,53 @@ class _CreateComplaintState extends State<CreateComplaint> {
   DatabaseService _initiateDBService() => new DatabaseService();
 
   Widget createComplaintButton(DatabaseService db){
-    return InkWell(
+    return _loading ? Loading() : InkWell(
       splashColor: Colors.transparent,
       onTap: () async{
         //disable the button and show loading animation
         setState(() {
-          _loading = validateAllInputField() ? true : false;
+          _loading = true;
         });
 
-        Random cid = new Random();
-        Complaint _complaint = new Complaint(
-          complaintId: cid.nextInt(99999999).toString(),
-          departmentName: selectedValueMap['department'],
-          complaintType: selectedValueMap['complaint'],
-          description: _description,
-          status: 'RAISED',
-          uid: widget.auth.getCurrentUID().toString(),
-          location: null,
-          start: null,
-          end: null,
-          verification: null,
-          assigned: null,
-        );
+        // TODO: validation for all dropdown and desc
+        if(true){
+          String uid = await _auth.getCurrentUID();
 
-        //creating document for new complaint in DATABASE
-        await db.complaint.document(widget.auth.getCurrentUID().toString()).setData(_complaint.toJson());
-        //adding image to STORAGE
-        db.uploadImageToFirebase(context,_imageFile);
+          Random random = new Random();
+          String cid = random.nextInt(99999999).toString();
+          Complaint _complaint = new Complaint(
+            departmentName: selectedValueMap['department'],
+            complaintType: selectedValueMap['complaint'],
+            description: _description,
+            status: 'RAISED',
+            uid: uid.toString(),
+            location: null,
+            // TODO : add this datetime with trimmed value
+            start: null,
+            end: null,
+            verification: null,
+            assigned: null,
+          );
+
+          // TODO: update location in DB i.e. complaint/uid/Region
+          // code here
+
+          //creating document for new complaint in DATABASE
+          await db.complaint.document(uid.toString()).collection(uid.toString()).document(cid.toString()).setData(_complaint.toJson());
+          //adding image to STORAGE
+          db.uploadImageToFirebase(context,_imageFile,cid.toString());
+          Navigator.pop(context);
+        }
+        else{
+          ToastUtils.showCustomToast(
+              context, "Some issue");
+        }
 
         //set loading to false and pop the window
         //Also showing toast message as notification
         setState(() {
           _loading = false;
         });
-        Navigator.pop(context);
-
       },
       child: Container(
         height: 45,
@@ -221,13 +235,6 @@ class _CreateComplaintState extends State<CreateComplaint> {
     );
   }
 
-  bool validateAllInputField(){
-    return _imageFile != null &&
-        selectedValueMap["department"] != null &&
-        selectedValueMap["complaint"] != null &&
-        _description != null;
-  }
-
   @override
   Widget build(BuildContext context) {
     DatabaseService db = _initiateDBService();
@@ -280,7 +287,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.grey[350],
+                    color: Colors.grey[300],
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(6.0),

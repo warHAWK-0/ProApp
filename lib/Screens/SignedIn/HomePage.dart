@@ -13,6 +13,9 @@ import 'Feed/FeedMain.dart';
 import 'Profile/ProfileMain.dart';
 
 class HomePage extends StatefulWidget {
+  final String uid;
+
+  const HomePage({Key key, this.uid}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -23,9 +26,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
-      FeedMain(),
-      ComplaintMain(),
-      ProfileMain(),
+      Container(child: Text('Home')),
+      // FeedMain(uid: widget.uid),
+      ComplaintMain(uid: widget.uid),
+      ProfileMain(uid: widget.uid),
     ];
 
     return Scaffold(
