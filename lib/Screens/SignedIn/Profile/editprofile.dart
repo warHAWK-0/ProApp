@@ -5,25 +5,22 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:proapp/Models/UserDetails.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class EditProfile extends StatefulWidget {
-  String uid ,name,email,phone,address;
-  EditProfile({this.uid,this.name,this.email,this.phone,this.address});
+  final UserDetails userDetails;
+
+  const EditProfile({Key key, this.userDetails}) : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
-  String email = "email@emailid.com";
-  String phone ="1234567789";
-  bool emailval = false;
-  String address =
-      "3/4 Spectrum Commercial C, Nr Relief Cinema Relief Road,Ahmedabad, Gujarat";
   bool loading = false;
   bool _btnEnabled = false;
   TextEditingController phoneController;
@@ -32,6 +29,11 @@ class _EditProfileState extends State<EditProfile> {
   String titleText = "Edit you profile";
   @override
   Widget build(BuildContext context) {
+
+    // storing userdetails
+    String address = widget.userDetails.address;
+    String mobileNo = widget.userDetails.mobileNo;
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -59,7 +61,7 @@ class _EditProfileState extends State<EditProfile> {
                           height: 7,
                         ),
                         Text(
-                          widget.name,
+                          widget.userDetails.name,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Inter',
@@ -88,16 +90,13 @@ class _EditProfileState extends State<EditProfile> {
                           alignment: Alignment.centerLeft,
                           child: TextFormField(
                             enabled: false,
-                            initialValue: widget.email,
-                            autovalidate: true,
-                            // ignore: missing_return
-
+                            initialValue: widget.userDetails.email,
                             decoration: InputDecoration(
                                 suffixIcon: Padding(
                                   padding: const EdgeInsetsDirectional.only(
                                       end: 12.0),
                                   child: Icon(
-                                    emailval ? Icons.done : null,
+                                    Icons.done,
                                     color: Colors.green,
                                   ), // myIcon is a 48px-wide widget.
                                 ),
@@ -144,10 +143,10 @@ class _EditProfileState extends State<EditProfile> {
                         Container(
                           alignment: Alignment.centerLeft,
                           child: TextFormField(
-                            initialValue: phone,
+                            initialValue: widget.userDetails.mobileNo,
                            onChanged: (value){
                              setState(() {
-                               phone=value;
+                               mobileNo = value;
                              });
 
                            },
@@ -155,12 +154,12 @@ class _EditProfileState extends State<EditProfile> {
                             autovalidate: true,
                             // ignore: missing_return
                             validator: (String txt) {
-                              bool isValid = txt == widget.phone;
+                              bool isValid = txt == mobileNo;
                               if (isValid == false) {
                                 WidgetsBinding.instance
                                     .addPostFrameCallback((_) {
                                   setState(() {
-                                    _btnEnabled = txt != phone;
+                                    _btnEnabled = txt != mobileNo;
                                   });
                                 });
                               }
@@ -212,7 +211,7 @@ class _EditProfileState extends State<EditProfile> {
                           height: 81,
                           width: double.infinity,
                           child: TextFormField(
-                            initialValue: widget.address,
+                            initialValue: address,
                             autovalidate: true,
                             // ignore: missing_return
                             validator: (String txt) {
@@ -261,7 +260,7 @@ class _EditProfileState extends State<EditProfile> {
                             width: double.infinity,
                             height: 46,
                             decoration: BoxDecoration(
-                              color: primarygreen,
+                              color: _btnEnabled ? primarygreen : Colors.grey[300],
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             child: loading
@@ -390,20 +389,8 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
   }
-  void _nav()async{
-    print(999);
-    print(phoneController.text);
-    await Firestore.instance.collection("UserDetails").document("1TQz3Lavr8fql71eaYt4z68RwMl1").updateData(
-        {
-          "phoneNo":phoneController.text
-        });
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
-
   void _nav() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Otp2()),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
   }
 
   void takePhoto(ImageSource source) async {

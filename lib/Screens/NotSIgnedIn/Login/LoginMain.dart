@@ -6,22 +6,24 @@ import 'package:proapp/Screens/NotSIgnedIn/SignUp/SignUp.dart';
 import 'package:proapp/Screens/NotSIgnedIn/forgetPass.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({this.auth, this.onSignedIn});
-  final BaseAuth auth;
-
+  LoginPage({this.onSignedIn});
   final VoidCallback onSignedIn;
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+  bool _isLoading = false;
   AnimationController animationController;
   Animation logoanimation;
   String _email, _password, _emailpassword;
   FocusNode focusNode;
+
+  final AuthService authService = AuthService();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -71,108 +73,158 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _login() async {
-    try {
-      String uid = await widget.auth.signIn(_email, _password);
-      print("Signed in : $uid");
-      await widget.auth.isEmailVerified().then((isVerified) async {
-        if (isVerified) {
-          print("Verified");
-          widget.onSignedIn();
-          //pass uid on
-
-        } else {
-          showGeneralDialog(
-            context: context,
-            barrierDismissible: false,
-            barrierLabel:
-            MaterialLocalizations.of(context).modalBarrierDismissLabel,
-            barrierColor: Colors.black45,
-            transitionDuration: const Duration(milliseconds: 500),
-            pageBuilder: (BuildContext buildContext, Animation animation,
-                Animation secondaryAnimation) {
-              return Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 30,
-                  height: 150,
-                  margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(45, 55, 72, 0.9),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Email Not Verified!',
-                        textAlign: TextAlign.justify,
-                        softWrap: true,
-                        style: TextStyle(
-                          decoration: TextDecoration.none,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                          color: Color(0xFFFFFFFF),
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: RaisedButton(
-                          elevation: 0.2,
-                          color: Colors.white,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text("Dismiss"),
-                        ),
-                      ),
-                    ],
-                  ),
+    setState(() {
+      _isLoading = true;
+    });
+    try{
+      dynamic result = await authService.signInWithEmailPassword(_email, _password);
+      if(result == null){
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierLabel:
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black45,
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (BuildContext buildContext, Animation animation,
+              Animation secondaryAnimation) {
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width - 30,
+                height: 150,
+                margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(45, 55, 72, 0.9),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              );
-            },
-            transitionBuilder: (context, anim1, anim2, child) {
-              return SlideTransition(
-                position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
-                    .animate(anim1),
-                child: child,
-              );
-            },
-          );
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Incorrect Email/Password.',
+                      textAlign: TextAlign.justify,
+                      softWrap: true,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                        color: Color(0xFFFFFFFF),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: RaisedButton(
+                        elevation: 0.2,
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Dismiss"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          transitionBuilder: (context, anim1, anim2, child) {
+            return SlideTransition(
+              position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                  .animate(anim1),
+              child: child,
+            );
+          },
+        );
+      }
+      else{
+        await authService.isEmailVerified().then((isVerified) async {
+          if (isVerified) {
+            // verified user can log in sucessfully
+          } else {
+            //user is not verified
+            // ping him to verify again
+            showGeneralDialog(
+              context: context,
+              barrierDismissible: false,
+              barrierLabel:
+              MaterialLocalizations.of(context).modalBarrierDismissLabel,
+              barrierColor: Colors.black45,
+              transitionDuration: const Duration(milliseconds: 500),
+              pageBuilder: (BuildContext buildContext, Animation animation,
+                  Animation secondaryAnimation) {
+                return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 30,
+                    height: 150,
+                    margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(45, 55, 72, 0.9),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Email Not Verified!',
+                          textAlign: TextAlign.justify,
+                          softWrap: true,
+                          style: TextStyle(
+                            decoration: TextDecoration.none,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                            color: Color(0xFFFFFFFF),
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.maxFinite,
+                          child: RaisedButton(
+                            elevation: 0.2,
+                            color: Colors.white,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("Dismiss"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              transitionBuilder: (context, anim1, anim2, child) {
+                return SlideTransition(
+                  position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                      .animate(anim1),
+                  child: child,
+                );
+              },
+            );
 
-          await Future.delayed(Duration(milliseconds: 1001));
-          await widget.auth.signOut();
-        }
-      });
-    } catch (e) {
-      print("Error: $e");
-      switch (e.code) {
-        case "ERROR_INVALID_EMAIL":
-          showErrorDialog(
-              context, "Your email address appears to be malformed.");
-          break;
-        case "ERROR_WRONG_PASSWORD":
-          showErrorDialog(context, "Your password is wrong.");
-          break;
-        case "ERROR_USER_NOT_FOUND":
-          showErrorDialog(context, "User with this email doesn't exist.");
-          break;
-        case "ERROR_USER_DISABLED":
-          showErrorDialog(context, "User with this email has been disabled.");
-          break;
-        case "ERROR_TOO_MANY_REQUESTS":
-          showErrorDialog(context, "Too many requests. Try again later.");
-          break;
-        case "ERROR_OPERATION_NOT_ALLOWED":
-          showErrorDialog(
-              context, "Signing in with Email and Password is not enabled.");
-          break;
-        default:
-          showErrorDialog(context, "An undefined Error happened.");
+            await Future.delayed(Duration(milliseconds: 1001));
+            await authService.signOut();
+          }
+        });
       }
     }
+    catch(e){
+      print(e.toString());
+      print(e.runtimeType);
+      print(e.hashCode);
+    }
+    finally{
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
   }
 
   showErrorDialog(BuildContext context, String err) {
@@ -219,9 +271,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     color: Colors.white,
                     onPressed: () {
                       Navigator.of(context).pop(context);
-                      widget.auth.sendEmailVerification().then(
+                      authService.sendEmailVerification().then(
                             (user) async {
-                          widget.auth.signOut();
+                          authService.signOut();
 
                           // Fluttertoast.showToast(
                           //     msg: "Verification Email Sent!Verify to Login",
@@ -260,7 +312,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     if (form.validate()) {
       form.save();
       try {
-        await widget.auth.resetPassword(_emailpassword);
+        await authService.resetPassword(_emailpassword);
         Navigator.of(context).pop();
         final snackBar = SnackBar(content: Text("Password Reset Email Sent"));
         scaffoldKey.currentState.showSnackBar(snackBar);
@@ -386,7 +438,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   Widget showPrimaryButton() {
-    return Container(
+    return _isLoading ? Loading() : Container(
       //Sign in button
       width: double.infinity,
       height: 46,
@@ -421,7 +473,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             style: TextStyle(color: primarygreen),
           ),
           onTap: () {
-            Navigator.of(context).push(PageNavigate(auth: widget.auth));
+            Navigator.of(context).push(PageNavigate(auth: authService));
+            // Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage()));
           },
         ),
       ],
@@ -446,11 +499,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 style: TextStyle(color: primarygreen),
               ),
               onTap: () {
-                var authen = Auth();
-                Navigator.push(
+                  Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ForgotPassword(auth: authen)),
+                      builder: (context) => ForgotPassword(auth: authService,)),
                 );
               },
             ),
@@ -588,34 +640,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 }
 
 class PageNavigate extends CupertinoPageRoute {
-  final BaseAuth auth;
+  final AuthService auth;
   PageNavigate({this.auth})
       : super(
-    builder: (BuildContext context) => RegistrationPage(
-      auth: auth,
-    ),
+    builder: (BuildContext context) => RegistrationPage(),
   );
 }
 
 FirebaseAuth auth = FirebaseAuth.instance;
 final gooleSignIn = GoogleSignIn();
-
-// Future<bool> googleSignIn() async {
-//   GoogleSignInAccount googleSignInAccount = await gooleSignIn.signIn();
-
-//   if (googleSignInAccount != null) {
-//     GoogleSignInAuthentication googleSignInAuthentication =
-//         await googleSignInAccount.authentication;
-
-//     AuthCredential credential = GoogleAuthProvider.getCredential(
-//         idToken: googleSignInAuthentication.idToken,
-//         accessToken: googleSignInAuthentication.accessToken);
-
-//     AuthResult result = await auth.signInWithCredential(credential);
-
-//     FirebaseUser user = await auth.currentUser();
-//     print(user.uid);
-
-//     return Future.value(true);
-//   }
-// }

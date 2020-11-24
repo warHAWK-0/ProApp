@@ -7,8 +7,8 @@ import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class ForgotPassword extends StatefulWidget {
-  ForgotPassword({this.auth});
-  final BaseAuth auth;
+  ForgotPassword({@required this.auth});
+  final AuthService auth;
 
   @override
   _ForgotPasswordState createState() => _ForgotPasswordState();

@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:proapp/Screens/NotSIgnedIn/Login/LoginMain.dart';
+import 'package:proapp/Screens/NotSIgnedIn/SignUp/SignUp.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
-import 'Wrapper.dart';
+class InitialScreen extends StatefulWidget {
+  final AuthService auth;
+  final VoidCallback onSignedIn;
 
-class initialScreen extends StatefulWidget {
+  InitialScreen({this.auth, this.onSignedIn});
+
   @override
-  _initialScreenState createState() => _initialScreenState();
+  _InitialScreenState createState() => _InitialScreenState();
 }
 
-class _initialScreenState extends State<initialScreen> {
+class _InitialScreenState extends State<InitialScreen> {
   final _formKey = GlobalKey<FormState>();
   String otp = "";
   bool loading = false;
@@ -85,7 +90,7 @@ class _initialScreenState extends State<initialScreen> {
                             child: loading
                                 ? Loading()
                                 : Text(
-                                    'Get Started',
+                                    'SIGNUP',
                                     style: TextStyle(
                                       fontFamily: 'Intern',
                                       fontSize: 14,
@@ -96,9 +101,39 @@ class _initialScreenState extends State<initialScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => Wrapper(
-                                    auth: new Auth(),
-                                  ),
+                                  builder: (context) => RegistrationPage()
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: _height/15,),
+                        Container(
+                          //Sign up button
+                          width: double.infinity,
+                          height: 46,
+                          child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                              side: BorderSide(color: Colors.white),
+                            ),
+                            color: Colors.white,
+                            textColor: primarygreen,
+                            child: loading
+                                ? Loading()
+                                : Text(
+                              'LOGIN',
+                              style: TextStyle(
+                                fontFamily: 'Intern',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(onSignedIn: widget.onSignedIn,)
                                 ),
                               );
                             },

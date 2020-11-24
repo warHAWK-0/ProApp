@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintExpanded.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 
 class ComplaintCard extends StatelessWidget {
+  final Complaint complaint;
+
   TextStyle complaintCardSubHeading = GoogleFonts.inter(
     textStyle: TextStyle(
       color: Colors.black,
@@ -21,11 +24,13 @@ class ComplaintCard extends StatelessWidget {
       )
   );
 
+  ComplaintCard({Key key, this.complaint}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintExpanded()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintExpanded(complaint: complaint,)));
       },
       child: Container(
         margin: EdgeInsets.all(8.0),
@@ -37,7 +42,7 @@ class ComplaintCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Department',
+                  complaint.departmentName,
                   style: complaintCardSubHeading,
                 ),
                 Spacer(),
@@ -51,7 +56,7 @@ class ComplaintCard extends StatelessWidget {
             Container(
               width: MediaQuery.of(context).size.width/1.35,
               child: Text(
-                'Complaint Complaint Comasdasdas fgszv efgak sjggdf gjgfAJfd',
+                complaint.complaintType,
                 softWrap: true,
                 style: complaintCardHeading,
               ),
@@ -61,13 +66,13 @@ class ComplaintCard extends StatelessWidget {
               children: [
                 Tag(
                   color: Colors.red,
-                  text: 'Raised',
+                  text: complaint.status,
                   textColor: Colors.white,
                   type: TagType.DEFAULT,
                 ),
                 Spacer(),
                 Text(
-                  'DD/MM/YYYY HH:MM PM',
+                  complaint.start.toString(),
                   style: complaintCardSubHeading,
                 )
               ],

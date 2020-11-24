@@ -1,12 +1,16 @@
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class ComplaintExpanded extends StatefulWidget {
+  final Complaint complaint;
+
+  const ComplaintExpanded({Key key, this.complaint}) : super(key: key);
   @override
   _ComplaintExpandedState createState() => _ComplaintExpandedState();
 }
@@ -51,7 +55,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
             Row(
               children: [
                 Text(
-                  "Department",
+                  widget.complaint.departmentName,
                   style: complaintCardSubHeading,
                 ),
                 Spacer(),
@@ -59,7 +63,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
               ],
             ),
             Text(
-              "Type of complaint",
+              widget.complaint.complaintType,
               style: complaintCardHeading,
             ),
             SizedBox(
@@ -69,13 +73,13 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
               children: [
                 Tag(
                   color: Colors.red,
-                  text: 'Raised',
+                  text: widget.complaint.status,
                   textColor: Colors.white,
                   type: TagType.DEFAULT,
                 ),
                 Spacer(),
                 Text(
-                  'DD/MM/YYYY HH:MM PM',
+                  widget.complaint.start.toString(),
                   style: complaintCardSubHeading,
                 )
               ],
@@ -84,7 +88,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
               height: 20,
             ),
             Text(
-              "Lorem ipsum dolor sit amet, consecter ipiscing elit, sed do eiusmod tempor incididunt utbore Lorem ipsum dolor sit amet, consecter ipiscing elit, sed do eiusmod tempor incididunt utbore...Lorem ipsum dolor sit amet, consecter 240 characters.Lorem ipsum dolor sit amet, consecter ipiscing elit, sed do eiusmod tempor incididunt utbore Lorem ipsum dolor sit amet, consecter ipiscing elit, sed do eiusmod tempor incididunt utbore...Lorem ipsum dolor sit amet, consecter 240 characters",
+              widget.complaint.description,
               style: complaintCardSubHeading,
             ),
             SizedBox(
@@ -119,7 +123,6 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                       ],
                     ),
                     onPressed: () {
-                      //to sign out dialogue
                       showDialog(
                           context: context,
                           builder: (BuildContext context) => Dialog(
@@ -172,7 +175,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                                       fontWeight:
                                                           FontWeight.w600))),
                                           onPressed: () {
-                                            //CODE TO SIGN OUT
+                                            //TODO: CODE TO SIGN OUT
                                           },
                                         ),
                                       ),
