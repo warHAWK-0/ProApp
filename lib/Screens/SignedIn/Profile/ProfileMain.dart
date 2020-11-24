@@ -34,315 +34,326 @@ class _ProfileMainState extends State<ProfileMain> {
       print("Error: $e");
     }
   }
-
-  _showUserName(){
-    return FutureBuilder(
-      future: db.getUserName(),
-      builder: (context, snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting)
-          // TODO: edit this to remove background color and edit font style
-          return Loading();
-        else{
-            userDetails.email = snapshot.data['email'];
-            userDetails.name = snapshot.data['name'];
-            userDetails.mobileNo = snapshot.data['mobileNo'];
-            userDetails.address = snapshot.data['address'];
-          return Text(
-            snapshot.data['name'],
-            style: Heading1(Colors.black),
-          );
-        }
-      },
-    );
-  }
-
-  var url;
-  Future _getImage() async {
-    final ref = FirebaseStorage.instance.ref().child('Profile/${widget.uid}.png');
-    url = await ref.getDownloadURL();
-  }
-
-  _showProfilePicture(){
-    return FutureBuilder(
-      future: _getImage(),
-      builder: (context,snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting)
-          return Loading();
-        else{
-          return Image.network(url);
-        }
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        child: Text(
-          "Profile",
-          style: Heading2(Colors.black, letterSpace: 1.25),
+    _showUserName(){
+      String username;
+      return FutureBuilder(
+        future: db.getUserName(),
+        builder: (context, snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting)
+            // TODO: edit this to remove background color and edit font style
+            return Loading();
+          else{
+              List <String> l = snapshot.data['name'].split(" ").toList();
+              for(var i=0;i<l.length;i++)
+              {
+                l[i][0].toUpperCase() + l[i].substring(1);
+              }
+              username = l.join(" ");
+              userDetails.email = snapshot.data['email'];
+              userDetails.name = snapshot.data['name'];
+              userDetails.mobileNo = snapshot.data['mobileNo'];
+              userDetails.address = snapshot.data['address'];
+            return Text(
+              '${username}',
+              style: Heading1(Colors.black),
+            );
+          }
+        },
+      );
+    }
+  
+    var url;
+    Future _getImage() async {
+      final ref = FirebaseStorage.instance.ref().child('Profile/profilepic.png');
+      url = await ref.getDownloadURL();
+    }
+  
+    _showProfilePicture(){
+      return FutureBuilder(
+        future: _getImage(),
+        builder: (context,snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting)
+            return Loading();
+          else{
+            return CircleAvatar(
+              backgroundImage: NetworkImage(url),
+              maxRadius: 50,
+  );
+          }
+        },
+      );
+    }
+  
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          child: Text(
+            "Profile",
+            style: Heading2(Colors.black, letterSpace: 1.25),
+          ),
+          elevation: false,
+          backIcon: false,
         ),
-        elevation: false,
-        backIcon: false,
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16, top: 32),
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _showProfilePicture(),
-              SizedBox(height: 16),
-              _showUserName(),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "ACCOUNT",
-                    style: GoogleFonts.inter(
-                      textStyle: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: Color.fromRGBO(0, 0, 0, 0.65),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 32),
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _showProfilePicture(),
+                SizedBox(height: 16),
+                _showUserName(),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "ACCOUNT",
+                      style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromRGBO(0, 0, 0, 0.65),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 9),
-              InkWell(
+                  ],
+                ),
+                SizedBox(height: 9),
+                InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile(
+                        userDetails: userDetails,
+                      )));
+                    },
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            FlevaIcons.edit_2,
+                            color: Color(0xFFCBD5E0),
+                          ),
+                          SizedBox(width: 16),
+                          Text(
+                            "Edit Profile",
+                          ),
+                        ],
+                      ),)),
+  
+                SizedBox(height: 8),
+                InkWell(
                   highlightColor: Colors.transparent,
                   splashColor: Colors.transparent,
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile(
-                      userDetails: userDetails,
-                    )));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChangePassword()),
+                    );
                   },
                   child: Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Icon(
-                          FlevaIcons.edit_2,
+                          FlevaIcons.eye_off,
                           color: Color(0xFFCBD5E0),
                         ),
                         SizedBox(width: 16),
                         Text(
-                          "Edit Profile",
+                          "Change Password",
                         ),
                       ],
-                    ),)),
-
-              SizedBox(height: 8),
-              InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChangePassword()),
-                  );
-                },
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FlevaIcons.eye_off,
-                        color: Color(0xFFCBD5E0),
-                      ),
-                      SizedBox(width: 16),
-                      Text(
-                        "Change Password",
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Divider(
-                color: Color.fromRGBO(0, 0, 0, 0.25),
-                height: 32,
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "SUPPORT",
-                    style: GoogleFonts.inter(
-                      textStyle: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: Color.fromRGBO(0, 0, 0, 0.65),
-                      ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 9),
-              InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-
-                },
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FlevaIcons.question_mark_circle,
-                        color: Color(0xFFCBD5E0),
-                      ),
-                      SizedBox(width: 16),
-                      Text(
-                        "FAQs",
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-              SizedBox(height: 8),
-              InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {},
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FlevaIcons.people,
-                        color: Color(0xFFCBD5E0),
-                      ),
-                      SizedBox(width: 16),
-                      Text(
-                        "About",
-                      ),
-                    ],
-                  ),
+                Divider(
+                  color: Color.fromRGBO(0, 0, 0, 0.25),
+                  height: 32,
                 ),
-              ),
-              Divider(
-                color: Color.fromRGBO(0, 0, 0, 0.25),
-                height: 32,
-              ),
-              SizedBox(height: 16),
-              InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  //to sign out dialogue
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => Dialog(
-                        insetPadding: EdgeInsets.only(
-                            left: 16, top: 24, right: 16, bottom: 16),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                12.0)), //this right here
-                        child: Container(
-                          height: 180.0,
-                          width: 328,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 24,
-                              ),
-                              Text('Are you sure you want to sign out?',
-                                  style: GoogleFonts.inter(
-                                      textStyle: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight:
-                                          FontWeight.w500))),
-                              SizedBox(height: 16),
-                              Container(
-                                height: 46,
-                                width: 296,
-                                child: FlatButton(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(6.0),
-                                      side: BorderSide(
-                                          color: Color(0xFFFF4128))),
-                                  color: Color(0xFFFF4128),
-                                  textColor: Colors.white,
-                                  child: Text('SIGN OUT',
-                                      style: GoogleFonts.inter(
-                                          textStyle: TextStyle(
-                                              fontFamily: 'Intern',
-                                              fontSize: 14,
-                                              fontWeight:
-                                              FontWeight.w600))),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    onSignOut();
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Container(
-                                height: 46,
-                                width: 296,
-                                child: FlatButton(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(6.0),
-                                      side: BorderSide(
-                                          color: Colors.white)),
-                                  color: Colors.white,
-                                  textColor: Color(0xFF718096),
-                                  child: Text('CANCEL',
-                                      style: GoogleFonts.inter(
-                                          textStyle: TextStyle(
-                                              fontFamily: 'Intern',
-                                              fontSize: 14,
-                                              fontWeight:
-                                              FontWeight.w600))),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ));
-                },
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FlevaIcons.log_out,
-                        color: Color(0xFFCBD5E0),
-                      ),
-                      SizedBox(width: 16),
-                      Text(
-                        "Sign Out",
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: Color(0xFFFF4128),
-                          ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "SUPPORT",
+                      style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromRGBO(0, 0, 0, 0.65),
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 9),
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+  
+                  },
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          FlevaIcons.question_mark_circle,
+                          color: Color(0xFFCBD5E0),
+                        ),
+                        SizedBox(width: 16),
+                        Text(
+                          "FAQs",
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 8),
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {},
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          FlevaIcons.people,
+                          color: Color(0xFFCBD5E0),
+                        ),
+                        SizedBox(width: 16),
+                        Text(
+                          "About",
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Color.fromRGBO(0, 0, 0, 0.25),
+                  height: 32,
+                ),
+                SizedBox(height: 16),
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    //to sign out dialogue
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => Dialog(
+                          insetPadding: EdgeInsets.only(
+                              left: 16, top: 24, right: 16, bottom: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  12.0)), //this right here
+                          child: Container(
+                            height: 180.0,
+                            width: 328,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 24,
+                                ),
+                                Text('Are you sure you want to sign out?',
+                                    style: GoogleFonts.inter(
+                                        textStyle: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight:
+                                            FontWeight.w500))),
+                                SizedBox(height: 16),
+                                Container(
+                                  height: 46,
+                                  width: 296,
+                                  child: FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(6.0),
+                                        side: BorderSide(
+                                            color: Color(0xFFFF4128))),
+                                    color: Color(0xFFFF4128),
+                                    textColor: Colors.white,
+                                    child: Text('SIGN OUT',
+                                        style: GoogleFonts.inter(
+                                            textStyle: TextStyle(
+                                                fontFamily: 'Intern',
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight.w600))),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      onSignOut();
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Container(
+                                  height: 46,
+                                  width: 296,
+                                  child: FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(6.0),
+                                        side: BorderSide(
+                                            color: Colors.white)),
+                                    color: Colors.white,
+                                    textColor: Color(0xFF718096),
+                                    child: Text('CANCEL',
+                                        style: GoogleFonts.inter(
+                                            textStyle: TextStyle(
+                                                fontFamily: 'Intern',
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight.w600))),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ));
+                  },
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          FlevaIcons.log_out,
+                          color: Color(0xFFCBD5E0),
+                        ),
+                        SizedBox(width: 16),
+                        Text(
+                          "Sign Out",
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Color(0xFFFF4128),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    }
+  
+    split(String s) {}
 }
