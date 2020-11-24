@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,25 @@ class _ProfileMainState extends State<ProfileMain> {
     );
   }
 
+  var url;
+  Future _getImage() async {
+    final ref = FirebaseStorage.instance.ref().child('Profile/${widget.uid}.png');
+    url = await ref.getDownloadURL();
+  }
+
+  _showProfilePicture(){
+    return FutureBuilder(
+      future: _getImage(),
+      builder: (context,snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting)
+          return Loading();
+        else{
+          return Image.network(url);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,9 +95,7 @@ class _ProfileMainState extends State<ProfileMain> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image(
-                image: AssetImage('Assets/img/profilepic.png'),
-              ),
+              _showProfilePicture(),
               SizedBox(height: 16),
               _showUserName(),
               SizedBox(height: 16),

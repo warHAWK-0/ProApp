@@ -44,6 +44,7 @@ dependencies:
   cloud_firestore: ^0.13.5
   firebase_storage: ^3.0.8
   provider: ^3.1.0
+  firebase_analytics: ^5.0.6
 
 # file pick extensions
   image_picker: "^0.6.7+11"

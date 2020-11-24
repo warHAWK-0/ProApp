@@ -28,7 +28,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     f1 = FocusNode();
     f2 = FocusNode();
