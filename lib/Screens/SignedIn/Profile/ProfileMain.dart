@@ -11,7 +11,7 @@ import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
-
+import 'package:recase/recase.dart';
 class ProfileMain extends StatefulWidget {
   final String uid;
 
@@ -43,12 +43,9 @@ class _ProfileMainState extends State<ProfileMain> {
             // TODO: edit this to remove background color and edit font style
             return Loading();
           else{
-              List <String> l = snapshot.data['name'].split(" ").toList();
-              for(var i=0;i<l.length;i++)
-              {
-                l[i][0].toUpperCase() + l[i].substring(1);
-              }
-              username = l.join(" ");
+              String retrieved_username = snapshot.data['name'];
+              username = retrieved_username.pascalCase;
+              
               userDetails.email = snapshot.data['email'];
               userDetails.name = snapshot.data['name'];
               userDetails.mobileNo = snapshot.data['mobileNo'];
