@@ -7,7 +7,7 @@ class Complaint{
   String status;
   String uid;
   String location;
-  DateTime start,end,verification,assigned;
+  String start,end,verification,assigned;
 
   Complaint({
     this.complaintId,

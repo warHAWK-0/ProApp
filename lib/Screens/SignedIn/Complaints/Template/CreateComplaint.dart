@@ -4,6 +4,7 @@ import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/Complaint.dart';
+import 'package:proapp/Screens/SignedIn/Complaints/Template/ConfirmLocation.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/ToastMessage.dart';
@@ -56,7 +57,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
   }
 
   Future pickGalleryImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
       _imageFile = File(pickedFile.path);
@@ -75,6 +76,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
       ));
     }
     return SearchableDropdown(
+
       underline: Container(),
       items: items,
       value: selectedValueMap[mapKey],
@@ -111,7 +113,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
         });
 
         // TODO: validation for all dropdown and desc
-        if(true){
+        if(selectedValueMap["department"]!=null && selectedValueMap["complaint"]!=null && _description.isNotEmpty){
           String uid = await _auth.getCurrentUID();
 
           Random random = new Random();
@@ -123,8 +125,8 @@ class _CreateComplaintState extends State<CreateComplaint> {
             status: 'RAISED',
             uid: uid.toString(),
             location: null,
-            // TODO : add this datetime with trimmed value
-            start: null,
+
+            start: DateTime.now().toString().substring(0,16),
             end: null,
             verification: null,
             assigned: null,
@@ -138,10 +140,11 @@ class _CreateComplaintState extends State<CreateComplaint> {
           //adding image to STORAGE
           db.uploadImageToFirebase(context,_imageFile,cid.toString());
           Navigator.pop(context);
+
         }
         else{
           ToastUtils.showCustomToast(
-              context, "Some issue");
+              context, "An error has occurred, please recheck and do no leave anything blank");
         }
 
         //set loading to false and pop the window
@@ -149,6 +152,15 @@ class _CreateComplaintState extends State<CreateComplaint> {
         setState(() {
           _loading = false;
         });
+//        Dialog(
+//          insetPadding: EdgeInsets.only(
+//              left: 16, top: 24, right: 16, bottom: 16),
+//          shape: RoundedRectangleBorder(
+//              borderRadius: BorderRadius.circular(
+//                  12.0)),
+//          child: Text("Complaint has been created"),
+//        );
+
       },
       child: Container(
         height: 45,
@@ -158,7 +170,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
           borderRadius: BorderRadius.circular(6.0),
         ),
         child: Center(
-          child: Text('CREATE',style: Heading4(Colors.white),),
+          child: Text('Continue',style: Heading4(Colors.white),),
         ),
       ),
     );
@@ -344,31 +356,64 @@ class _CreateComplaintState extends State<CreateComplaint> {
                     ],
                   ),
                 ),
-              ) : Container(
-                padding: EdgeInsets.symmetric(horizontal: 4,vertical: 8),
-                height: MediaQuery.of(context).size.width/3,
-                width: MediaQuery.of(context).size.width/2,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey[350],
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(6.0),
+              ) : Stack(
+
+                children: [Container(
+                  padding: EdgeInsets.symmetric(horizontal: 4,vertical: 8),
+                  height: MediaQuery.of(context).size.width/3,
+                  width: MediaQuery.of(context).size.width/2,
+                  child: new Image.file(_imageFile),
+
+//                decoration: BoxDecoration(
+//                  border: Border.all(
+//                    color: Colors.grey[350],
+//                    width: 1,
+//                  ),
+//                  borderRadius: BorderRadius.circular(6.0),
+//                ),
                 ),
+                Positioned(
+                  left: MediaQuery.of(context).size.width/2-65,
+                  bottom: MediaQuery.of(context).size.width/3-25,
+                  child: InkWell(
+
+                      child: Icon(FlevaIcons.close_circle,size:25 ,color: Color(0xff404040),),
+                  onTap:() {
+                    setState(() {
+                      _imageFile=null;
+                    });
+
+                  },),
+                )],
               ),
-              Container(
-                padding: EdgeInsets.only(top: 6,left: 4),
-                child: Text(
-                  'File Size condition',
-                  style: Heading(
-                    color: Color.fromRGBO(0, 0, 0, 0.45),
-                    fontSize: 13.0,
-                  )
-                ),
-              ),
+
               SizedBox(height: _height/50,),
               // Button to create the complaint
-              createComplaintButton(db),
+              //createComplaintButton(db),
+              InkWell(
+                child: Container(
+                  height: 45,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: primarygreen,
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  child: Center(
+                    child: Text('CONTINUE',style: Heading4(Colors.white),),
+                  ),
+                ),
+                onTap: (){
+                  if(selectedValueMap["department"]!=null && selectedValueMap["complaint"]!=null && _description.isNotEmpty){
+                    Navigator.push(context , MaterialPageRoute(builder: (context)=> ConfirmLocation()));
+                  }
+                  else{
+                    ToastUtils.showCustomToast(
+                        context, "An error has occurred, please recheck and do no leave anything blank");
+
+                  }
+
+                },
+              ),
             ],
           ),
         ),

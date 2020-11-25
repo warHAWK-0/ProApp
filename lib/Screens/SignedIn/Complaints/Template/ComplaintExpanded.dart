@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,11 +7,13 @@ import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:proapp/Widgets/themes.dart';
+import 'package:intl/intl.dart';
 
 class ComplaintExpanded extends StatefulWidget {
   final Complaint complaint;
+  final String uid;
 
-  const ComplaintExpanded({Key key, this.complaint}) : super(key: key);
+  const ComplaintExpanded({Key key, this.complaint,this.uid}) : super(key: key);
   @override
   _ComplaintExpandedState createState() => _ComplaintExpandedState();
 }
@@ -41,7 +44,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         child: Text(
-          'Complaint ##',
+          "Complaint - "+widget.complaint.complaintId,
           style: blackBoldLargeStyle,
         ),
       ),
@@ -79,7 +82,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                 ),
                 Spacer(),
                 Text(
-                  widget.complaint.start.toString(),
+                datefor(),
                   style: complaintCardSubHeading,
                 )
               ],
@@ -146,7 +149,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                             EdgeInsets.symmetric(horizontal: 8),
                                         child: Center(
                                           child: Text(
-                                              'Are you sure you want to delete complaint ##?',
+                                              'Are you sure you want to delete complaint - '+widget.complaint.complaintId+" ?",
                                               textAlign: TextAlign.center,
                                               style: GoogleFonts.inter(
                                                   textStyle: TextStyle(
@@ -174,8 +177,11 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                                       fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w600))),
-                                          onPressed: () {
-                                            //TODO: CODE TO SIGN OUT
+                                          onPressed: () async{
+                                            await Firestore.instance.collection("Complaint").document(widget.uid).collection(widget.uid).document(widget.complaint.complaintId).delete();
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+
                                           },
                                         ),
                                       ),
@@ -215,5 +221,21 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
         )),
       ),
     );
+  }
+  String datefor(){
+    DateTime now = DateTime.now();
+    DateTime justNow = now.subtract(Duration(minutes: 1));
+    DateTime localDateTime = DateTime.parse(widget.complaint.start+":00Z");
+    if (!localDateTime.difference(justNow).isNegative) {
+      if(widget.complaint.start.toString().substring(11,13).compareTo("12")>0){
+        return widget.complaint.start.toString().substring(11,16);
+      }
+      else{return widget.complaint.start.toString().substring(11,16);}
+    }
+    String roughTimeString = DateFormat('jm').format(now);
+    if (localDateTime.day == now.day && localDateTime.month == now.month && localDateTime.year == now.year) {
+      return roughTimeString;
+    }
+    return localDateTime.toString().substring(8,10)+localDateTime.toString().substring(4,8)+localDateTime.toString().substring(0,4);
   }
 }
