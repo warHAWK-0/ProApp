@@ -3,10 +3,12 @@ import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:proapp/Models/UserDetails.dart';
 import 'package:proapp/Services/authentication.dart';
 
 class DatabaseService{
-
+  final String uid;
+  DatabaseService({@required this.uid});
   Auth _auth = new AuthService();
 
   static var firestore = Firestore.instance;
@@ -48,6 +50,11 @@ class DatabaseService{
     //       (value) => print("Image Uploaded"),
     // );
   }
-
+   Future updateUserDB(UserDetails userDetails) async {
+    return await Firestore.instance
+        .collection("UserDetails")
+        .document(uid)
+        .updateData(userDetails.toJson());
+  }
 
 }

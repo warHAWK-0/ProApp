@@ -13,6 +13,7 @@ import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
+import 'package:recase/recase.dart';
 
 class EditProfile extends StatefulWidget {
   final UserDetails userDetails;
@@ -23,6 +24,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  DatabaseService databaseService;
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool _btnEnabled = false;
@@ -32,7 +34,7 @@ class _EditProfileState extends State<EditProfile> {
   String titleText = "Edit you profile";
   @override
   Widget build(BuildContext context) {
-
+    databaseService = new DatabaseService(uid: widget.uid);
     // storing userdetails
     String address = widget.userDetails.address;
     String mobileNo = widget.userDetails.mobileNo;
@@ -149,6 +151,7 @@ class _EditProfileState extends State<EditProfile> {
                             initialValue: widget.userDetails.mobileNo,
                            onChanged: (value){
                              setState(() {
+                               widget.userDetails.mobileNo = value;
                                mobileNo = value;
                              });
 
@@ -217,12 +220,18 @@ class _EditProfileState extends State<EditProfile> {
                             initialValue: address,
                             autovalidate: true,
                             // ignore: missing_return
+                            onChanged: (value) {
+                              setState(() {
+                                widget.userDetails.address = value;
+                              });
+                            },
                             validator: (String txt) {
                               bool isValid = txt == address;
                               if (isValid == false) {
                                 WidgetsBinding.instance
                                     .addPostFrameCallback((_) {
                                   setState(() {
+                                    
                                     _btnEnabled = txt != address;
                                   });
                                 });
@@ -257,7 +266,8 @@ class _EditProfileState extends State<EditProfile> {
                           height: 32.0,
                         ),
                         InkWell(
-                          onTap: _btnEnabled ? () => _nav() : null,
+                         // onTap: _btnEnabled ? () => _nav() : null,
+                         onTap: () => _nav(),
                           child: Container(
                             //Sign up button
                             width: double.infinity,
@@ -418,7 +428,18 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
   void _nav() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
+    databaseService.updateUserDB(new UserDetails(
+      mobileNo: widget.userDetails.mobileNo,
+      address: widget.userDetails.address
+    ));
+    
+    print(widget.uid);
+    print(widget.userDetails.mobileNo);
+    print(widget.userDetails.address);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Otp2()),
+    );
   }
   
   void takePhoto(ImageSource source) async {
