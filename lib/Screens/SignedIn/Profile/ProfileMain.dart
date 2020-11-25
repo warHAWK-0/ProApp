@@ -45,6 +45,7 @@ class _ProfileMainState extends State<ProfileMain> {
           else{
               String retrieved_username = snapshot.data['name'];
               username = retrieved_username.pascalCase;
+             // print(widget.uid);
               
               userDetails.email = snapshot.data['email'];
               userDetails.name = snapshot.data['name'];
@@ -127,6 +128,7 @@ class _ProfileMainState extends State<ProfileMain> {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile(
                         userDetails: userDetails,
+                        uid: widget.uid,
                       )));
                     },
                     child: Container(

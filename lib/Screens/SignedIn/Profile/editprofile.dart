@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
+import 'package:proapp/Services/authentication.dart';
+import 'package:proapp/Services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/UserDetails.dart';
@@ -14,8 +16,8 @@ import 'package:proapp/Widgets/themes.dart';
 
 class EditProfile extends StatefulWidget {
   final UserDetails userDetails;
-
-  const EditProfile({Key key, this.userDetails}) : super(key: key);
+  final String uid;
+  const EditProfile({Key key, this.userDetails,this.uid}) : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -292,6 +294,7 @@ class _EditProfileState extends State<EditProfile> {
     }
     // retrieving image url from firebase storage
      _showProfilePicture(){
+     // print("Edit profile:${widget.profile.uid}");
       return FutureBuilder(
         future: _getImage(),
         builder: (context,snapshot){
@@ -411,7 +414,7 @@ class _EditProfileState extends State<EditProfile> {
   void _nav() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
   }
-
+  
   void takePhoto(ImageSource source) async {
     final pickedFile = await _picker.getImage(
       source: source,
@@ -419,5 +422,11 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       _imageFile = pickedFile;
     });
+    FirebaseStorage storage = FirebaseStorage.instance;
+    File image;
+    image = File(_imageFile.path);
+    StorageReference reference =
+        storage.ref().child("Profile/${widget.uid}.jpg");
+        StorageUploadTask uploadTask = reference.putFile(image);
   }
 }
