@@ -62,8 +62,16 @@ class _ProfileMainState extends State<ProfileMain> {
   
     var url;
     Future _getImage() async {
-      final ref = FirebaseStorage.instance.ref().child('Profile/profilepic.png');
+      try{
+      final ref = FirebaseStorage.instance.ref().child('Profile/${widget.uid}.jpg');
       url = await ref.getDownloadURL();
+      }
+      catch(e)
+      {
+        final ref = FirebaseStorage.instance.ref().child('Profile/profilepic.png');
+        url = await ref.getDownloadURL();
+      }
+     // url = await ref.getDownloadURL();
     }
   
     _showProfilePicture(){

@@ -289,8 +289,14 @@ class _EditProfileState extends State<EditProfile> {
   }
   var url;
   Future _getImage() async {
+    try {
+      final ref = FirebaseStorage.instance.ref().child('Profile/${widget.uid}.jpg');
+      url = await ref.getDownloadURL();
+    }
+    catch(e) {
       final ref = FirebaseStorage.instance.ref().child('Profile/profilepic.png');
       url = await ref.getDownloadURL();
+    }
     }
     // retrieving image url from firebase storage
      _showProfilePicture(){
