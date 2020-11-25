@@ -18,7 +18,7 @@ import 'package:recase/recase.dart';
 class EditProfile extends StatefulWidget {
   final UserDetails userDetails;
   final String uid;
-  const EditProfile({Key key, this.userDetails,this.uid}) : super(key: key);
+  const EditProfile({Key key, this.userDetails, this.uid}) : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -27,11 +27,109 @@ class _EditProfileState extends State<EditProfile> {
   DatabaseService databaseService;
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
-  bool _btnEnabled = false;
+  FocusNode f1, f2;
   TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
   String titleText = "Edit you profile";
+  @override
+  void initState() {
+    super.initState();
+    f1 = FocusNode();
+    f2 = FocusNode();
+  }
+
+  void submit() {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      _nav();
+    }
+  }
+
+  Widget showphoneField() {
+    return Container(
+      width: double.infinity,
+      child: TextFormField(
+        maxLines: 1,
+        autofocus: false,
+        initialValue: widget.userDetails.mobileNo,
+        onChanged: (value) {
+          setState(() {
+            widget.userDetails.mobileNo = value;
+          });
+        },
+        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f1),
+        keyboardType: TextInputType.emailAddress,
+        validator: (val) =>
+            val.length != 10 ? "Enter a valid phone number" : null,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: primarygreen),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Colors.red),
+          ), //for error write code change color to red
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget showAddressField() {
+    return Container(
+      //input fields email
+      height: 81,
+      width: double.infinity,
+      child: TextFormField(
+        onChanged: (value) {
+          setState(() {
+            widget.userDetails.address = value;
+          });
+        },
+        maxLines: 4,
+        autofocus: false,
+        validator: (value) =>
+            value.length <= 0 ? "Enter a valid address" : null,
+        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f2),
+        keyboardType: TextInputType.multiline,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: primarygreen),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Colors.red),
+          ), //for error write code change color to red
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     databaseService = new DatabaseService(uid: widget.uid);
@@ -44,7 +142,8 @@ class _EditProfileState extends State<EditProfile> {
         appBar: CustomAppBar(
           child: Text(
             titleText,
-            style: Heading2(Colors.black, letterSpace: 1.25),          ),
+            style: Heading2(Colors.black, letterSpace: 1.25),
+          ),
           backIcon: true,
           elevation: true,
         ),
@@ -112,14 +211,14 @@ class _EditProfileState extends State<EditProfile> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
+                                      BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 errorBorder: InputBorder
                                     .none, //for error write code change color to red
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
+                                      BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 hintStyle: TextStyle(
                                     fontSize: 16,
@@ -145,54 +244,7 @@ class _EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 8,
                         ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: TextFormField(
-                            initialValue: widget.userDetails.mobileNo,
-                           onChanged: (value){
-                             setState(() {
-                               widget.userDetails.mobileNo = value;
-                               mobileNo = value;
-                             });
-
-                           },
-                            showCursor: true,
-                            autovalidate: true,
-                            // ignore: missing_return
-                            validator: (String txt) {
-                              bool isValid = txt == mobileNo;
-                              if (isValid == false) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  setState(() {
-                                    _btnEnabled = txt != mobileNo;
-                                  });
-                                });
-                              }
-                            },
-                            keyboardType: TextInputType.phone,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    left: 12, top: 0, bottom: 0),
-                                filled: true,
-                                fillColor: Colors.white,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                errorBorder: InputBorder
-                                    .none, //for error write code change color to red
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                hintStyle: TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45))),
-                          ),
-                        ),
+                        showphoneField(),
                         SizedBox(
                           height: 16.0,
                         ),
@@ -212,82 +264,34 @@ class _EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 8,
                         ),
-                        Container(
-                          // address
-                          height: 81,
-                          width: double.infinity,
-                          child: TextFormField(
-                            initialValue: address,
-                            autovalidate: true,
-                            // ignore: missing_return
-                            onChanged: (value) {
-                              setState(() {
-                                widget.userDetails.address = value;
-                              });
-                            },
-                            validator: (String txt) {
-                              bool isValid = txt == address;
-                              if (isValid == false) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  setState(() {
-                                    
-                                    _btnEnabled = txt != address;
-                                  });
-                                });
-                              }
-                            },
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 4,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    left: 12, top: 20, bottom: 0),
-                                isDense: true,
-                                filled: true,
-                                fillColor: Colors.white,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                errorBorder: InputBorder
-                                    .none, //for error write code change color to red
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                hintStyle: TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45))),
-                          ),
-                        ),
+                        showAddressField(),
                         SizedBox(
                           height: 32.0,
                         ),
                         InkWell(
-                         // onTap: _btnEnabled ? () => _nav() : null,
-                         onTap: () => _nav(),
+                          //onTap: _btnEnabled ? () => _nav() : null,
+                          //onTap: () =>  _nav(),
+                          onTap: submit,
                           child: Container(
                             //Sign up button
                             width: double.infinity,
                             height: 46,
                             decoration: BoxDecoration(
-                              color: _btnEnabled ? primarygreen : Colors.grey[300],
+                              color: primarygreen,
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             child: loading
                                 ? Loading()
                                 : Center(
-                              child: Text(
-                                'SAVE',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Intern',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
+                                    child: Text(
+                                      'SAVE',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Intern',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
@@ -297,36 +301,39 @@ class _EditProfileState extends State<EditProfile> {
           },
         ));
   }
+
   var url;
   Future _getImage() async {
     try {
-      final ref = FirebaseStorage.instance.ref().child('Profile/${widget.uid}.jpg');
+      final ref =
+          FirebaseStorage.instance.ref().child('Profile/${widget.uid}.jpg');
+      url = await ref.getDownloadURL();
+    } catch (e) {
+      final ref =
+          FirebaseStorage.instance.ref().child('Profile/profilepic.png');
       url = await ref.getDownloadURL();
     }
-    catch(e) {
-      final ref = FirebaseStorage.instance.ref().child('Profile/profilepic.png');
-      url = await ref.getDownloadURL();
-    }
-    }
-    // retrieving image url from firebase storage
-     _showProfilePicture(){
-     // print("Edit profile:${widget.profile.uid}");
-      return FutureBuilder(
-        future: _getImage(),
-        builder: (context,snapshot){
-          if(snapshot.connectionState == ConnectionState.waiting)
-            return Loading();
-          else{
-            return CircleAvatar(
-              radius: 32.0,
-              backgroundImage: _imageFile == null
-              ? NetworkImage(url):
-              FileImage(File(_imageFile.path)),
-  );
-          }
-        },
-      );
-    }
+  }
+
+  // retrieving image url from firebase storage
+  _showProfilePicture() {
+    // print("Edit profile:${widget.profile.uid}");
+    return FutureBuilder(
+      future: _getImage(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Loading();
+        else {
+          return CircleAvatar(
+            radius: 32.0,
+            backgroundImage: _imageFile == null
+                ? NetworkImage(url)
+                : FileImage(File(_imageFile.path)),
+          );
+        }
+      },
+    );
+  }
 
   Widget imageProfile() {
     return Center(
@@ -371,68 +378,77 @@ class _EditProfileState extends State<EditProfile> {
         children: <Widget>[
           Spacer(),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              InkWell(
-                onTap: (){
-                  takePhoto(ImageSource.camera);
-                },
-                child: Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        margin: EdgeInsets.only(bottom: 4),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: primarygreen),
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: Colors.white,
-                          size: 30,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    takePhoto(ImageSource.camera);
+                  },
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.only(bottom: 4),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: primarygreen),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 30,
+                          ),
                         ),
-                      ),
-                      Text('CAMERA',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
-                    ],
+                        Text(
+                          'CAMERA',
+                          style: TextStyle(
+                              color: Colors.grey, fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: (){
-                  takePhoto(ImageSource.gallery);
-                },
-                child: Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        margin: EdgeInsets.only(bottom: 4),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: primarygreen),
-                        child: Icon(
-                          Icons.image,
-                          color: Colors.white,
-                          size: 30,
+                InkWell(
+                  onTap: () {
+                    takePhoto(ImageSource.gallery);
+                  },
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.only(bottom: 4),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: primarygreen),
+                          child: Icon(
+                            Icons.image,
+                            color: Colors.white,
+                            size: 30,
+                          ),
                         ),
-                      ),
-                      Text('GALLERY',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
-                    ],
+                        Text(
+                          'GALLERY',
+                          style: TextStyle(
+                              color: Colors.grey, fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ]
-          ),
+              ]),
           Spacer(),
         ],
       ),
     );
   }
+
   void _nav() {
     databaseService.updateUserDB(new UserDetails(
-      mobileNo: widget.userDetails.mobileNo,
-      address: widget.userDetails.address
-    ));
-    
+        name: widget.userDetails.name,
+        email: widget.userDetails.email,
+        mobileNo: widget.userDetails.mobileNo,
+        address: widget.userDetails.address));
+
     print(widget.uid);
     print(widget.userDetails.mobileNo);
     print(widget.userDetails.address);
@@ -441,7 +457,7 @@ class _EditProfileState extends State<EditProfile> {
       MaterialPageRoute(builder: (context) => Otp2()),
     );
   }
-  
+
   void takePhoto(ImageSource source) async {
     final pickedFile = await _picker.getImage(
       source: source,
@@ -454,6 +470,6 @@ class _EditProfileState extends State<EditProfile> {
     image = File(_imageFile.path);
     StorageReference reference =
         storage.ref().child("Profile/${widget.uid}.jpg");
-        StorageUploadTask uploadTask = reference.putFile(image);
+    StorageUploadTask uploadTask = reference.putFile(image);
   }
 }
