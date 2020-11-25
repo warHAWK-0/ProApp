@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -284,16 +285,34 @@ class _EditProfileState extends State<EditProfile> {
           },
         ));
   }
+  var url;
+  Future _getImage() async {
+      final ref = FirebaseStorage.instance.ref().child('Profile/profilepic.png');
+      url = await ref.getDownloadURL();
+    }
+    // retrieving image url from firebase storage
+     _showProfilePicture(){
+      return FutureBuilder(
+        future: _getImage(),
+        builder: (context,snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting)
+            return Loading();
+          else{
+            return CircleAvatar(
+              radius: 32.0,
+              backgroundImage: _imageFile == null
+              ? NetworkImage(url):
+              FileImage(File(_imageFile.path)),
+  );
+          }
+        },
+      );
+    }
 
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-        CircleAvatar(
-          radius: 32.0,
-          backgroundImage: _imageFile == null
-              ? AssetImage('Assets/img/profilepic.png')
-              : FileImage(File(_imageFile.path)),
-        ),
+        _showProfilePicture(),
         Positioned(
           bottom: 3.0,
           right: 3.0,
