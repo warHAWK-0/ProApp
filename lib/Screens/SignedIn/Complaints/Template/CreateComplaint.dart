@@ -47,7 +47,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
 
   //Upload Image
   Future pickCameraImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 75,maxHeight: 600,maxWidth: 600);
 
     setState(() {
       _imageFile = File(pickedFile.path);
@@ -55,7 +55,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
   }
 
   Future pickGalleryImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 75, maxWidth: 600,maxHeight: 600);
 
     setState(() {
       _imageFile = File(pickedFile.path);

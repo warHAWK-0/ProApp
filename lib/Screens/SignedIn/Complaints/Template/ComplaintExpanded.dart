@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
@@ -8,10 +10,12 @@ import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:intl/intl.dart';
+import 'package:proapp/Services/database.dart';
 
 class ComplaintExpanded extends StatefulWidget {
   final Complaint complaint;
   final String uid;
+
 
   const ComplaintExpanded({Key key, this.complaint,this.uid}) : super(key: key);
   @override
@@ -19,6 +23,8 @@ class ComplaintExpanded extends StatefulWidget {
 }
 
 class _ComplaintExpandedState extends State<ComplaintExpanded> {
+  var url;
+  DatabaseService db = new DatabaseService();
   TextStyle complaintCardHeading = GoogleFonts.inter(
       textStyle: TextStyle(
     color: Colors.black,
@@ -38,6 +44,44 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
       textStyle: TextStyle(
           color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600));
 
+  Future _getImage() async {
+    try {
+      final ref =
+      FirebaseStorage.instance.ref().child('complaint/'+widget.uid.toString()+'/'+widget.complaint.complaintId+'.jpg');
+      url = await ref.getDownloadURL();
+    } catch (e) {
+
+
+      url = null;
+    }
+  }
+
+  _showComplaintPicture() {
+    return FutureBuilder(
+      future: _getImage(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Container(
+            child: SpinKitChasingDots(
+              color: Colors.black,
+              size: 24,
+            ),
+          );
+        else {
+          return  ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                url.toString(),
+                fit: BoxFit.fill,
+              )
+            );
+        }
+      },
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +94,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
       ),
       body: Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+
         child: SingleChildScrollView(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -98,6 +143,9 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
               height: 20,
             ),
 
+            _showComplaintPicture(),
+
+            SizedBox(height: 20,),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -216,8 +264,10 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                     },
                   ),
                 ),
+
               ],
-            )
+            ),
+            SizedBox(height: 16,)
           ],
         )),
       ),

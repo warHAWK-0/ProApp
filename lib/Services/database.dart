@@ -39,21 +39,8 @@ class DatabaseService{
     firebaseStorageRef.putFile(_imageFile);
 
   }
-  //to do
 
-//  var url;
-//  Future _getImage(String uid,String complaintId) async {
-//    try {
-//      final ref =
-//      FirebaseStorage.instance.ref().child('Complaints/'+uid.toString()+'/'+complaintId+'.jpg');
-//      url = await ref.getDownloadURL();
-//    } catch (e) {
-//      final ref =
-//      FirebaseStorage.instance.ref().child('Profile/profilepic.png');
-//      url = await ref.getDownloadURL();
-//    }
-//    // url = await ref.getDownloadURL();
-//  }
+
 
 
 }

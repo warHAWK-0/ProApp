@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintExpanded.dart';
+import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:intl/intl.dart';
@@ -32,7 +33,8 @@ class ComplaintCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintExpanded(complaint: complaint,uid: uid,)));
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintExpanded(complaint: complaint,uid: uid)));
       },
       child: Container(
         margin: EdgeInsets.only(left:8.0,right: 8),

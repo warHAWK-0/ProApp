@@ -38,5 +38,6 @@ class Complaint{
     'Verification' : verification,
     'Assigned' : assigned,
     'Upvote': upvote,
+
   };
 }
