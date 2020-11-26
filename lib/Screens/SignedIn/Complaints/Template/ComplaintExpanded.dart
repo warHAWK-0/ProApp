@@ -95,8 +95,9 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
               style: complaintCardSubHeading,
             ),
             SizedBox(
-              height: 76,
+              height: 20,
             ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

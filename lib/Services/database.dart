@@ -29,25 +29,31 @@ class DatabaseService{
   Future uploadImageToFirebase(BuildContext context,File _imageFile,String complaintId) async {
     String uid = await _auth.getCurrentUID();
     String fileName = basename(_imageFile.path);
-
     // update LOCATION field for this complaint
     await complaint.document(uid.toString()).updateData({
-      'Location' : 'complaint/' + uid.toString() + '/'+ 'complaintId.jpg',
+      'Location' : 'complaint/' + uid.toString() + '/'+ complaintId+'.jpg',
     });
-
     // uploading file to storage
     StorageReference firebaseStorageRef =
-    FirebaseStorage.instance.ref().child('complaint/' + uid.toString() + '/'+ 'complaintId.jpg');
+    FirebaseStorage.instance.ref().child('complaint/' + uid.toString() + '/'+ complaintId+'.jpg');
     firebaseStorageRef.putFile(_imageFile);
 
-    //just to check the upload status of image and starting a task after that
-
-    // StorageUploadTask uploadTask = firebaseStorageRef.putFile(_imageFile);
-    // StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    // taskSnapshot.ref.getDownloadURL().then(
-    //       (value) => print("Image Uploaded"),
-    // );
   }
+  //to do
+
+//  var url;
+//  Future _getImage(String uid,String complaintId) async {
+//    try {
+//      final ref =
+//      FirebaseStorage.instance.ref().child('Complaints/'+uid.toString()+'/'+complaintId+'.jpg');
+//      url = await ref.getDownloadURL();
+//    } catch (e) {
+//      final ref =
+//      FirebaseStorage.instance.ref().child('Profile/profilepic.png');
+//      url = await ref.getDownloadURL();
+//    }
+//    // url = await ref.getDownloadURL();
+//  }
 
 
 }

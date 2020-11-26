@@ -1,17 +1,17 @@
 import 'dart:io';
-import 'dart:math';
+
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:proapp/Models/Complaint.dart';
+
 import 'package:proapp/Screens/SignedIn/Complaints/Template/ConfirmLocation.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/ToastMessage.dart';
-import 'package:proapp/Widgets/loading.dart';
+
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-import 'package:proapp/Services/authentication.dart';
+
 
 
 class CreateComplaint extends StatefulWidget {
@@ -20,8 +20,6 @@ class CreateComplaint extends StatefulWidget {
 }
 
 class _CreateComplaintState extends State<CreateComplaint> {
-  Auth _auth = AuthService();
-  bool _loading = false;
   File _imageFile;
   final picker = ImagePicker();
   Map<String, String> selectedValueMap = Map();
@@ -103,78 +101,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
 
   DatabaseService _initiateDBService() => new DatabaseService();
 
-  Widget createComplaintButton(DatabaseService db){
-    return _loading ? Loading() : InkWell(
-      splashColor: Colors.transparent,
-      onTap: () async{
-        //disable the button and show loading animation
-        setState(() {
-          _loading = true;
-        });
 
-        // TODO: validation for all dropdown and desc
-        if(selectedValueMap["department"]!=null && selectedValueMap["complaint"]!=null && _description.isNotEmpty){
-          String uid = await _auth.getCurrentUID();
-
-          Random random = new Random();
-          String cid = random.nextInt(99999999).toString();
-          Complaint _complaint = new Complaint(
-            departmentName: selectedValueMap['department'],
-            complaintType: selectedValueMap['complaint'],
-            description: _description,
-            status: 'RAISED',
-            uid: uid.toString(),
-            location: null,
-
-            start: DateTime.now().toString().substring(0,16),
-            end: null,
-            verification: null,
-            assigned: null,
-          );
-
-          // TODO: update location in DB i.e. complaint/uid/Region
-          // code here
-
-          //creating document for new complaint in DATABASE
-          await db.complaint.document(uid.toString()).collection(uid.toString()).document(cid.toString()).setData(_complaint.toJson());
-          //adding image to STORAGE
-          db.uploadImageToFirebase(context,_imageFile,cid.toString());
-          Navigator.pop(context);
-
-        }
-        else{
-          ToastUtils.showCustomToast(
-              context, "An error has occurred, please recheck and do no leave anything blank");
-        }
-
-        //set loading to false and pop the window
-        //Also showing toast message as notification
-        setState(() {
-          _loading = false;
-        });
-//        Dialog(
-//          insetPadding: EdgeInsets.only(
-//              left: 16, top: 24, right: 16, bottom: 16),
-//          shape: RoundedRectangleBorder(
-//              borderRadius: BorderRadius.circular(
-//                  12.0)),
-//          child: Text("Complaint has been created"),
-//        );
-
-      },
-      child: Container(
-        height: 45,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: primarygreen,
-          borderRadius: BorderRadius.circular(6.0),
-        ),
-        child: Center(
-          child: Text('Continue',style: Heading4(Colors.white),),
-        ),
-      ),
-    );
-  }
 
   Widget bottomSheet(BuildContext context) {
     return Container(
@@ -249,7 +176,6 @@ class _CreateComplaintState extends State<CreateComplaint> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseService db = _initiateDBService();
     final double _height = MediaQuery.of(context).size.height;
     final double _width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -363,14 +289,6 @@ class _CreateComplaintState extends State<CreateComplaint> {
                   height: MediaQuery.of(context).size.width/3,
                   width: MediaQuery.of(context).size.width/2,
                   child: new Image.file(_imageFile),
-
-//                decoration: BoxDecoration(
-//                  border: Border.all(
-//                    color: Colors.grey[350],
-//                    width: 1,
-//                  ),
-//                  borderRadius: BorderRadius.circular(6.0),
-//                ),
                 ),
                 Positioned(
                   left: MediaQuery.of(context).size.width/2-65,
@@ -382,14 +300,12 @@ class _CreateComplaintState extends State<CreateComplaint> {
                     setState(() {
                       _imageFile=null;
                     });
-
                   },),
                 )],
               ),
 
               SizedBox(height: _height/50,),
-              // Button to create the complaint
-              //createComplaintButton(db),
+
               InkWell(
                 child: Container(
                   height: 45,
@@ -404,12 +320,11 @@ class _CreateComplaintState extends State<CreateComplaint> {
                 ),
                 onTap: (){
                   if(selectedValueMap["department"]!=null && selectedValueMap["complaint"]!=null && _description.isNotEmpty){
-                    Navigator.push(context , MaterialPageRoute(builder: (context)=> ConfirmLocation()));
+                    Navigator.push(context , MaterialPageRoute(builder: (context)=> ConfirmLocation(description: _description,selectedValueMap: selectedValueMap,imageFile: _imageFile,)));
                   }
                   else{
                     ToastUtils.showCustomToast(
                         context, "An error has occurred, please recheck and do no leave anything blank");
-
                   }
 
                 },
