@@ -1,24 +1,22 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
-import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/UserDetails.dart';
-import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
-import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/loading.dart';
+import 'package:proapp/Widgets/otp.dart';
 import 'package:proapp/Widgets/themes.dart';
-import 'package:recase/recase.dart';
 
 class EditProfile extends StatefulWidget {
   final UserDetails userDetails;
   final String uid;
-  const EditProfile({Key key, this.userDetails, this.uid}) : super(key: key);
+  String userProfileUrl;
+  EditProfile({Key key, this.userDetails, this.uid, this.userProfileUrl}) : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -26,12 +24,13 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   DatabaseService databaseService;
   final _formKey = GlobalKey<FormState>();
-  bool loading = false;
+  bool loading = true;
   FocusNode f1, f2;
   TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
-  String titleText = "Edit you profile";
+  String newMobNo,newAddress;
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +42,19 @@ class _EditProfileState extends State<EditProfile> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      _nav();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OTP(
+          prevMobNo: widget.userDetails.mobileNo,
+          uid: widget.uid,
+          newUserDetails: UserDetails(
+            email: widget.userDetails.email,
+            name: widget.userDetails.name,
+            address: newAddress,
+            mobileNo: newMobNo,
+          ),
+        )),
+      );
     }
   }
 
@@ -56,11 +67,12 @@ class _EditProfileState extends State<EditProfile> {
         initialValue: widget.userDetails.mobileNo,
         onChanged: (value) {
           setState(() {
-            widget.userDetails.mobileNo = value;
+            newMobNo = value;
+            loading = false;
           });
         },
         onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f1),
-        keyboardType: TextInputType.emailAddress,
+        keyboardType: TextInputType.number,
         validator: (val) =>
             val.length != 10 ? "Enter a valid phone number" : null,
         decoration: InputDecoration(
@@ -94,9 +106,11 @@ class _EditProfileState extends State<EditProfile> {
       height: 81,
       width: double.infinity,
       child: TextFormField(
+        initialValue: widget.userDetails.address,
         onChanged: (value) {
           setState(() {
-            widget.userDetails.address = value;
+            newAddress = value;
+            loading = false;
           });
         },
         maxLines: 4,
@@ -104,7 +118,7 @@ class _EditProfileState extends State<EditProfile> {
         validator: (value) =>
             value.length <= 0 ? "Enter a valid address" : null,
         onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f2),
-        keyboardType: TextInputType.multiline,
+        keyboardType: TextInputType.streetAddress,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           filled: true,
@@ -133,19 +147,27 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     databaseService = new DatabaseService(uid: widget.uid);
-    // storing userdetails
-    String address = widget.userDetails.address;
-    String mobileNo = widget.userDetails.mobileNo;
 
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: CustomAppBar(
-          child: Text(
-            titleText,
-            style: Heading2(Colors.black, letterSpace: 1.25),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: InkWell(
+            onTap: (){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileMain(uid: widget.uid,)));
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+              size: 20,
+            ),
           ),
-          backIcon: true,
-          elevation: true,
+          title: Center(
+            child: Text(
+              'Edit your profile       ',
+              style: Heading2(Colors.black, letterSpace: 1.15),
+            ),
+          ),
         ),
         body: Builder(
           builder: (context) {
@@ -160,7 +182,7 @@ class _EditProfileState extends State<EditProfile> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        imageProfile(),
+                        _showProfilePicture(),
                         SizedBox(
                           height: 7,
                         ),
@@ -269,20 +291,16 @@ class _EditProfileState extends State<EditProfile> {
                           height: 32.0,
                         ),
                         InkWell(
-                          //onTap: _btnEnabled ? () => _nav() : null,
-                          //onTap: () =>  _nav(),
-                          onTap: submit,
+                          onTap: loading ? null : submit,
                           child: Container(
                             //Sign up button
                             width: double.infinity,
                             height: 46,
                             decoration: BoxDecoration(
-                              color: primarygreen,
+                              color: loading ? Colors.grey[300] : primarygreen,
                               borderRadius: BorderRadius.circular(6.0),
                             ),
-                            child: loading
-                                ? Loading()
-                                : Center(
+                            child: Center(
                                     child: Text(
                                       'SAVE',
                                       style: TextStyle(
@@ -302,43 +320,14 @@ class _EditProfileState extends State<EditProfile> {
         ));
   }
 
-  var url;
-  Future _getImage() async {
-    try {
-      final ref =
-          FirebaseStorage.instance.ref().child('Profile/${widget.uid}.jpg');
-      url = await ref.getDownloadURL();
-    } catch (e) {
-      final ref =
-          FirebaseStorage.instance.ref().child('Profile/profilepic.png');
-      url = await ref.getDownloadURL();
-    }
-  }
-
   // retrieving image url from firebase storage
   _showProfilePicture() {
-    // print("Edit profile:${widget.profile.uid}");
-    return FutureBuilder(
-      future: _getImage(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return Loading();
-        else {
-          return CircleAvatar(
-            radius: 32.0,
-            backgroundImage: _imageFile == null
-                ? NetworkImage(url)
-                : FileImage(File(_imageFile.path)),
-          );
-        }
-      },
-    );
-  }
-
-  Widget imageProfile() {
-    return Center(
-      child: Stack(children: <Widget>[
-        _showProfilePicture(),
+    return Stack(
+      children: [
+      CircleAvatar(
+        backgroundImage: NetworkImage(widget.userProfileUrl),
+        maxRadius: 50,
+      ),
         Positioned(
           bottom: 3.0,
           right: 3.0,
@@ -350,6 +339,7 @@ class _EditProfileState extends State<EditProfile> {
               );
             },
             child: Container(
+              padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: primarygreen,
@@ -357,12 +347,12 @@ class _EditProfileState extends State<EditProfile> {
               child: Icon(
                 EvaIcons.edit,
                 color: Colors.black, //to change the picture
-                size: 16.0,
+                size: 20.0,
               ),
             ),
           ),
         ),
-      ]),
+      ]
     );
   }
 
@@ -442,22 +432,6 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  void _nav() {
-    databaseService.updateUserDB(new UserDetails(
-        name: widget.userDetails.name,
-        email: widget.userDetails.email,
-        mobileNo: widget.userDetails.mobileNo,
-        address: widget.userDetails.address));
-
-    print(widget.uid);
-    print(widget.userDetails.mobileNo);
-    print(widget.userDetails.address);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Otp2()),
-    );
-  }
-
   void takePhoto(ImageSource source) async {
     final pickedFile = await _picker.getImage(
       source: source,
@@ -467,9 +441,30 @@ class _EditProfileState extends State<EditProfile> {
     });
     FirebaseStorage storage = FirebaseStorage.instance;
     File image;
-    image = File(_imageFile.path);
+
+    // compress image function
+    final filePath = _imageFile.path;
+    final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
+    final splitted = filePath.substring(0, (lastIndex));
+    final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
+
+    var compressedImage = await FlutterImageCompress.compressAndGetFile(
+      filePath,
+      outPath,
+      minWidth: 600,
+      minHeight: 600,
+      quality: 50,
+    );
+
+    setState(() {
+      widget.userProfileUrl = compressedImage.path;
+    });
+    print(compressedImage.path);
+    image = File(compressedImage.path);
     StorageReference reference =
         storage.ref().child("Profile/${widget.uid}.jpg");
-    StorageUploadTask uploadTask = reference.putFile(image);
+    reference.putFile(image);
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 }

@@ -1,23 +1,43 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:proapp/Services/phoneAuth.dart';
+import 'package:proapp/Models/UserDetails.dart';
+import 'package:proapp/Services/database.dart';
+import 'package:proapp/Widgets/Twilio/send_sms.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
+import 'package:timer_button/timer_button.dart';
 
 import 'CustomAppBar.dart';
 
-class SignUpOTP extends StatefulWidget {
+class OTP extends StatefulWidget {
+  final String prevMobNo,uid;
+  final UserDetails newUserDetails;
+
+  const OTP({Key key, this.prevMobNo, this.newUserDetails, this.uid}) : super(key: key);
   @override
-  _SignUpOTPState createState() => _SignUpOTPState();
+  _OTPState createState() => _OTPState();
 }
 
-class _SignUpOTPState extends State<SignUpOTP> {
+class _OTPState extends State<OTP> {
+  @override
+  void initState() {
+    super.initState();
+    _generateOTP();
+  }
+
   final _formKey = GlobalKey<FormState>();
-  String smsCode, verificationId;
+  String otp;
+  String userEnteredOTP;
   bool loading = false;
-  bool checkcode;
+
+  _generateOTP(){
+    Random random = new Random();
+    otp = random.nextInt(999999).toString();
+    String OTPmessage = "[ProApp]Here's the verification code for changing your profile: $otp. This code will expire in 60 seconds.";
+    sendSMS(widget.prevMobNo, OTPmessage);
+  }
 
   Widget showProgressBar() {
     return Container(
@@ -43,7 +63,7 @@ class _SignUpOTPState extends State<SignUpOTP> {
         validator: (val) => val.isEmpty ? 'Enter OTP' : null,
         onChanged: (val) {
           setState(() {
-            this.smsCode = val;
+            this.userEnteredOTP = val;
           });
         },
         keyboardType: TextInputType.phone,
@@ -62,14 +82,15 @@ class _SignUpOTPState extends State<SignUpOTP> {
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.0),
               borderSide: BorderSide(color: Colors.red),
-            ), //for error write code change color to red
+            ),
+            //for error write code change color to red
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.0),
               borderSide: BorderSide(color: Color(0xffCBD5E0)),
             ),
             hintText: 'Enter OTP',
             hintStyle:
-                TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.45))),
+            TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.45))),
       ),
     );
   }
@@ -94,7 +115,10 @@ class _SignUpOTPState extends State<SignUpOTP> {
                 padding: EdgeInsets.only(
                     left: 20,
                     right: 20,
-                    top: MediaQuery.of(context).size.height / 10),
+                    top: MediaQuery
+                        .of(context)
+                        .size
+                        .height / 10),
                 width: double.infinity,
                 child: Form(
                   key: _formKey,
@@ -132,18 +156,12 @@ class _SignUpOTPState extends State<SignUpOTP> {
                                   color: Colors.black,
                                   fontFamily: 'Intern',
                                   fontSize: 14)),
-                          InkWell(
-                            //forgot password
-                            splashColor: Colors.lightBlueAccent,
-                            child: Text(
-                              "30 sec.",
-                              style: TextStyle(
-                                  color: primarygreen,
-                                  fontFamily: 'Intern',
-                                  fontSize: 14),
-                            ),
-                            onTap: () {},
-                          ),
+                          TimerButton(
+                            buttonType: ButtonType.FlatButton,
+                            label: 'Resend',
+                            timeOutInSeconds: 60,
+                            disabledColor: Colors.white,
+                          )
                         ],
                       ),
                       SizedBox(
@@ -162,15 +180,25 @@ class _SignUpOTPState extends State<SignUpOTP> {
                           child: loading
                               ? Loading()
                               : Text(
-                                  'CONTINUE',
-                                  style: TextStyle(
-                                      fontFamily: 'Intern',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                          onPressed: () {                
-                            PhoneAuth().signInWithOTP(smsCode, verificationId);
-                            
+                            'CONTINUE',
+                            style: TextStyle(
+                                fontFamily: 'Intern',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              loading = true;
+                            });
+                            if (userEnteredOTP == otp){
+                              DatabaseService db = DatabaseService(uid: widget.uid);
+                              db.updateUserDB(widget.newUserDetails);
+                            }
+                            else{
+                              // reset timer
+                              // resend otp
+
+                            }
                           },
                         ),
                       ),
@@ -181,33 +209,5 @@ class _SignUpOTPState extends State<SignUpOTP> {
         },
       ),
     );
-  }
-
-  Future<void> verifyPhone(phoneNo) async {
-    final PhoneVerificationCompleted verified = (AuthCredential authResult) {};
-
-    final PhoneVerificationFailed verificationfailed =
-        (AuthException authException) {
-      print('${authException.message}');
-    };
-
-    final PhoneCodeSent smsSent = (String verId, [int forceResend]) {
-      this.verificationId = verId;
-      setState(() {
-        
-      });
-    };
-
-    final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
-      this.verificationId = verId;
-    };
-
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phoneNo,
-        timeout: const Duration(seconds: 5),
-        verificationCompleted: verified,
-        verificationFailed: verificationfailed,
-        codeSent: smsSent,
-        codeAutoRetrievalTimeout: autoTimeout);
   }
 }
