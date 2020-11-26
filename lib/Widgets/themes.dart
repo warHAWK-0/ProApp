@@ -6,6 +6,13 @@ Color primarygreen = Color(0xFF20BAA2);
 Color primaryorange=Color(0xffFF4128);
 Color progressYellow=Color(0xFFFFD400);
 
+// twilio https url
+const String TWILIO_SMS_API_BASE_URL = 'https://api.twilio.com/2010-04-01';
+// twilio auth creds
+String twilioSID = 'AC1dd40e33c2749b102472de1264b8fd34';
+String twilioAuthToken = 'e338f4cc2bc70790fccb12fe2a1628b6';
+String twilioMyPhoneNumber = '+18503066184';
+
 //textstyle with fontsize 20
 TextStyle Heading1(Color color,{fontWeight = FontWeight.w500,letterSpace = 1.0}) => GoogleFonts.inter(
     textStyle:TextStyle(
