@@ -31,24 +31,15 @@ class DatabaseService{
   Future uploadImageToFirebase(BuildContext context,File _imageFile,String complaintId) async {
     String uid = await _auth.getCurrentUID();
     String fileName = basename(_imageFile.path);
-
     // update LOCATION field for this complaint
     await complaint.document(uid.toString()).updateData({
-      'Location' : 'complaint/' + uid.toString() + '/'+ 'complaintId.jpg',
+      'Location' : 'complaint/' + uid.toString() + '/'+ complaintId+'.jpg',
     });
-
     // uploading file to storage
     StorageReference firebaseStorageRef =
-    FirebaseStorage.instance.ref().child('complaint/' + uid.toString() + '/'+ 'complaintId.jpg');
+    FirebaseStorage.instance.ref().child('complaint/' + uid.toString() + '/'+ complaintId+'.jpg');
     firebaseStorageRef.putFile(_imageFile);
 
-    //just to check the upload status of image and starting a task after that
-
-    // StorageUploadTask uploadTask = firebaseStorageRef.putFile(_imageFile);
-    // StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    // taskSnapshot.ref.getDownloadURL().then(
-    //       (value) => print("Image Uploaded"),
-    // );
   }
    Future updateUserDB(UserDetails userDetails) async {
     return await Firestore.instance
@@ -56,5 +47,7 @@ class DatabaseService{
         .document(uid)
         .updateData(userDetails.toJson());
   }
+
+
 
 }

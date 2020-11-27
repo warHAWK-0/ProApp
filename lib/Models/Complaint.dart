@@ -6,8 +6,9 @@ class Complaint{
   String attachmentURL;
   String status;
   String uid;
+  num upvote;
   String location;
-  DateTime start,end,verification,assigned;
+  String start,end,verification,assigned;
 
   Complaint({
     this.complaintId,
@@ -20,7 +21,8 @@ class Complaint{
     this.start,
     this.end,
     this.verification,
-    this.assigned
+    this.assigned,
+    this.upvote,
   });
 
   Map<String, dynamic> toJson() => {
@@ -35,5 +37,7 @@ class Complaint{
     'End' : end,
     'Verification' : verification,
     'Assigned' : assigned,
+    'Upvote': upvote,
+
   };
 }
