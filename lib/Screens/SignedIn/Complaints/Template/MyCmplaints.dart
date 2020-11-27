@@ -86,11 +86,10 @@ class _MyComplaintState extends State<MyComplaint> {
         width: 300.0,
         height: 500.0,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30.0),
             image: DecorationImage(
-                image: NetworkImage(
-                  "https://images.unsplash.com/photo-1547721064-da6cfb341d50",
-                ), fit: BoxFit.cover)
+                image: AssetImage('Assets/img/no_complaint_found.png'),
+                fit: BoxFit.fill
+            )
         ),
       ),
     );
@@ -114,14 +113,13 @@ class _MyComplaintState extends State<MyComplaint> {
           stream: Firestore.instance.collection("Complaint").document(widget.uid).collection(widget.uid).snapshots(),
           builder: (context,snapshot){
             if(!snapshot.hasData){
-              return _noCompalaintFoundContainer();
+              return SpinKitChasingDots(
+                color: Colors.black,
+                size: 30,
+              );
             }
             else{
-
-
-              return snapshot.data.documents.length == 0 ?  Container(
-                color: primarygreen,
-              ) :
+              return snapshot.data.documents.length == 0 ? _noCompalaintFoundContainer() :
               // map complaints to complaint card
                 ListView.builder(
                   controller: _scrollController,
