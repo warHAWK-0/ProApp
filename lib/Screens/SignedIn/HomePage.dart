@@ -21,8 +21,8 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _pages = [
       Container(child: Text('Home')),
       // FeedMain(uid: widget.uid),
-      Container(child: Text('Complaint')),
-      // ComplaintMain(uid: widget.uid),
+      // Container(child: Text('Complaint')),
+      ComplaintMain(uid: widget.uid),
       ProfileMain(uid: widget.uid),
     ];
 
