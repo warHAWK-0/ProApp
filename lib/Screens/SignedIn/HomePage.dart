@@ -21,7 +21,8 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _pages = [
       Container(child: Text('Home')),
       // FeedMain(uid: widget.uid),
-      ComplaintMain(uid: widget.uid),
+      Container(child: Text('Complaint')),
+      // ComplaintMain(uid: widget.uid),
       ProfileMain(uid: widget.uid),
     ];
 
@@ -40,16 +41,28 @@ class _HomePageState extends State<HomePage> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(EvaIcons.starOutline,size: 22,),
-            title:Text( "Feed")
+            icon: Icon(
+              EvaIcons.starOutline,
+              size: 22,
+            ),
+            title: Text("Feed"),
+            //label : "Feed"
           ),
           BottomNavigationBarItem(
-              icon: Icon(EvaIcons.alertCircleOutline,size: 22,),
-    title:Text(  "Complaints")
+            icon: Icon(
+              EvaIcons.alertCircleOutline,
+              size: 22,
+            ),
+            //label: "Complaints"
+            title: Text("Complaints"),
           ),
           BottomNavigationBarItem(
-              icon: Icon(EvaIcons.personOutline,size: 22,),
-    title:Text(  "User Profile")
+            icon: Icon(
+              EvaIcons.personOutline,
+              size: 22,
+            ),
+            //label: "User Profile"
+            title: Text("User Profile"),
           ),
         ],
       ),

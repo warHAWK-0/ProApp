@@ -1,47 +1,173 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
+import 'package:proapp/Services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/UserDetails.dart';
-import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
-import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/loading.dart';
+import 'package:proapp/Widgets/otp.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class EditProfile extends StatefulWidget {
   final UserDetails userDetails;
-
-  const EditProfile({Key key, this.userDetails}) : super(key: key);
+  final String uid;
+  String userProfileUrl;
+  EditProfile({Key key, this.userDetails, this.uid, this.userProfileUrl}) : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
+  DatabaseService databaseService;
   final _formKey = GlobalKey<FormState>();
-  bool loading = false;
-  bool _btnEnabled = false;
+  bool loading = true;
+  FocusNode f1, f2;
   TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
-  String titleText = "Edit you profile";
+  String newMobNo,newAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    f1 = FocusNode();
+    f2 = FocusNode();
+  }
+
+  void submit() {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OTP(
+          prevMobNo: widget.userDetails.mobileNo,
+          uid: widget.uid,
+          newUserDetails: UserDetails(
+            email: widget.userDetails.email,
+            name: widget.userDetails.name,
+            address: newAddress,
+            mobileNo: newMobNo,
+          ),
+        )),
+      );
+    }
+  }
+
+  Widget showphoneField() {
+    return Container(
+      width: double.infinity,
+      child: TextFormField(
+        maxLines: 1,
+        autofocus: false,
+        initialValue: widget.userDetails.mobileNo,
+        onChanged: (value) {
+          setState(() {
+            newMobNo = value;
+            loading = false;
+          });
+        },
+        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f1),
+        keyboardType: TextInputType.number,
+        validator: (val) =>
+            val.length != 10 ? "Enter a valid phone number" : null,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: primarygreen),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Colors.red),
+          ), //for error write code change color to red
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget showAddressField() {
+    return Container(
+      //input fields email
+      height: 81,
+      width: double.infinity,
+      child: TextFormField(
+        initialValue: widget.userDetails.address,
+        onChanged: (value) {
+          setState(() {
+            newAddress = value;
+            loading = false;
+          });
+        },
+        maxLines: 4,
+        autofocus: false,
+        validator: (value) =>
+            value.length <= 0 ? "Enter a valid address" : null,
+        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f2),
+        keyboardType: TextInputType.streetAddress,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: primarygreen),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Colors.red),
+          ), //for error write code change color to red
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    // storing userdetails
-    String address = widget.userDetails.address;
-    String mobileNo = widget.userDetails.mobileNo;
+    databaseService = new DatabaseService(uid: widget.uid);
 
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: CustomAppBar(
-          child: Text(
-            titleText,
-            style: Heading2(Colors.black, letterSpace: 1.25),          ),
-          backIcon: true,
-          elevation: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: InkWell(
+            onTap: (){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileMain(uid: widget.uid,)));
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+              size: 20,
+            ),
+          ),
+          title: Center(
+            child: Text(
+              'Edit your profile       ',
+              style: Heading2(Colors.black, letterSpace: 1.15),
+            ),
+          ),
         ),
         body: Builder(
           builder: (context) {
@@ -56,7 +182,7 @@ class _EditProfileState extends State<EditProfile> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        imageProfile(),
+                        _showProfilePicture(),
                         SizedBox(
                           height: 7,
                         ),
@@ -107,14 +233,14 @@ class _EditProfileState extends State<EditProfile> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
+                                      BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 errorBorder: InputBorder
                                     .none, //for error write code change color to red
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(6.0),
                                   borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
+                                      BorderSide(color: Color(0xffCBD5E0)),
                                 ),
                                 hintStyle: TextStyle(
                                     fontSize: 16,
@@ -140,53 +266,7 @@ class _EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 8,
                         ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: TextFormField(
-                            initialValue: widget.userDetails.mobileNo,
-                           onChanged: (value){
-                             setState(() {
-                               mobileNo = value;
-                             });
-
-                           },
-                            showCursor: true,
-                            autovalidate: true,
-                            // ignore: missing_return
-                            validator: (String txt) {
-                              bool isValid = txt == mobileNo;
-                              if (isValid == false) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  setState(() {
-                                    _btnEnabled = txt != mobileNo;
-                                  });
-                                });
-                              }
-                            },
-                            keyboardType: TextInputType.phone,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    left: 12, top: 0, bottom: 0),
-                                filled: true,
-                                fillColor: Colors.white,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                errorBorder: InputBorder
-                                    .none, //for error write code change color to red
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                hintStyle: TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45))),
-                          ),
-                        ),
+                        showphoneField(),
                         SizedBox(
                           height: 16.0,
                         ),
@@ -206,75 +286,30 @@ class _EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 8,
                         ),
-                        Container(
-                          // address
-                          height: 81,
-                          width: double.infinity,
-                          child: TextFormField(
-                            initialValue: address,
-                            autovalidate: true,
-                            // ignore: missing_return
-                            validator: (String txt) {
-                              bool isValid = txt == address;
-                              if (isValid == false) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  setState(() {
-                                    _btnEnabled = txt != address;
-                                  });
-                                });
-                              }
-                            },
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 4,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    left: 12, top: 20, bottom: 0),
-                                isDense: true,
-                                filled: true,
-                                fillColor: Colors.white,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                errorBorder: InputBorder
-                                    .none, //for error write code change color to red
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                  BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                hintStyle: TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45))),
-                          ),
-                        ),
+                        showAddressField(),
                         SizedBox(
                           height: 32.0,
                         ),
                         InkWell(
-                          onTap: _btnEnabled ? () => _nav() : null,
+                          onTap: loading ? null : submit,
                           child: Container(
                             //Sign up button
                             width: double.infinity,
                             height: 46,
                             decoration: BoxDecoration(
-                              color: _btnEnabled ? primarygreen : Colors.grey[300],
+                              color: loading ? Colors.grey[300] : primarygreen,
                               borderRadius: BorderRadius.circular(6.0),
                             ),
-                            child: loading
-                                ? Loading()
-                                : Center(
-                              child: Text(
-                                'SAVE',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Intern',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
+                            child: Center(
+                                    child: Text(
+                                      'SAVE',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Intern',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
@@ -285,15 +320,14 @@ class _EditProfileState extends State<EditProfile> {
         ));
   }
 
-  Widget imageProfile() {
-    return Center(
-      child: Stack(children: <Widget>[
-        CircleAvatar(
-          radius: 32.0,
-          backgroundImage: _imageFile == null
-              ? AssetImage('Assets/img/profilepic.png')
-              : FileImage(File(_imageFile.path)),
-        ),
+  // retrieving image url from firebase storage
+  _showProfilePicture() {
+    return Stack(
+      children: [
+      CircleAvatar(
+        backgroundImage: NetworkImage(widget.userProfileUrl),
+        maxRadius: 50,
+      ),
         Positioned(
           bottom: 3.0,
           right: 3.0,
@@ -305,6 +339,7 @@ class _EditProfileState extends State<EditProfile> {
               );
             },
             child: Container(
+              padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: primarygreen,
@@ -312,12 +347,12 @@ class _EditProfileState extends State<EditProfile> {
               child: Icon(
                 EvaIcons.edit,
                 color: Colors.black, //to change the picture
-                size: 16.0,
+                size: 20.0,
               ),
             ),
           ),
         ),
-      ]),
+      ]
     );
   }
 
@@ -333,64 +368,68 @@ class _EditProfileState extends State<EditProfile> {
         children: <Widget>[
           Spacer(),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              InkWell(
-                onTap: (){
-                  takePhoto(ImageSource.camera);
-                },
-                child: Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        margin: EdgeInsets.only(bottom: 4),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: primarygreen),
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: Colors.white,
-                          size: 30,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    takePhoto(ImageSource.camera);
+                  },
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.only(bottom: 4),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: primarygreen),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 30,
+                          ),
                         ),
-                      ),
-                      Text('CAMERA',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
-                    ],
+                        Text(
+                          'CAMERA',
+                          style: TextStyle(
+                              color: Colors.grey, fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: (){
-                  takePhoto(ImageSource.gallery);
-                },
-                child: Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        margin: EdgeInsets.only(bottom: 4),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: primarygreen),
-                        child: Icon(
-                          Icons.image,
-                          color: Colors.white,
-                          size: 30,
+                InkWell(
+                  onTap: () {
+                    takePhoto(ImageSource.gallery);
+                  },
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.only(bottom: 4),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: primarygreen),
+                          child: Icon(
+                            Icons.image,
+                            color: Colors.white,
+                            size: 30,
+                          ),
                         ),
-                      ),
-                      Text('GALLERY',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
-                    ],
+                        Text(
+                          'GALLERY',
+                          style: TextStyle(
+                              color: Colors.grey, fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ]
-          ),
+              ]),
           Spacer(),
         ],
       ),
     );
-  }
-  void _nav() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Otp2()),);
   }
 
   void takePhoto(ImageSource source) async {
@@ -400,5 +439,32 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       _imageFile = pickedFile;
     });
+    FirebaseStorage storage = FirebaseStorage.instance;
+    File image;
+
+    // compress image function
+    final filePath = _imageFile.path;
+    final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
+    final splitted = filePath.substring(0, (lastIndex));
+    final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
+
+    var compressedImage = await FlutterImageCompress.compressAndGetFile(
+      filePath,
+      outPath,
+      minWidth: 600,
+      minHeight: 600,
+      quality: 50,
+    );
+
+    setState(() {
+      widget.userProfileUrl = compressedImage.path;
+    });
+    print(compressedImage.path);
+    image = File(compressedImage.path);
+    StorageReference reference =
+        storage.ref().child("Profile/${widget.uid}.jpg");
+    reference.putFile(image);
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 }
