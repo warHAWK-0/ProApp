@@ -10,7 +10,6 @@ import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
-import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:recase/recase.dart';
 

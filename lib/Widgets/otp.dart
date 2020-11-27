@@ -1,13 +1,14 @@
 import 'dart:math';
+import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:proapp/Models/UserDetails.dart';
+import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/Twilio/send_sms.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
-import 'package:timer_button/timer_button.dart';
 
 import 'CustomAppBar.dart';
 
@@ -36,7 +37,7 @@ class _OTPState extends State<OTP> {
     Random random = new Random();
     otp = random.nextInt(999999).toString();
     String OTPmessage = "[ProApp]Here's the verification code for changing your profile: $otp. This code will expire in 60 seconds.";
-    sendSMS(widget.prevMobNo, OTPmessage);
+    sendSMS(widget.newUserDetails.mobileNo, OTPmessage);
   }
 
   Widget showProgressBar() {
@@ -54,15 +55,21 @@ class _OTPState extends State<OTP> {
     );
   }
 
+  bool _enableContinue = false;
   Widget showotpInput() {
     return Container(
       //input fields for number
-
       width: double.infinity,
       child: TextFormField(
-        validator: (val) => val.isEmpty ? 'Enter OTP' : null,
+        validator: (val) => val.length == 6 ? null : 'Enter a 6-digit OTP',
         onChanged: (val) {
           setState(() {
+            if(val.length == 6){
+             _enableContinue = true;
+            }
+            else{
+              _enableContinue = false;
+            }
             this.userEnteredOTP = val;
           });
         },
@@ -115,16 +122,14 @@ class _OTPState extends State<OTP> {
                 padding: EdgeInsets.only(
                     left: 20,
                     right: 20,
-                    top: MediaQuery
-                        .of(context)
-                        .size
-                        .height / 10),
+                    top: 50
+                ),
                 width: double.infinity,
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       showProgressBar(),
                       SizedBox(
@@ -148,21 +153,40 @@ class _OTPState extends State<OTP> {
                       SizedBox(
                         height: 12.0,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("Resend OTP in ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Intern',
-                                  fontSize: 14)),
-                          TimerButton(
-                            buttonType: ButtonType.FlatButton,
-                            label: 'Resend',
-                            timeOutInSeconds: 60,
-                            disabledColor: Colors.white,
-                          )
-                        ],
+                      ArgonTimerButton(
+                        initialTimer: 60, // Optional
+                        height: 50,
+                        width: 100,
+                        minWidth: 100,
+                        color: Colors.white,
+                        elevation: 0,
+                        child: Text(
+                          "Resend OTP",
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400
+                          ),
+                        ),
+                        loader: (timeLeft) {
+                          return Text(
+                            "Wait | $timeLeft",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400
+                            ),
+                          );
+                        },
+                        onTap: (startTimer, btnState) {
+                          if (btnState == ButtonState.Idle) {
+                            print('ilde');
+                            startTimer(60);
+                          }
+                          else if(btnState == ButtonState.Busy){
+                            print('busy');
+                          }
+                        },
                       ),
                       SizedBox(
                         height: 32.0,
@@ -191,8 +215,10 @@ class _OTPState extends State<OTP> {
                               loading = true;
                             });
                             if (userEnteredOTP == otp){
+                              print(widget.newUserDetails.mobileNo);
                               DatabaseService db = DatabaseService(uid: widget.uid);
                               db.updateUserDB(widget.newUserDetails);
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ProfileMain()));
                             }
                             else{
                               // reset timer

@@ -20,4 +20,6 @@ Future<void> sendSMS(String toPhoneNumber, String messageBody) async {
     'from': twilioMyPhoneNumber,
     'to': '+91$toPhoneNumber',
   });
+  // TODO: check message body and show toast message
+  print(message);
 }
