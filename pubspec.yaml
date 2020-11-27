@@ -36,6 +36,7 @@ dependencies:
   datetime_picker_formfield: ^0.1.8
   email_validator: "^1.0.6"
   footer: ^0.0.3
+  recase: ^3.0.1
 
 # firestore-firebase extensions
   google_sign_in: ^4.5.3
@@ -44,9 +45,14 @@ dependencies:
   cloud_firestore: ^0.13.5
   firebase_storage: ^3.0.8
   provider: ^3.1.0
+  firebase_analytics: ^5.0.6
 
 # file pick extensions
   image_picker: "^0.6.7+11"
+
+  http: ^0.12.0+4
+  flutter_image_compress: ^0.7.0
+  argon_buttons_flutter: ^1.0.6
 
 dev_dependencies:
   flutter_test:

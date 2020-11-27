@@ -314,7 +314,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
               ),
               SizedBox(height: _height/50,),
               // Upload Button
-              InkWell(
+              _imageFile == null ? InkWell(
                 onTap: () {
                   showModalBottomSheet(
                     context: context,
@@ -343,6 +343,17 @@ class _CreateComplaintState extends State<CreateComplaint> {
                       )
                     ],
                   ),
+                ),
+              ) : Container(
+                padding: EdgeInsets.symmetric(horizontal: 4,vertical: 8),
+                height: MediaQuery.of(context).size.width/3,
+                width: MediaQuery.of(context).size.width/2,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey[350],
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(6.0),
                 ),
               ),
               Container(

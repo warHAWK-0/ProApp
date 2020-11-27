@@ -1,15 +1,8 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:proapp/Models/UserDetails.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/themes.dart';
-
-import '../NotSIgnedIn/Login/LoginMain.dart';
 import 'Complaints/ComplaintsMain.dart';
-import 'Feed/FeedMain.dart';
 import 'Profile/ProfileMain.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,7 +21,8 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _pages = [
       Container(child: Text('Home')),
       // FeedMain(uid: widget.uid),
-      ComplaintMain(uid: widget.uid),
+      Container(child: Text('Complaint')),
+      // ComplaintMain(uid: widget.uid),
       ProfileMain(uid: widget.uid),
     ];
 
@@ -47,17 +41,28 @@ class _HomePageState extends State<HomePage> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(EvaIcons.starOutline,size: 22,),
-            label : "Feed"
+            icon: Icon(
+              EvaIcons.starOutline,
+              size: 22,
+            ),
+            title: Text("Feed"),
+            //label : "Feed"
           ),
           BottomNavigationBarItem(
-              icon: Icon(EvaIcons.alertCircleOutline,size: 22,),
-              label: "Complaints"
+            icon: Icon(
+              EvaIcons.alertCircleOutline,
+              size: 22,
+            ),
+            //label: "Complaints"
+            title: Text("Complaints"),
           ),
           BottomNavigationBarItem(
-              icon: Icon(EvaIcons.personOutline,size: 22,),
-              label: "User Profile"
-
+            icon: Icon(
+              EvaIcons.personOutline,
+              size: 22,
+            ),
+            //label: "User Profile"
+            title: Text("User Profile"),
           ),
         ],
       ),
