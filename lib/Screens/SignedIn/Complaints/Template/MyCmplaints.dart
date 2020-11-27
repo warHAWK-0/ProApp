@@ -79,7 +79,7 @@ class _MyComplaintState extends State<MyComplaint> {
   }
 
   Widget _noCompalaintFoundContainer(){
-    print("*******************");
+
     return Container(
       alignment: Alignment.center,
       child: Container(
@@ -99,7 +99,7 @@ class _MyComplaintState extends State<MyComplaint> {
 
   @override
   Widget build(BuildContext context) {
-    print('current uid is: '+widget.uid);
+
 
     _scrollController.addListener(() {
       double maxScroll = _scrollController.position.maxScrollExtent;
@@ -117,8 +117,8 @@ class _MyComplaintState extends State<MyComplaint> {
               return _noCompalaintFoundContainer();
             }
             else{
-              print(snapshot.data.documents[0]['ComplaintType']);
-              print(snapshot.data.documents.length == 0);
+
+
               return snapshot.data.documents.length == 0 ?  Container(
                 color: primarygreen,
               ) :

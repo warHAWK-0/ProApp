@@ -116,7 +116,6 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 color: Colors.white,
               ),
         onPressed: () {
-          print(widget.uid);
           _myComplaint
               ? Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CreateComplaint()))

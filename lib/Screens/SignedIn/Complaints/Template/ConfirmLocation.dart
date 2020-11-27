@@ -174,8 +174,7 @@ TextEditingController locationController;
    }
 
   Widget createComplaintButton(DatabaseService db){
-    print(widget.description);
-    print(widget.selectedValueMap["department"]);
+
     return _loading ? Loading() : InkWell(
       splashColor: Colors.transparent,
       onTap: () async{
@@ -222,13 +221,7 @@ TextEditingController locationController;
           Navigator.pop(context);
           Navigator.pop(context);
         }
-//        else{
-//          ToastUtils.showCustomToast(
-//              context, "Some issue");
-//        }
 
-        //set loading to false and pop the window
-        //Also showing toast message as notification
         setState(() {
           _loading = false;
         });
