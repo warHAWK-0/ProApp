@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/CreateComplaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/FilterComplaints.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
@@ -16,7 +17,38 @@ class ComplaintMain extends StatefulWidget {
 
 class _ComplaintMainState extends State<ComplaintMain> {
   bool _myComplaint = true;
-  String dept, comp, desc;
+  String dept, comp, desc,region;
+  Position _currentPosition;
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  _getCurrentLocation() {
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        region=place.administrativeArea;
+      });
+
+    } catch (e) {
+      print(e);
+    }
+  }
 
 
   @override
@@ -75,6 +107,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
                         child: InkWell(
                           onTap: () {
                             setState(() {
+                             _getCurrentLocation();
                               _myComplaint = false;
                             });
                           },
@@ -97,7 +130,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 SizedBox(
                   height: 10,
                 ),
-                _myComplaint ? MyComplaint(uid: widget.uid,) : AllComplaint(),
+                _myComplaint ? MyComplaint(uid: widget.uid,) : AllComplaint(uid: widget.uid,region:region),
               ],
             ),
 

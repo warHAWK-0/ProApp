@@ -33,7 +33,7 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
   bool _loading = false;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
-
+  String region;
   Position _currentPosition;
   String _currentAddress;
   @override
@@ -67,6 +67,7 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
       setState(() {
         _currentAddress =
         "   ${place.name} "+", "+"${place.locality}"+", "+" ${place.subLocality}"+", "+"${place.administrativeArea} "+", "+"${place.subAdministrativeArea} "+", "+" ${place.thoroughfare} "+", "+" ${place.country} "+", "+"${place.postalCode}";
+      region=place.administrativeArea;
       });
 
     } catch (e) {
@@ -216,6 +217,7 @@ TextEditingController locationController;
 
           //creating document for new complaint in DATABASE
           await db.complaint.document(uid.toString()).collection(uid.toString()).document(cid.toString()).setData(_complaint.toJson());
+          await db.allComplaints.document(region).collection(uid.toString()).document(cid.toString()).setData(_complaint.toJson());
           //adding image to STORAGE
           db.uploadImageToFirebase(context,widget.imageFile,cid.toString());
           Navigator.pop(context);
