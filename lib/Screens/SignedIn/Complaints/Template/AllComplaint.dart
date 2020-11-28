@@ -76,6 +76,7 @@ class _AllComplaintState extends State<AllComplaint> {
 
                     ),
                     uid: widget.uid,
+
                   );
                 }
             );

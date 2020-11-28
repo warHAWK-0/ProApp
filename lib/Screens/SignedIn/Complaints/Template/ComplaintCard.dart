@@ -11,6 +11,7 @@ class ComplaintCard extends StatelessWidget {
   final Complaint complaint;
   final String uid;
 
+
   TextStyle complaintCardSubHeading = GoogleFonts.inter(
     textStyle: TextStyle(
       color: Colors.black,

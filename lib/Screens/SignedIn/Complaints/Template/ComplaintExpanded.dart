@@ -17,6 +17,7 @@ class ComplaintExpanded extends StatefulWidget {
   final String uid;
 
 
+
   const ComplaintExpanded({Key key, this.complaint,this.uid}) : super(key: key);
   @override
   _ComplaintExpandedState createState() => _ComplaintExpandedState();
@@ -149,7 +150,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
+                widget.uid==widget.complaint.uid?Container(
                   height: 48,
                   width: MediaQuery.of(context).size.width / 3 >= 122
                       ? 122
@@ -263,7 +264,8 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                               ));
                     },
                   ),
-                ),
+                )
+                    :SizedBox(height: 0.1,)
 
               ],
             ),
