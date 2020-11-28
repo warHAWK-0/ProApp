@@ -217,7 +217,7 @@ TextEditingController locationController;
 
           //creating document for new complaint in DATABASE
           await db.complaint.document(uid.toString()).collection(uid.toString()).document(cid.toString()).setData(_complaint.toJson());
-          await db.allComplaints.document(region).collection(uid.toString()).document(cid.toString()).setData(_complaint.toJson());
+          await db.allComplaints.document(region).collection(region).document(cid.toString()).setData(_complaint.toJson());
           //adding image to STORAGE
           db.uploadImageToFirebase(context,widget.imageFile,cid.toString());
           Navigator.pop(context);

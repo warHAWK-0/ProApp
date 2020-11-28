@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Screens/SignedIn/Complaints/Template/ComplaintCard.dart';
+import 'package:proapp/Services/database.dart';
 
 class AllComplaint extends StatefulWidget {
 final String region;
@@ -15,6 +16,7 @@ final String region;
 }
 
 class _AllComplaintState extends State<AllComplaint> {
+  DatabaseService db = new DatabaseService();
 
   Widget _noCompalaintFoundContainer(){
 
@@ -34,11 +36,14 @@ class _AllComplaintState extends State<AllComplaint> {
 
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return   Expanded(
       child: StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection("AllComplaints").document(widget.region).collection(widget.uid).snapshots(),
+
+    stream: Firestore.instance.collection("AllComplaints").document(widget.region).collection(widget.region).snapshots(),
         builder: (context,snapshot){
           if(!snapshot.hasData){
             return SpinKitChasingDots(
