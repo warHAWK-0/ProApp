@@ -9,6 +9,7 @@ class AllComplaint extends StatefulWidget {
 final String region;
   final String uid;
 
+
   const AllComplaint({Key key, this.uid, this.region}) : super(key: key);
 
   @override
@@ -39,51 +40,69 @@ class _AllComplaintState extends State<AllComplaint> {
 
   @override
   Widget build(BuildContext context) {
+    QuerySnapshot Filtered;
 
-    return   Expanded(
-      child: StreamBuilder<QuerySnapshot>(
+    if(Filtered != null){
+      print("69696969696969696");
+      //for(int i=0;i<widget.Filtered.documents.length;i++){
+        print(Filtered.documents[0]["DepartmentName"]);
+      //}
+    }
+    else {
+      return Expanded(
+        child: StreamBuilder<QuerySnapshot>(
 
-    stream: Firestore.instance.collection("AllComplaints").document(widget.region).collection(widget.region).snapshots(),
-        builder: (context,snapshot){
-          if(!snapshot.hasData){
-            return SpinKitChasingDots(
-              color: Colors.black,
-              size: 30,
-            );
-          }
-          else{
-            return snapshot.data.documents.length == 0 ? _noCompalaintFoundContainer() :
-            // map complaints to complaint card
-            ListView.builder(
+          stream: Firestore.instance.collection("AllComplaints").document(
+              widget.region).collection(widget.region).snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return SpinKitChasingDots(
+                color: Colors.black,
+                size: 30,
+              );
+            }
+            else {
+              return snapshot.data.documents.length == 0
+                  ? _noCompalaintFoundContainer()
+                  :
+              // map complaints to complaint card
+              ListView.builder(
 //                controller: _scrollController,
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: (context ,index){
-                  return ComplaintCard(
-                    complaint: Complaint(
-                      complaintType: snapshot.data.documents[index]['ComplaintType'],
-                      complaintId : snapshot.data.documents[index].documentID,
-                      departmentName : snapshot.data.documents[index]['DepartmentName'],
-                      description : snapshot.data.documents[index]['Description'],
-                      status : snapshot.data.documents[index]['Status'],
-                      uid : snapshot.data.documents[index]['UID'],
-                      location : snapshot.data.documents[index]['Location'],
-                      start : snapshot.data.documents[index]['Start'],
-                      end : snapshot.data.documents[index]['End'],
-                      verification : snapshot.data.documents[index]['Verification'],
-                      assigned : snapshot.data.documents[index]['Assigned'],
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.documents.length,
+                  itemBuilder: (context, index) {
+                    return ComplaintCard(
+                      complaint: Complaint(
+                          complaintType: snapshot.data
+                              .documents[index]['ComplaintType'],
+                          complaintId: snapshot.data.documents[index]
+                              .documentID,
+                          departmentName: snapshot.data
+                              .documents[index]['DepartmentName'],
+                          description: snapshot.data
+                              .documents[index]['Description'],
+                          status: snapshot.data.documents[index]['Status'],
+                          uid: snapshot.data.documents[index]['UID'],
+                          location: snapshot.data.documents[index]['Location'],
+                          start: snapshot.data.documents[index]['Start'],
+                          end: snapshot.data.documents[index]['End'],
+                          verification: snapshot.data
+                              .documents[index]['Verification'],
+                          assigned: snapshot.data.documents[index]['Assigned'],
+                          upvote: snapshot.data.documents[index]['Upvote']
 
-                    ),
-                    uid: widget.uid,
+                      ),
+                      uid: widget.uid,
 
-                  );
-                }
-            );
-          }
-        },
-      ),
+                    );
+                  }
+              );
+            }
+          },
+        ),
 
-    );
+      );
+    }
   }
 }

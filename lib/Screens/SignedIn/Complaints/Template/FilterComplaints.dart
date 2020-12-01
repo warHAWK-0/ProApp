@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Screens/SignedIn/Complaints/Template/AllComplaint.dart';
+import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/themes.dart';
@@ -13,6 +16,7 @@ class Filter extends StatefulWidget {
 }
 
 class _FilterState extends State<Filter> {
+  DatabaseService db =new DatabaseService();
   DateTime fromDate = DateTime.now();
   DateTime toDate = DateTime.now();
   Color wProgress = Colors.black;
@@ -408,8 +412,8 @@ class _FilterState extends State<Filter> {
                       ],
                     ),
                     onPressed: () {
-                      //apply
-                    },
+                      filtercomplaint();
+                    }
                   ),
                 ),
                 Spacer(),
@@ -447,5 +451,22 @@ class _FilterState extends State<Filter> {
         ),
       ),
     );
+  }
+ List<String> filtercomplaints= [];
+  QuerySnapshot filtered;
+  void filtercomplaint() {
+    db.allComplaints.document('California').collection('California').where('DepartmentName',isEqualTo:selectedValueMap["department"]).where('Status',isEqualTo: 'RAISED').getDocuments().then((QuerySnapshot doc){
+  print("got it");
+      filtered=doc;
+    });
+    Navigator.pop(context);
+  }
+
+
+
+  Stream<List<QuerySnapshot>> getData() {
+    Stream stream1 = db.allComplaints.document('California').collection('California').snapshots();
+
+    return stream1;
   }
 }

@@ -149,11 +149,12 @@ class _ComplaintMainState extends State<ComplaintMain> {
                 color: Colors.white,
               ),
         onPressed: () {
-          _myComplaint
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CreateComplaint()))
-              : Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Filter()));
+          if(_myComplaint)
+              {Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CreateComplaint()));}
+              else {Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Filter()));}
+
         },
       ),
     );
