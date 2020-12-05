@@ -208,7 +208,8 @@ TextEditingController locationController;
             start: DateTime.now().toString().substring(0,16),
             end: null,
             verification: null,
-            assigned: null,
+            assignedBy: null,
+            assignedTo: [],
             upvote: 0,
           );
 

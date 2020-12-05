@@ -139,8 +139,8 @@ class _MyComplaintState extends State<MyComplaint> {
                       start : snapshot.data.documents[index]['Start'],
                       end : snapshot.data.documents[index]['End'],
                       verification : snapshot.data.documents[index]['Verification'],
-                      assigned : snapshot.data.documents[index]['Assigned'],
-
+                      assignedBy: snapshot.data.documents[index]['AssignedBy'],
+                      assignedTo: snapshot.data.documents[index]['AssignedTo'],
                     ),
                       uid: widget.uid,
                   );

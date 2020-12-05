@@ -8,7 +8,8 @@ class Complaint{
   String uid;
   num upvote;
   String location;
-  String start,end,verification,assigned;
+  String start,end,verification,assignedBy;
+  List assignedTo;
 
   Complaint({
     this.complaintId,
@@ -21,8 +22,9 @@ class Complaint{
     this.start,
     this.end,
     this.verification,
-    this.assigned,
+    this.assignedBy,
     this.upvote,
+    this.assignedTo
   });
 
   Map<String, dynamic> toJson() => {
@@ -36,8 +38,9 @@ class Complaint{
     'Start' : start,
     'End' : end,
     'Verification' : verification,
-    'Assigned' : assigned,
+    'AssignedBy' : assignedBy,
     'Upvote': upvote,
+    'AssignedTo' : assignedTo,
 
   };
 }
