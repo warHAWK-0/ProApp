@@ -7,12 +7,12 @@ import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
-class Filter extends StatefulWidget {
+class FilterAllComplaint extends StatefulWidget {
   @override
-  _FilterState createState() => _FilterState();
+  _FilterAllComplaintState createState() => _FilterAllComplaintState();
 }
 
-class _FilterState extends State<Filter> {
+class _FilterAllComplaintState extends State<FilterAllComplaint> {
   DateTime fromDate = DateTime.now();
   DateTime toDate = DateTime.now();
   Color wProgress = Colors.black;

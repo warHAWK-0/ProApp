@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 enum VoteType{
@@ -9,6 +11,8 @@ enum VoteType{
 
 
 class VoteTemplate extends StatefulWidget {
+  final compaintId;
+  final String uid;
   final VoteType type;
   final bool upvote;
   final bool downvote;
@@ -21,6 +25,7 @@ class VoteTemplate extends StatefulWidget {
     this.downvote = false,
     @required this.upvoteCount,
     this.downvoteCount = 0,
+    this.uid, this.compaintId,
   });
 
   @override
@@ -36,6 +41,8 @@ class _VoteTemplateState extends State<VoteTemplate> {
       upvoteCount: widget.upvoteCount,
       downvoteCount: widget.downvoteCount,
     ) : ComplaintVote(
+      complaintId: widget.compaintId,
+      uid: widget.uid,
       upvoteCount: widget.upvoteCount,
       upvote: widget.upvote,
     );
@@ -150,24 +157,57 @@ class _FeedState extends State<Feed> {
 }
 
 class ComplaintVote extends StatefulWidget {
+  final String complaintId;
+  final String uid;
   bool upvote;
   int upvoteCount;
 
   ComplaintVote({
     this.upvote = false,
-    @required this.upvoteCount
+    @required this.upvoteCount, this.uid, this.complaintId
   });
   @override
   _ComplaintVoteState createState() => _ComplaintVoteState();
 }
 
 class _ComplaintVoteState extends State<ComplaintVote> {
+
+  DatabaseService db ;
+
+  Future<void> updateVoteCount(int upvoteCount) async {
+    // updating value in complaint document
+    await db.complaint.document(widget.uid).collection(widget.uid).document(widget.complaintId)
+        .updateData({
+      'Upvote': upvoteCount,
+    });
+  }
+
+  Future<void> updateListOfLikedComplaints() async{
+    if(widget.upvote){
+      // update likedComplaint field
+      await db.complaint.document(widget.uid).updateData({
+        'likedComplaint': FieldValue.arrayRemove([widget.complaintId]),
+      });
+    }
+    else{
+      // update likedComplaint field
+      await db.complaint.document(widget.uid).updateData({
+        'likedComplaint': FieldValue.arrayUnion([widget.complaintId]),
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    db = DatabaseService(uid: widget.uid);
     return InkWell(
-      onTap: (){
+      onTap: () async{
         setState(() {
           widget.upvoteCount = widget.upvote ? widget.upvoteCount-1 : widget.upvoteCount+1;
+        });
+        await updateVoteCount(widget.upvoteCount);
+        await updateListOfLikedComplaints();
+        setState(() {
           widget.upvote = !widget.upvote;
         });
       },
@@ -183,6 +223,7 @@ class _ComplaintVoteState extends State<ComplaintVote> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Spacer(),
             Text(
               widget.upvoteCount.toString(),
               style: TextStyle(

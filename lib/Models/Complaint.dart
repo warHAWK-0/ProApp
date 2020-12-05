@@ -9,6 +9,7 @@ class Complaint{
   num upvote;
   String location;
   String start,end,verification,assigned;
+  List<dynamic> likedByUsers;
 
   Complaint({
     this.complaintId,
@@ -23,6 +24,7 @@ class Complaint{
     this.verification,
     this.assigned,
     this.upvote,
+    this.likedByUsers,
   });
 
   Map<String, dynamic> toJson() => {
@@ -38,6 +40,6 @@ class Complaint{
     'Verification' : verification,
     'Assigned' : assigned,
     'Upvote': upvote,
-
+    'LikedByUsers' : likedByUsers,
   };
 }

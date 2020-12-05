@@ -48,6 +48,9 @@ class DatabaseService{
         .updateData(userDetails.toJson());
   }
 
-
-
+  Future getlikedcomplaints() async{
+    final document =  await complaint.document(uid).get();
+    print(document.data['likedComplaint'].toList());
+    return document.data['likedComplaint'].toList();
+  }
 }

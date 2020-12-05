@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,12 +9,8 @@ import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
-import 'package:proapp/Widgets/ToastMessage.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
-
-
-
 
 class ConfirmLocation extends StatefulWidget {
   final File imageFile;
@@ -43,7 +40,7 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
     super.initState();
   }
 
-  _getCurrentLocation() {
+  Future _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
@@ -82,6 +79,8 @@ TextEditingController locationController;
   Widget build(BuildContext context) {
     DatabaseService db = _initiateDBService();
 
+    // TODO: add current location into textbox for user
+
     return Scaffold(
       appBar: CustomAppBar(
         child: Text(
@@ -92,53 +91,61 @@ TextEditingController locationController;
         backIcon: true,
       ),
 
-      body: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            SizedBox(height: 16,),
-            Text( "If your current location is incorrect, enter your location",style: GoogleFonts.inter(
-              textStyle:TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-              )),),
-            SizedBox(height: 16,),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _currentPosition!=null ? Text(_currentAddress) :SizedBox(height: 0.1,)
+      body: FutureBuilder(
+        future: _getCurrentLocation(),
+        builder: (context,snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting)
+            return Container();
+          else
+            return Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  SizedBox(height: 16,),
+                  Text( "If your current location is incorrect, enter your location",style: GoogleFonts.inter(
+                      textStyle:TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      )),),
+                  SizedBox(height: 16,),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _currentPosition!=null ? Text(_currentAddress) :SizedBox(height: 0.1,)
 
-              ],
-            ),
-            SizedBox(height: 16,),
+                    ],
+                  ),
+                  SizedBox(height: 16,),
 
-            TextField(
-              controller: locationController,
-              maxLines: 5,
-              keyboardType: TextInputType.multiline,
-              maxLength: 1000,
-              maxLengthEnforced: true,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromRGBO(0, 0, 0, 0.45))
-                ),
-                hintStyle: Heading3(
-                  Color.fromRGBO(0, 0, 0, 0.45),
-                ),
-                border: InputBorder.none,
-                hintText: 'Location',
-              ),
-              onChanged: (text){
-                setState(() {
-                  _location = text;
-                });
-              },
-            ),
-            SizedBox(height: 16,),
+                  TextField(
+                    controller: locationController,
+                    maxLines: 5,
+                    keyboardType: TextInputType.multiline,
+                    maxLength: 1000,
+                    maxLengthEnforced: true,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color.fromRGBO(0, 0, 0, 0.45))
+                      ),
+                      hintStyle: Heading3(
+                        Color.fromRGBO(0, 0, 0, 0.45),
+                      ),
+                      border: InputBorder.none,
+                      hintText: 'Location',
+                    ),
+                    onChanged: (text){
+                      setState(() {
+                        _location = text;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16,),
 //            createComplaintButton(db),
-            createButton(db),
-          ],
-        ),
+                  createButton(db),
+                ],
+              ),
+            );
+        },
       ),
     );
   }
@@ -174,8 +181,6 @@ TextEditingController locationController;
    }
 
   Widget createComplaintButton(DatabaseService db){
-    print(widget.description);
-    print(widget.selectedValueMap["department"]);
     return _loading ? Loading() : InkWell(
       splashColor: Colors.transparent,
       onTap: () async{
@@ -184,7 +189,6 @@ TextEditingController locationController;
           _loading = true;
         });
 
-        // TODO: validation for all dropdown and desc
         if(true){
           String uid = await _auth.getCurrentUID();
           String loc;
@@ -198,21 +202,21 @@ TextEditingController locationController;
           Random random = new Random();
           String cid = random.nextInt(99999999).toString();
           Complaint _complaint = new Complaint(
+            complaintId: cid,
             departmentName: widget.selectedValueMap['department'],
             complaintType: widget.selectedValueMap['complaint'],
             description: widget.description,
             status: 'RAISED',
             uid: uid.toString(),
             location: loc,
-            // TODO : add this datetime with trimmed value
             start: DateTime.now().toString().substring(0,16),
             end: null,
             verification: null,
             assigned: null,
-            upvote: 0,
+            upvote: 1,
+            likedByUsers: [uid],
           );
 
-          // TODO: update location in DB i.e. complaint/uid/Region
           // code here
 
           //creating document for new complaint in DATABASE
@@ -222,13 +226,7 @@ TextEditingController locationController;
           Navigator.pop(context);
           Navigator.pop(context);
         }
-//        else{
-//          ToastUtils.showCustomToast(
-//              context, "Some issue");
-//        }
 
-        //set loading to false and pop the window
-        //Also showing toast message as notification
         setState(() {
           _loading = false;
         });
