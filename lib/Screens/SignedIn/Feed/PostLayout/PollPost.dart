@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:recase/recase.dart';
 import 'readmore.dart';
 
 class PollPost extends StatefulWidget {
   final String description, name, tag, datetime;
-
-  const PollPost({Key key, this.description, this.name, this.tag, this.datetime}) : super(key: key);
+  final Map options;
+  const PollPost({Key key, this.description, this.name, this.tag, this.datetime, this.options}) : super(key: key);
   @override
   _PollPostState createState() => _PollPostState();
 }
@@ -77,50 +77,67 @@ class _PollPostState extends State<PollPost> {
           SizedBox(
             height: 10,
           ),
-          Column(
-            children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
-                  ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: widget.options.length,
+              itemBuilder: (BuildContext context, index){
+                return SizedBox(
+                  width: double.infinity,
+                  child: OutlineButton(
+                    child: Text(
+                      widget.options.keys.elementAt(index).toString().pascalCase,
+                      style: TextStyle(color: Color(0xff20BAA2)),
+                    ),
 
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
                   ),
-
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
-                  ),
-
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
-                  ),
-
-                ),
-              ),
-            ],
+                );
+              }
           ),
+          // Column(
+          //   children: <Widget>[
+          //     SizedBox(
+          //       width: double.infinity,
+          //       child: OutlineButton(
+          //         child: Text(
+          //           "Option1",
+          //           style: TextStyle(color: Color(0xff20BAA2)),
+          //         ),
+          //
+          //       ),
+          //     ),
+          //     SizedBox(
+          //       width: double.infinity,
+          //       child: OutlineButton(
+          //         child: Text(
+          //           "Option1",
+          //           style: TextStyle(color: Color(0xff20BAA2)),
+          //         ),
+          //
+          //       ),
+          //     ),
+          //     SizedBox(
+          //       width: double.infinity,
+          //       child: OutlineButton(
+          //         child: Text(
+          //           "Option1",
+          //           style: TextStyle(color: Color(0xff20BAA2)),
+          //         ),
+          //
+          //       ),
+          //     ),
+          //     SizedBox(
+          //       width: double.infinity,
+          //       child: OutlineButton(
+          //         child: Text(
+          //           "Option1",
+          //           style: TextStyle(color: Color(0xff20BAA2)),
+          //         ),
+          //
+          //       ),
+          //     ),
+          //   ],
+          // ),
           SizedBox(height: 10,),
           Align(
             alignment: Alignment.centerLeft,

@@ -70,6 +70,7 @@ class _FeedMainState extends State<FeedMain> {
                             name: snapshot.data.documents[index]['Name'],
                             datetime: snapshot.data.documents[index]['DateTime'],
                             tag: snapshot.data.documents[index]['Tag'],
+                            options: snapshot.data.documents[index]['Options'],
 
                           );}
                        }
