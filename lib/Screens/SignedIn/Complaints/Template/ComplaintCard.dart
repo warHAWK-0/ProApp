@@ -6,6 +6,7 @@ import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:intl/intl.dart';
+import 'package:proapp/Widgets/themes.dart';
 
 class ComplaintCard extends StatelessWidget {
   final Complaint complaint;
@@ -69,7 +70,7 @@ class ComplaintCard extends StatelessWidget {
             Row(
               children: [
                 Tag(
-                  color: Colors.red,
+                  color: complaint.status=="RAISED" ?Colors.red :complaint.status=="IN PROGRESS"?progressYellow:primarygreen,
                   text: complaint.status,
                   textColor: Colors.white,
                   type: TagType.DEFAULT,
