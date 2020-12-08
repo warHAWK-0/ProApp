@@ -33,15 +33,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool isEnabled = false;
   void initState() {
     super.initState();
-    animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 1500),
-    );
-    logoanimation =
-        CurvedAnimation(parent: animationController, curve: Curves.easeOut);
-    logoanimation.addListener(() => this.setState(() {}));
-    animationController.forward();
-    focusNode = FocusNode();
+    // animationController = AnimationController(
+    //   vsync: null,
+    //   duration: Duration(milliseconds: 1500),
+    // );
+    // logoanimation =
+    //     CurvedAnimation(parent: animationController, curve: Curves.easeOut);
+    // logoanimation.addListener(() => this.setState(() {}));
+    // animationController.forward();
+    // focusNode = FocusNode();
   }
 
   enableButton() {

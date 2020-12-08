@@ -6,6 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'readmore.dart';
 
 class PollPost extends StatefulWidget {
+  final String description, name, tag, datetime;
+
+  const PollPost({Key key, this.description, this.name, this.tag, this.datetime}) : super(key: key);
   @override
   _PollPostState createState() => _PollPostState();
 }
@@ -29,7 +32,7 @@ class _PollPostState extends State<PollPost> {
               SizedBox(
                 width: 10,
               ),
-              new Text("Anonymous Name",
+              new Text(widget.name,
                   style: GoogleFonts.inter(
                     letterSpacing: .25,
                     fontSize: 16,
@@ -38,18 +41,16 @@ class _PollPostState extends State<PollPost> {
               Spacer(),
               new Container(
                 height: 25,
-                width: 45,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(13),
                   color: Color(0xFF189F98),
                 ),
-                child: Center(
-                  child: Text("TAGS",
-                      style: GoogleFonts.inter(
-                          letterSpacing: 1.5,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white)),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10, right :10),
+                  child: Center(
+                    child: Text(widget.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                        fontWeight: FontWeight.w500, color: Colors.white) ),
+                  ),
                 ),
               )
             ],
@@ -57,18 +58,21 @@ class _PollPostState extends State<PollPost> {
           SizedBox(
             height: 10,
           ),
-          ReadMoreText(
-            'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\n',
-            style: GoogleFonts.inter(
-                letterSpacing: .25,
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 0.65)),
-            trimLines: 3,
-            colorClickableText: Color(0xFF20BAA2),
-            trimMode: TrimMode.Line,
-            trimCollapsedText: '....\nRead More',
-            trimExpandedText: 'Read less',
+          Align(
+            alignment: Alignment.centerLeft,
+            child: ReadMoreText(
+              widget.description+"\n",
+              style: GoogleFonts.inter(
+                  letterSpacing: .25,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Color.fromRGBO(0, 0, 0, 0.65)),
+              trimLines: 3,
+              colorClickableText: Color(0xFF20BAA2),
+              trimMode: TrimMode.Line,
+              trimCollapsedText: '....\nRead More',
+              trimExpandedText: 'Read less',
+            ),
           ),
           SizedBox(
             height: 10,
@@ -120,7 +124,7 @@ class _PollPostState extends State<PollPost> {
           SizedBox(height: 10,),
           Align(
             alignment: Alignment.centerLeft,
-            child: new Text("28th September 2020",
+            child: new Text(datetimeformat(widget.datetime),
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter(
                     letterSpacing: 1,
@@ -134,5 +138,48 @@ class _PollPostState extends State<PollPost> {
         ],
       ),
     );
+  }
+  String datetimeformat(String date){
+    String month = date.substring(5,7);
+    int m =int.parse(month);
+    switch (m) {
+      case 1:
+        month = "January";
+        break;
+      case 2:
+        month = "February";
+        break;
+      case 3:
+        month = "March";
+        break;
+      case 4:
+        month = "April";
+        break;
+      case 5:
+        month = "May";
+        break;
+      case 6:
+        month = "June";
+        break;
+      case 7:
+        month = "July";
+        break;
+      case 8:
+        month = "August";
+        break;
+      case 9:
+        month = "September";
+        break;
+      case 10:
+        month = "October";
+        break;
+      case 11:
+        month = "November";
+        break;
+      case 12:
+        month = "December";
+        break;
+    }
+    return date.substring(8,10) +"th "+month+" "+date.substring(0,4);
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'Complaints/ComplaintsMain.dart';
+import 'Feed/FeedMain.dart';
 import 'Profile/ProfileMain.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,8 +20,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
-      Container(child: Text('Home')),
-      // FeedMain(uid: widget.uid),
+      //Container(child: Text('Home')),
+      FeedMain(uid: widget.uid),
       // Container(child: Text('Complaint')),
       ComplaintMain(uid: widget.uid),
       ProfileMain(uid: widget.uid),
