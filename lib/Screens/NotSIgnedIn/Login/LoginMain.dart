@@ -179,20 +179,6 @@ class _LoginMainState extends State<LoginMain> {
                 // style: buttonText,
               ),
               onPressed: () async {
-            //     dynamic result = await auth.signInWithEmailPassword(
-            //     _email, _password);
-            // if (result == null) {
-            //
-            //   setState(() {
-            //     Scaffold.of(context).showSnackBar((SnackBar(
-            //       content: new Text("Incorrect Email/ Password"),
-            //       duration: Duration(seconds: 3),
-            //     )));
-            //   });
-            // } else {
-            //   print('logging in');
-            // }
-            // Navigator.pop(context);
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
                   setState(() {

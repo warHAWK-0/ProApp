@@ -175,10 +175,9 @@ class ComplaintVote extends StatefulWidget {
 class _ComplaintVoteState extends State<ComplaintVote> {
 
   DatabaseService db ;
-
   Future<void> updateVoteCount(int upvoteCount) async {
     // updating value in complaint document
-    await db.complaint.document(widget.uid).collection(widget.uid).document(widget.complaintId)
+    await db.myComplaint().document(widget.complaintId)
         .updateData({
       'Upvote': upvoteCount,
     });
@@ -187,13 +186,13 @@ class _ComplaintVoteState extends State<ComplaintVote> {
   Future<void> updateListOfLikedComplaints() async{
     if(widget.upvote){
       // update likedComplaint field
-      await db.complaint.document(widget.uid).collection(widget.uid).document(widget.complaintId).updateData({
+      await db.myComplaint().document(widget.complaintId).updateData({
         'LikedByUsers': FieldValue.arrayRemove([widget.uid]),
       });
     }
     else{
       // update likedComplaint field
-      await db.complaint.document(widget.uid).collection(widget.uid).document(widget.complaintId).updateData({
+      await db.myComplaint().document(widget.complaintId).updateData({
         'LikedByUsers': FieldValue.arrayUnion([widget.uid]),
       });
     }

@@ -110,6 +110,11 @@ class _FilterAllComplaintState extends State<FilterAllComplaint> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            getSearchableDropdown(_complaint, "complaint"),
+            Divider(
+              thickness: 1,
+              height: 24,
+            ),
             Text(
               "Department",
               //style: complaintCardHeading,

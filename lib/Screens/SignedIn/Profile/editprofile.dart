@@ -38,7 +38,7 @@ class _EditProfileState extends State<EditProfile> {
     f2 = FocusNode();
   }
 
-  void submit() {
+  submit(String oldAddress, String oldMobileNo) {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
@@ -50,8 +50,8 @@ class _EditProfileState extends State<EditProfile> {
           newUserDetails: UserDetails(
             email: widget.userDetails.email,
             name: widget.userDetails.name,
-            address: newAddress,
-            mobileNo: newMobNo,
+            address: newAddress == null ? oldAddress : newAddress,
+            mobileNo: newMobNo == null ? oldMobileNo : newMobNo,
           ),
         )),
       );
@@ -291,7 +291,7 @@ class _EditProfileState extends State<EditProfile> {
                           height: 32.0,
                         ),
                         InkWell(
-                          onTap: loading ? null : submit,
+                          onTap: loading ? null : submit(widget.userDetails.address,widget.userDetails.mobileNo),
                           child: Container(
                             //Sign up button
                             width: double.infinity,

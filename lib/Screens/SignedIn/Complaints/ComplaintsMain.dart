@@ -12,12 +12,8 @@ class ComplaintMain extends StatefulWidget {
   bool myComplaint;
   Filter filter;
 
-  ComplaintMain({
-    Key key,
-    this.uid,
-    this.myComplaint = true,
-    this.filter
-  }) : super(key: key);
+  ComplaintMain({Key key, this.uid, this.myComplaint = true, this.filter})
+      : super(key: key);
   @override
   _ComplaintMainState createState() => _ComplaintMainState();
 }
@@ -61,7 +57,8 @@ class _ComplaintMainState extends State<ComplaintMain> {
                       });
                     },
                     child: Container(
-                      color: widget.myComplaint ? Colors.grey[50] : Colors.white,
+                      color:
+                          widget.myComplaint ? Colors.grey[50] : Colors.white,
                       width: (MediaQuery.of(context).size.width - 1) / 2,
                       height: 60,
                       child: Center(
@@ -89,7 +86,8 @@ class _ComplaintMainState extends State<ComplaintMain> {
                       });
                     },
                     child: Container(
-                      color: !widget.myComplaint ? Colors.grey[50] : Colors.white,
+                      color:
+                          !widget.myComplaint ? Colors.grey[50] : Colors.white,
                       width: (MediaQuery.of(context).size.width - 1) / 2,
                       height: 60,
                       child: Center(
@@ -115,9 +113,7 @@ class _ComplaintMainState extends State<ComplaintMain> {
               ? MyComplaint(
                   uid: widget.uid,
                 )
-              : AllComplaint(
-
-          ),
+              : AllComplaint(),
         ],
       ),
 
@@ -145,7 +141,9 @@ class _ComplaintMainState extends State<ComplaintMain> {
               ? Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CreateComplaint()))
               : Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => FilterAllComplaint()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FilterAllComplaint()));
         },
       ),
     );

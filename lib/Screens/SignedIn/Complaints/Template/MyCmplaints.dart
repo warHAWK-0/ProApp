@@ -40,13 +40,11 @@ class _MyComplaintState extends State<MyComplaint> {
     });
     QuerySnapshot querySnapshot;
     if (lastdocument == null) {
-      querySnapshot = await DatabaseService.firestore
-          .collection('comaplaint')
+      querySnapshot = await db.myComplaint()
           .limit(doclimit)
           .getDocuments();
     } else {
-      querySnapshot = await DatabaseService.firestore
-          .collection('comaplint')
+      querySnapshot = await db.myComplaint()
           .limit(doclimit)
           .getDocuments();
     }
@@ -106,12 +104,6 @@ class _MyComplaintState extends State<MyComplaint> {
     );
   }
 
-  var likedComplaint;
-  Future _getLikedComplaintList() async {
-    print('here');
-    likedComplaint = await db.getlikedcomplaints();
-  }
-
   @override
   Widget build(BuildContext context) {
     _scrollController.addListener(() {
@@ -124,12 +116,10 @@ class _MyComplaintState extends State<MyComplaint> {
     });
 
     db = new DatabaseService(uid: widget.uid);
+
     return Container(
       child: StreamBuilder<QuerySnapshot>(
-        stream: db.complaint
-            .document(widget.uid)
-            .collection(widget.uid)
-            .snapshots(),
+        stream: db.myComplaint().snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return _showFetchComplaintContainer();

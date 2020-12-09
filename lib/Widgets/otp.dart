@@ -30,7 +30,7 @@ class _OTPState extends State<OTP> {
 
   final _formKey = GlobalKey<FormState>();
   String otp;
-  String userEnteredOTP;
+  String userEnteredOTP = "";
   bool loading = false;
 
   _generateOTP(){
@@ -56,12 +56,19 @@ class _OTPState extends State<OTP> {
   }
 
   bool _enableContinue = false;
+  String validateOTPInput(userInput){
+    if(userInput.length != 6 || userInput.matches("^[0-9]{1,6}"))
+      return "Please enter 6-digit OTP";
+
+    return null;
+  }
+
   Widget showotpInput() {
     return Container(
       //input fields for number
       width: double.infinity,
       child: TextFormField(
-        validator: (val) => val.length == 6 ? null : 'Enter a 6-digit OTP',
+        validator: (val) => val.length != 6 ? "Enter a Valid OTP" : null,
         onChanged: (val) {
           setState(() {
             if(val.length == 6){
@@ -75,29 +82,30 @@ class _OTPState extends State<OTP> {
         },
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6.0),
-              borderSide: BorderSide(color: Color(0xffCBD5E0)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6.0),
-              borderSide: BorderSide(color: Color(0xffCBD5E0)),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6.0),
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            //for error write code change color to red
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6.0),
-              borderSide: BorderSide(color: Color(0xffCBD5E0)),
-            ),
-            hintText: 'Enter OTP',
-            hintStyle:
-            TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.45))),
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          //for error write code change color to red
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.0),
+            borderSide: BorderSide(color: Color(0xffCBD5E0)),
+          ),
+          hintText: 'Enter OTP',
+          hintStyle:
+          TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.45)),
+        ),
       ),
     );
   }
@@ -138,7 +146,7 @@ class _OTPState extends State<OTP> {
                       Container(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "OTP has been sent to your email id and mobile number",
+                          "OTP has been sent to your Mobile Number.",
                           style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'Intern',
@@ -180,11 +188,9 @@ class _OTPState extends State<OTP> {
                         },
                         onTap: (startTimer, btnState) {
                           if (btnState == ButtonState.Idle) {
-                            print('ilde');
                             startTimer(60);
                           }
                           else if(btnState == ButtonState.Busy){
-                            print('busy');
                           }
                         },
                       ),
@@ -210,20 +216,26 @@ class _OTPState extends State<OTP> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              loading = true;
-                            });
-                            if (userEnteredOTP == otp){
-                              print(widget.newUserDetails.mobileNo);
-                              DatabaseService db = DatabaseService(uid: widget.uid);
-                              db.updateUserDB(widget.newUserDetails);
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ProfileMain()));
-                            }
-                            else{
-                              // reset timer
-                              // resend otp
+                          onPressed: !_enableContinue ? null : (){
+                            if(_formKey.currentState.validate()){
+                              setState(() {
+                                loading = true;
+                              });
+                              if (userEnteredOTP == otp){
+                                print(widget.newUserDetails.mobileNo);
+                                DatabaseService db = DatabaseService(uid: widget.uid);
+                                db.updateUserDB(widget.newUserDetails);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }
+                              else{
+                                // TODO: reset timer
+                                // resend otp
 
+                              }
+                              setState(() {
+                                loading = false;
+                              });
                             }
                           },
                         ),

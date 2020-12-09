@@ -17,8 +17,9 @@ class ConfirmLocation extends StatefulWidget {
   final Map<String, String> selectedValueMap;
   final String description;
 
-
-  const ConfirmLocation({Key key, this.imageFile,this.selectedValueMap,this.description}) : super(key: key);
+  const ConfirmLocation(
+      {Key key, this.imageFile, this.selectedValueMap, this.description})
+      : super(key: key);
   @override
   _ConfirmLocationState createState() => _ConfirmLocationState();
 }
@@ -30,12 +31,11 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
   bool _loading = false;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
-
   Position _currentPosition;
   String _currentAddress;
   @override
-  void initState(){
-  locationController=TextEditingController();
+  void initState() {
+    locationController = TextEditingController();
 
     super.initState();
   }
@@ -62,18 +62,30 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
       Placemark place = p[0];
 
       setState(() {
-        _currentAddress =
-        "   ${place.name} "+", "+"${place.locality}"+", "+" ${place.subLocality}"+", "+"${place.administrativeArea} "+", "+"${place.subAdministrativeArea} "+", "+" ${place.thoroughfare} "+", "+" ${place.country} "+", "+"${place.postalCode}";
+        _currentAddress = "   ${place.name} " +
+            ", " +
+            "${place.locality}" +
+            ", " +
+            " ${place.subLocality}" +
+            ", " +
+            "${place.administrativeArea} " +
+            ", " +
+            "${place.subAdministrativeArea} " +
+            ", " +
+            " ${place.thoroughfare} " +
+            ", " +
+            " ${place.country} " +
+            ", " +
+            "${place.postalCode}";
       });
-
     } catch (e) {
       print(e);
     }
   }
 
-  String _buttontext="GET LOCATION";
-int _buttonflag=1;
-TextEditingController locationController;
+  String _buttontext = "GET LOCATION";
+  int _buttonflag = 1;
+  TextEditingController locationController;
 
   @override
   Widget build(BuildContext context) {
@@ -85,37 +97,48 @@ TextEditingController locationController;
       appBar: CustomAppBar(
         child: Text(
           'Confirm Location',
-          style: Heading2(Colors.black,letterSpace: 1.0),
+          style: Heading2(Colors.black, letterSpace: 1.0),
         ),
         elevation: true,
         backIcon: true,
       ),
-
       body: FutureBuilder(
         future: _getCurrentLocation(),
-        builder: (context,snapshot){
-          if(snapshot.connectionState == ConnectionState.waiting)
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
             return Container();
           else
             return Container(
               padding: EdgeInsets.all(16),
               child: Column(
                 children: [
-                  SizedBox(height: 16,),
-                  Text( "If your current location is incorrect, enter your location",style: GoogleFonts.inter(
-                      textStyle:TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      )),),
-                  SizedBox(height: 16,),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "If your current location is incorrect, enter your location",
+                    style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    )),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _currentPosition!=null ? Text(_currentAddress) :SizedBox(height: 0.1,)
-
+                      _currentPosition != null
+                          ? Text(_currentAddress)
+                          : SizedBox(
+                              height: 0.1,
+                            )
                     ],
                   ),
-                  SizedBox(height: 16,),
+                  SizedBox(
+                    height: 16,
+                  ),
 
                   TextField(
                     controller: locationController,
@@ -125,21 +148,23 @@ TextEditingController locationController;
                     maxLengthEnforced: true,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color.fromRGBO(0, 0, 0, 0.45))
-                      ),
+                          borderSide:
+                              BorderSide(color: Color.fromRGBO(0, 0, 0, 0.45))),
                       hintStyle: Heading3(
                         Color.fromRGBO(0, 0, 0, 0.45),
                       ),
                       border: InputBorder.none,
                       hintText: 'Location',
                     ),
-                    onChanged: (text){
+                    onChanged: (text) {
                       setState(() {
                         _location = text;
                       });
                     },
                   ),
-                  SizedBox(height: 16,),
+                  SizedBox(
+                    height: 16,
+                  ),
 //            createComplaintButton(db),
                   createButton(db),
                 ],
@@ -149,101 +174,106 @@ TextEditingController locationController;
       ),
     );
   }
-   Widget createButton(DatabaseService db){
 
-    return _buttonflag==1 ? InkWell(
-      onTap:(){
-        _getCurrentLocation();
-        setState(() {
-          _buttonflag =0;
-          _buttontext="CREATE";
+  Widget createButton(DatabaseService db) {
+    return _buttonflag == 1
+        ? InkWell(
+            onTap: () {
+              _getCurrentLocation();
+              setState(() {
+                _buttonflag = 0;
+                _buttontext = "CREATE";
+              });
+            },
+            child: Container(
+              height: 45,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: primarygreen,
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+              child: Center(
+                child: Text(
+                  _buttontext,
+                  style: Heading4(Colors.white),
+                ),
+              ),
+            ),
+          )
+        : createComplaintButton(db);
+  }
 
-        }
+  Widget createComplaintButton(DatabaseService db) {
+    return _loading
+        ? Loading()
+        : InkWell(
+            splashColor: Colors.transparent,
+            onTap: () async {
+              //disable the button and show loading animation
+              setState(() {
+                _loading = true;
+              });
 
-        );
-      },
-      child:Container(
-        height: 45,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: primarygreen,
-          borderRadius: BorderRadius.circular(6.0),
-        ),
-        child: Center(
-          child: Text(_buttontext,style: Heading4(Colors.white),),
-        ),
-      ),
-    )
-        :createComplaintButton(db);
+              if (true) {
+                String uid = await _auth.getCurrentUID();
+                String loc;
+                if (locationController.text.isEmpty) {
+                  loc = _currentAddress;
+                } else {
+                  loc = locationController.text;
+                }
 
+                Random random = new Random();
+                String cid = random.nextInt(99999999).toString();
+                Complaint _complaint = new Complaint(
+                  complaintId: cid,
+                  departmentName: widget.selectedValueMap['department'],
+                  complaintType: widget.selectedValueMap['complaint'],
+                  description: widget.description,
+                  status: 'RAISED',
+                  uid: uid.toString(),
+                  location: loc,
+                  start: DateTime.now().toString().substring(0, 16),
+                  end: null,
+                  verification: null,
+                  assigned: null,
+                  upvote: 1,
+                  likedByUsers: [uid],
+                );
 
+                // code here
 
-   }
+                //creating document for new complaint in DATABASE
+                await db.myComplaint()
+                    .document(cid.toString())
+                    .setData(_complaint.toJson());
+                //adding image to STORAGE
+                db.uploadImageToFirebase(
+                    context, widget.imageFile, cid.toString());
+                Navigator.pop(context);
+                Navigator.pop(context);
+              }
 
-  Widget createComplaintButton(DatabaseService db){
-    return _loading ? Loading() : InkWell(
-      splashColor: Colors.transparent,
-      onTap: () async{
-        //disable the button and show loading animation
-        setState(() {
-          _loading = true;
-        });
-
-        if(true){
-          String uid = await _auth.getCurrentUID();
-          String loc;
-          if (locationController.text.isEmpty){
-            loc=_currentAddress;
-          }
-          else{
-            loc=locationController.text;
-          }
-
-          Random random = new Random();
-          String cid = random.nextInt(99999999).toString();
-          Complaint _complaint = new Complaint(
-            complaintId: cid,
-            departmentName: widget.selectedValueMap['department'],
-            complaintType: widget.selectedValueMap['complaint'],
-            description: widget.description,
-            status: 'RAISED',
-            uid: uid.toString(),
-            location: loc,
-            start: DateTime.now().toString().substring(0,16),
-            end: null,
-            verification: null,
-            assigned: null,
-            upvote: 1,
-            likedByUsers: [uid],
+              setState(() {
+                _loading = false;
+              });
+            },
+            child: Container(
+              height: 45,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: primarygreen,
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+              child: Center(
+                child: Text(
+                  _buttontext,
+                  style: Heading4(Colors.white),
+                ),
+              ),
+            ),
           );
-
-          // code here
-
-          //creating document for new complaint in DATABASE
-          await db.complaint.document(uid.toString()).collection(uid.toString()).document(cid.toString()).setData(_complaint.toJson());
-          //adding image to STORAGE
-          db.uploadImageToFirebase(context,widget.imageFile,cid.toString());
-          Navigator.pop(context);
-          Navigator.pop(context);
-        }
-
-        setState(() {
-          _loading = false;
-        });
-      },
-      child: Container(
-        height: 45,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: primarygreen,
-          borderRadius: BorderRadius.circular(6.0),
-        ),
-        child: Center(
-          child: Text(_buttontext,style: Heading4(Colors.white),),
-        ),
-      ),
-    );
   }
 }
 
-// name locality sublocality  administrativearea subadminarea throughfare country postalcode
+// name locality sub-locality  administrative-area sub-admin-area through-fare country postalcode
