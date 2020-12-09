@@ -30,27 +30,58 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   void _passwordReset() async {
     final form = _formKey.currentState;
     if (form.validate()) {
-      form.save();
-      print("form saved");
-      print(_emailpassword);
       try {
         await widget.auth.resetPassword(_emailpassword);
-        print("tried");
-
-        // AlertDialog(
-        //   title: Text("Password Reset Email Sent"),
-        // );
-        // final snackBar = SnackBar(content: Text("Password Reset Email Sent"));
-        // scaffoldKey.currentState.showSnackBar(snackBar);
-        Navigator.of(context).pushNamed('/ForgotPassConfirm');
-        print('conf');
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierLabel:
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black45,
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (BuildContext buildContext, Animation animation,
+              Animation secondaryAnimation) {
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width - 30,
+                height: MediaQuery.of(context).size.height / 16 < 60 ? 60 : MediaQuery.of(context).size.height / 16,
+                margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(45, 55, 72, 0.9),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Email has been sent to your registered Mail-Id.',
+                      textAlign: TextAlign.justify,
+                      softWrap: true,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                        color: Color(0xFFFFFFFF),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          transitionBuilder: (context, anim1, anim2, child) {
+            return SlideTransition(
+              position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                  .animate(anim1),
+              child: child,
+            );
+          },
+        );
       } catch (e) {
-        // Fluttertoast.showToast(
-        //     msg: "Invalid Input!",
-        //     toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.BOTTOM,
-        // );
-        print(e);
       }
     }
   }

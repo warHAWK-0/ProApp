@@ -164,7 +164,9 @@ class ComplaintVote extends StatefulWidget {
 
   ComplaintVote({
     this.upvote = false,
-    @required this.upvoteCount, this.uid, this.complaintId
+    @required this.upvoteCount,
+    this.uid,
+    this.complaintId,
   });
   @override
   _ComplaintVoteState createState() => _ComplaintVoteState();
@@ -185,14 +187,14 @@ class _ComplaintVoteState extends State<ComplaintVote> {
   Future<void> updateListOfLikedComplaints() async{
     if(widget.upvote){
       // update likedComplaint field
-      await db.complaint.document(widget.uid).updateData({
-        'likedComplaint': FieldValue.arrayRemove([widget.complaintId]),
+      await db.complaint.document(widget.uid).collection(widget.uid).document(widget.complaintId).updateData({
+        'LikedByUsers': FieldValue.arrayRemove([widget.uid]),
       });
     }
     else{
       // update likedComplaint field
-      await db.complaint.document(widget.uid).updateData({
-        'likedComplaint': FieldValue.arrayUnion([widget.complaintId]),
+      await db.complaint.document(widget.uid).collection(widget.uid).document(widget.complaintId).updateData({
+        'LikedByUsers': FieldValue.arrayUnion([widget.uid]),
       });
     }
   }
@@ -205,8 +207,8 @@ class _ComplaintVoteState extends State<ComplaintVote> {
         setState(() {
           widget.upvoteCount = widget.upvote ? widget.upvoteCount-1 : widget.upvoteCount+1;
         });
-        await updateVoteCount(widget.upvoteCount);
-        await updateListOfLikedComplaints();
+        updateVoteCount(widget.upvoteCount);
+        updateListOfLikedComplaints();
         setState(() {
           widget.upvote = !widget.upvote;
         });
