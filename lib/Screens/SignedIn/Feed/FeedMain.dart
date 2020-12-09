@@ -63,7 +63,15 @@ class _FeedMainState extends State<FeedMain> {
                             );
                           }
                           else if(snapshot.data.documents[index]['Type']=="imagepost"){
-                            return TextImagePost();
+                            return TextImagePost(
+                              description: snapshot.data.documents[index]['Description'],
+                              name: snapshot.data.documents[index]['Name'],
+                              datetime: snapshot.data.documents[index]['DateTime'],
+                              tag: snapshot.data.documents[index]['Tag'],
+                              upvote: snapshot.data.documents[index]['Upvote'],
+                              downvote: snapshot.data.documents[index]['Downvote'],
+                              postid: snapshot.data.documents[index].documentID,
+                            );
                           }
                           else{return PollPost(
                             description: snapshot.data.documents[index]['Description'],

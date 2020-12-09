@@ -1,14 +1,23 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/comment.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:footer/footer.dart';
 import 'package:footer/footer_view.dart';
+import 'package:proapp/Widgets/commentgrab.dart';
 
 
 class PostdetailsImage extends StatefulWidget {
+  final String name, description, tag,datetime,url;
+  final int upvote, downvote;
+
+  const PostdetailsImage({Key key, this.name, this.description, this.tag, this.datetime, this.upvote, this.downvote,this.url}) : super(key: key);
+
+
   @override
   _PostdetailsImageState createState() => _PostdetailsImageState();
 }
@@ -16,6 +25,30 @@ class PostdetailsImage extends StatefulWidget {
 class _PostdetailsImageState extends State<PostdetailsImage> {
   bool isPressed = false;
   bool isPressed1 = false;
+
+  _showPostPicture() {
+    return FutureBuilder(
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Container(
+            child: SpinKitChasingDots(
+              color: Colors.black,
+              size: 24,
+            ),
+          );
+        else {
+          return  ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                widget.url,
+                fit: BoxFit.fill,
+              )
+          );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +84,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                       SizedBox(
                         width: 10,
                       ),
-                      new Text("Anonymous Name",
+                      new Text(widget.name,
                           style: GoogleFonts.inter(
                             letterSpacing: .25,
                             fontSize: 16,
@@ -60,18 +93,16 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                       Spacer(),
                       new Container(
                         height: 25,
-                        width: 45,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(13),
                           color: Color(0xFF189F98),
                         ),
-                        child: Center(
-                          child: Text("TAGS",
-                              style: GoogleFonts.inter(
-                                  letterSpacing: 1.5,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white)),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 10, right :10),
+                          child: Center(
+                            child: Text(widget.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                                fontWeight: FontWeight.w500, color: Colors.white) ),
+                          ),
                         ),
                       )
                     ],
@@ -79,20 +110,16 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                   SizedBox(
                     height: 10,
                   ),
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                          "https://t8x8a5p2.stackpathcdn.com/wp-content/uploads/2018/05/Birthday-Cake-Recipe-Image-720x720.jpg")),
+                  _showPostPicture(),
                   SizedBox(
                     height: 10,
                   ),
-                  VoteTemplate(type: VoteType.feed, upvoteCount: 234),
+                  VoteTemplate(type: VoteType.feed, upvoteCount: widget.upvote, downvoteCount: widget.downvote,),
                   SizedBox(
                     height: 10,
                   ),
                   Text(
-                    'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',
-                    style: GoogleFonts.inter(
+widget.description+'/n',                    style: GoogleFonts.inter(
                         letterSpacing: .25,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -104,7 +131,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: new Text("28th September 2020",
+                    child: new Text(datetimeformat(widget.datetime),
                         textAlign: TextAlign.left,
                         style: GoogleFonts.inter(
                             letterSpacing: 1,
@@ -124,15 +151,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                         fontWeight: FontWeight.w500,)),
                     ),
                   ),
-                  ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      //padding: const EdgeInsets.all(8),
-                      itemCount: 5,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Comment();
-                      }
-                  ),
+                  CommentGrab(),
 
                 ],
 
@@ -152,4 +171,50 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
 
     );
   }
+  String datetimeformat(String date){
+    String month = date.substring(5,7);
+    int m =int.parse(month);
+    switch (m) {
+      case 1:
+        month = "January";
+        break;
+      case 2:
+        month = "February";
+        break;
+      case 3:
+        month = "March";
+        break;
+      case 4:
+        month = "April";
+        break;
+      case 5:
+        month = "May";
+        break;
+      case 6:
+        month = "June";
+        break;
+      case 7:
+        month = "July";
+        break;
+      case 8:
+        month = "August";
+        break;
+      case 9:
+        month = "September";
+        break;
+      case 10:
+        month = "October";
+        break;
+      case 11:
+        month = "November";
+        break;
+      case 12:
+        month = "December";
+        break;
+    }
+    return date.substring(8,10) +"th "+month+" "+date.substring(0,4);
+  }
+
+
+
 }
