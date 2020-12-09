@@ -5,16 +5,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Feed.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'ExpandedTextImagePost.dart';
 //import 'file:///E:/Flutter/proapp/lib/Screens/SignedIn/Feed/PostLayout/readmore.dart';
 import 'readmore.dart';
 
 class TextImagePost extends StatefulWidget {
-  final String name, tag, postid,description, datetime;
-  final int upvote, downvote;
-
-  const TextImagePost({Key key, this.name, this.tag, this.postid, this.description, this.datetime, this.upvote, this.downvote}) : super(key: key);
+  final FeedModel feed;
+  const TextImagePost({Key key, this.feed}) : super(key: key);
 
   @override
   _TextPostState createState() => _TextPostState();
@@ -28,7 +27,7 @@ class _TextPostState extends State<TextImagePost> {
   Future _getImage() async {
     try {
       final ref =
-      FirebaseStorage.instance.ref().child('Feed/'+'/'+widget.postid+'.jpg');
+      FirebaseStorage.instance.ref().child('Feed/'+'/'+widget.feed.postid+'.jpg');
       url = await ref.getDownloadURL();
     } catch (e) {
 
@@ -74,7 +73,7 @@ class _TextPostState extends State<TextImagePost> {
             children: <Widget>[
               CircleAvatar(radius: 16,backgroundImage: NetworkImage("https://www.woolha.com/media/2020/03/flutter-circleavatar-minradius-maxradius.jpg") ,),
               SizedBox(width: 10,),
-              new Text(widget.name, style: GoogleFonts.inter( letterSpacing: .25,fontSize: 16,
+              new Text(widget.feed.name, style: GoogleFonts.inter( letterSpacing: .25,fontSize: 16,
                 fontWeight: FontWeight.w400,)),
 
               Spacer(),
@@ -87,7 +86,7 @@ class _TextPostState extends State<TextImagePost> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, right :10),
                   child: Center(
-                    child: Text(widget.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                    child: Text(widget.feed.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
                         fontWeight: FontWeight.w500, color: Colors.white) ),
                   ),
                 ),
@@ -105,11 +104,11 @@ class _TextPostState extends State<TextImagePost> {
           Row(
             children: <Widget>[
               // Toggle the up, down button and fill the box
-              VoteTemplate(type: VoteType.feed, upvoteCount: widget.upvote,downvoteCount: widget.downvote,),
+              VoteTemplate(type: VoteType.feed, upvoteCount: widget.feed.upvote,downvoteCount: widget.feed.downvote,),
               Spacer(),
               GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostdetailsImage(description: widget.description,name: widget.name,tag: widget.tag,upvote: widget.upvote,downvote: widget.downvote,url: url,datetime: widget.datetime,)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostdetailsImage(feed:widget.feed,url: url)));
                 },
                   child: Text("View Comments", style: GoogleFonts.inter(letterSpacing: .5, fontSize: 12,fontWeight: FontWeight.w600, color: Color(0XFF20BAA2)))),
 
@@ -118,7 +117,7 @@ class _TextPostState extends State<TextImagePost> {
           Align(
             alignment: Alignment.centerLeft,
             child: ReadMoreText(
-              widget.description+'\n',
+              widget.feed.description+'\n',
               style: GoogleFonts.inter(letterSpacing: .25, fontSize: 14, fontWeight: FontWeight.w400, color: Color.fromRGBO(0, 0, 0, 0.65)),
               trimLines: 3,
 
@@ -131,7 +130,7 @@ class _TextPostState extends State<TextImagePost> {
           SizedBox(height: 10,),
           Align(
             alignment: Alignment.centerLeft,
-            child: new Text(datetimeformat(widget.datetime),
+            child: new Text(datetimeformat(widget.feed.datetime),
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter(
                     letterSpacing: 1,

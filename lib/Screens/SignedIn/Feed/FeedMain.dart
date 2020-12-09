@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:proapp/Models/Feed.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/PollPost.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/TextImagePost.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/TextPost.dart';
@@ -53,24 +54,43 @@ class _FeedMainState extends State<FeedMain> {
                        itemCount: snapshot.data.documents.length,
                        itemBuilder: (context,index){
                           if(snapshot.data.documents[index]['Type']=="post"){
-                            return TextPost(
-                              description: snapshot.data.documents[index]['Description'],
-                              name: snapshot.data.documents[index]['Name'],
-                              datetime: snapshot.data.documents[index]['DateTime'],
-                              tag: snapshot.data.documents[index]['Tag'],
-                              upvote: snapshot.data.documents[index]['Upvote'],
-                              downvote: snapshot.data.documents[index]['Downvote'],
-                            );
+//                            return TextPost(
+//                              description: snapshot.data.documents[index]['Description'],
+//                              name: snapshot.data.documents[index]['Name'],
+//                              datetime: snapshot.data.documents[index]['DateTime'],
+//                              tag: snapshot.data.documents[index]['Tag'],
+//                              upvote: snapshot.data.documents[index]['Upvote'],
+//                              downvote: snapshot.data.documents[index]['Downvote'],
+//                            );
+                              return TextPost(
+                                feed: FeedModel(
+                                  uid: snapshot.data.documents[index]['uid'],
+                                  name:snapshot.data.documents[index]['Name'],
+                                  type:snapshot.data.documents[index]['Type'],
+                                  datetime:snapshot.data.documents[index]['DateTime'],
+                                  description:snapshot.data.documents[index]['Description'],
+                                  downvote: snapshot.data.documents[index]['Downvote'],
+                                  options:snapshot.data.documents[index]['options'],
+                                  postid:snapshot.data.documents[index].documentID,
+                                  tag:snapshot.data.documents[index]['Tag'],
+                                  upvote:snapshot.data.documents[index]['Upvote'],
+                                ),
+                              );
                           }
                           else if(snapshot.data.documents[index]['Type']=="imagepost"){
                             return TextImagePost(
-                              description: snapshot.data.documents[index]['Description'],
-                              name: snapshot.data.documents[index]['Name'],
-                              datetime: snapshot.data.documents[index]['DateTime'],
-                              tag: snapshot.data.documents[index]['Tag'],
-                              upvote: snapshot.data.documents[index]['Upvote'],
-                              downvote: snapshot.data.documents[index]['Downvote'],
-                              postid: snapshot.data.documents[index].documentID,
+                              feed: FeedModel(
+                                uid: snapshot.data.documents[index]['uid'],
+                                name:snapshot.data.documents[index]['Name'],
+                                type:snapshot.data.documents[index]['Type'],
+                                datetime:snapshot.data.documents[index]['DateTime'],
+                                description:snapshot.data.documents[index]['Description'],
+                                downvote: snapshot.data.documents[index]['Downvote'],
+                                options:snapshot.data.documents[index]['options'],
+                                postid:snapshot.data.documents[index].documentID,
+                                tag:snapshot.data.documents[index]['Tag'],
+                                upvote:snapshot.data.documents[index]['Upvote'],
+                              ),
                             );
                           }
                           else{return PollPost(

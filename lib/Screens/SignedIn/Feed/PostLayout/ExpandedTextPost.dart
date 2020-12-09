@@ -2,6 +2,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Feed.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/comment.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:proapp/Widgets/commentgrab.dart';
@@ -10,11 +11,10 @@ import 'package:footer/footer_view.dart';
 
 
 class Postdetails extends StatefulWidget {
-  final String name, description, tag,date;
-  final int upvote, downvote;
+  final FeedModel feed;
 
 
-  const Postdetails({Key key, this.name, this.description, this.tag, this.date, this.upvote, this.downvote}) : super(key: key);@override
+  const Postdetails({Key key, this.feed}) : super(key: key);@override
   _PostdetailsState createState() => _PostdetailsState();
 }
 
@@ -56,7 +56,7 @@ class _PostdetailsState extends State<Postdetails> {
                       SizedBox(
                         width: 10,
                       ),
-                      new Text(widget.name,
+                      new Text(widget.feed.name,
                           style: GoogleFonts.inter(
                             letterSpacing: .25,
                             fontSize: 16,
@@ -72,7 +72,7 @@ class _PostdetailsState extends State<Postdetails> {
                         child: Padding(
                           padding: EdgeInsets.only(left: 10, right :10),
                           child: Center(
-                            child: Text(widget.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                            child: Text(widget.feed.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
                                 fontWeight: FontWeight.w500, color: Colors.white) ),
                           ),
                         ),
@@ -84,7 +84,7 @@ class _PostdetailsState extends State<Postdetails> {
                   ),
 
                   Text(
-                    widget.description+'\n',
+                    widget.feed.description+'\n',
                     style: GoogleFonts.inter(
                         letterSpacing: .25,
                         fontSize: 14,
@@ -95,14 +95,14 @@ class _PostdetailsState extends State<Postdetails> {
                   SizedBox(
                     height: 10,
                   ),
-                  VoteTemplate(type: VoteType.feed, upvoteCount: widget.upvote, downvoteCount: widget.downvote,),
+                  VoteTemplate(type: VoteType.feed, upvoteCount: widget.feed.upvote, downvoteCount: widget.feed.downvote,),
 
                   SizedBox(
                     height: 10,
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: new Text(datetimeformat(widget.date),
+                    child: new Text(datetimeformat(widget.feed.datetime),
                         textAlign: TextAlign.left,
                         style: GoogleFonts.inter(
                             letterSpacing: 1,
@@ -122,7 +122,7 @@ class _PostdetailsState extends State<Postdetails> {
                         fontWeight: FontWeight.w500,)),
                     ),
                   ),
-                  CommentGrab(),
+                  CommentGrab(pid: widget.feed.postid,),
 
                 ],
 

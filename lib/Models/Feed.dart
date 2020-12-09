@@ -1,9 +1,9 @@
-class Feed{
+class FeedModel{
   String datetime, description, name, tag, type, uid, postid;
   int downvote, upvote;
   Map options;
 
-  Feed({
+  FeedModel({
     this.uid,
     this.name,
     this.type,
@@ -14,7 +14,6 @@ class Feed{
     this.postid,
     this.tag,
     this.upvote
-
   });
 
   Map<String, dynamic> toJson() => {
@@ -27,11 +26,7 @@ class Feed{
     'Type':type,
     'Upvote':upvote,
     'uid':uid,
-
   };
-
-
-
 
 }
 

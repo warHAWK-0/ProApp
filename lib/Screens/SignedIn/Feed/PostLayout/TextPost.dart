@@ -6,11 +6,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/ExpandedTextPost.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/readmore.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
+import 'package:proapp/Models/Feed.dart';
 
 class TextPost extends StatefulWidget {
-  final String description, name, tag, datetime;
-  final int upvote, downvote;
-  const TextPost({Key key, this.description, this.name, this.tag, this.datetime, this.upvote, this.downvote}) : super(key: key);
+//  final String description, name, tag, datetime;
+//  final int upvote, downvote;
+  final FeedModel feed;
+
+  const TextPost({Key key, this.feed}) : super(key: key);
   @override
   _TextPostState createState() => _TextPostState();
 }
@@ -30,7 +33,7 @@ class _TextPostState extends State<TextPost> {
 
               CircleAvatar(radius: 16,backgroundImage: NetworkImage("https://www.woolha.com/media/2020/03/flutter-circleavatar-minradius-maxradius.jpg") ,),
               SizedBox(width: 10,),
-              new Text(widget.name, style: GoogleFonts.inter( letterSpacing: .25,fontSize: 16,
+              new Text(widget.feed.name, style: GoogleFonts.inter( letterSpacing: .25,fontSize: 16,
                 fontWeight: FontWeight.w400,)),
 
               Spacer(),
@@ -43,7 +46,7 @@ class _TextPostState extends State<TextPost> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, right :10),
                   child: Center(
-                    child: Text(widget.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                    child: Text(widget.feed.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
                         fontWeight: FontWeight.w500, color: Colors.white) ),
                   ),
                 ),
@@ -57,7 +60,7 @@ class _TextPostState extends State<TextPost> {
           Align(
             alignment: Alignment.centerLeft,
             child: ReadMoreText(
-              widget.description+'\n',
+              widget.feed.description+'\n',
               style: GoogleFonts.inter(letterSpacing: .25, fontSize: 14, fontWeight: FontWeight.w400, color: Color.fromRGBO(0, 0, 0, 0.65)),
               trimLines: 3,
 
@@ -71,11 +74,11 @@ class _TextPostState extends State<TextPost> {
           Row(
             children: <Widget>[
               // Toggle the up, down button and fill the box
-              VoteTemplate(type: VoteType.feed, upvoteCount: widget.upvote,downvoteCount: widget.downvote,),
+              VoteTemplate(type: VoteType.feed, upvoteCount: widget.feed.upvote,downvoteCount: widget.feed.downvote,),
               Spacer(),
               GestureDetector(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Postdetails(name: widget.name,description: widget.description,upvote: widget.upvote,downvote: widget.downvote,tag: widget.tag,date: widget.datetime,)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Postdetails(feed: widget.feed)));
                   },
                   child: Text("View Comments", style: GoogleFonts.inter(letterSpacing: .5, fontSize: 12,fontWeight: FontWeight.w600, color: Color(0XFF20BAA2)))),
 
@@ -86,7 +89,7 @@ class _TextPostState extends State<TextPost> {
           SizedBox(height: 8,),
           Align(
             alignment: Alignment.centerLeft,
-            child: new Text(datetimeformat(widget.datetime),
+            child: new Text(datetimeformat(widget.feed.datetime),
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter(
                     letterSpacing: 1,
