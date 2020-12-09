@@ -61,7 +61,7 @@ class _TextPostState extends State<TextImagePost> {
               Spacer(),
               GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Postdetails()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostdetailsImage()));
                 },
                   child: Text("View Comments", style: GoogleFonts.inter(letterSpacing: .5, fontSize: 12,fontWeight: FontWeight.w600, color: Color(0XFF20BAA2)))),
 

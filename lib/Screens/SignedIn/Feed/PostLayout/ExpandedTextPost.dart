@@ -4,16 +4,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/comment.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
+import 'package:proapp/Widgets/commentgrab.dart';
 import 'package:footer/footer.dart';
 import 'package:footer/footer_view.dart';
 
 
-class PostdetailsImage extends StatefulWidget {
-  @override
-  _PostdetailsImageState createState() => _PostdetailsImageState();
+class Postdetails extends StatefulWidget {
+  final String name, description, tag,date;
+  final int upvote, downvote;
+
+
+  const Postdetails({Key key, this.name, this.description, this.tag, this.date, this.upvote, this.downvote}) : super(key: key);@override
+  _PostdetailsState createState() => _PostdetailsState();
 }
 
-class _PostdetailsImageState extends State<PostdetailsImage> {
+class _PostdetailsState extends State<Postdetails> {
   bool isPressed = false;
   bool isPressed1 = false;
   @override
@@ -28,7 +33,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
           color: Color(0xff20BAA2),
           onPressed: () {
             Navigator.pop(context);
-            
+
           },
         ),
       ),
@@ -51,7 +56,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                       SizedBox(
                         width: 10,
                       ),
-                      new Text("Anonymous Name",
+                      new Text(widget.name,
                           style: GoogleFonts.inter(
                             letterSpacing: .25,
                             fontSize: 16,
@@ -60,18 +65,16 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                       Spacer(),
                       new Container(
                         height: 25,
-                        width: 45,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(13),
                           color: Color(0xFF189F98),
                         ),
-                        child: Center(
-                          child: Text("TAGS",
-                              style: GoogleFonts.inter(
-                                  letterSpacing: 1.5,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white)),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 10, right :10),
+                          child: Center(
+                            child: Text(widget.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                                fontWeight: FontWeight.w500, color: Colors.white) ),
+                          ),
                         ),
                       )
                     ],
@@ -79,19 +82,9 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                   SizedBox(
                     height: 10,
                   ),
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                          "https://t8x8a5p2.stackpathcdn.com/wp-content/uploads/2018/05/Birthday-Cake-Recipe-Image-720x720.jpg")),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  VoteTemplate(type: VoteType.feed, upvoteCount: 234),
-                  SizedBox(
-                    height: 10,
-                  ),
+
                   Text(
-                    'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',
+                    widget.description+'\n',
                     style: GoogleFonts.inter(
                         letterSpacing: .25,
                         fontSize: 14,
@@ -102,9 +95,14 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                   SizedBox(
                     height: 10,
                   ),
+                  VoteTemplate(type: VoteType.feed, upvoteCount: widget.upvote, downvoteCount: widget.downvote,),
+
+                  SizedBox(
+                    height: 10,
+                  ),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: new Text("28th September 2020",
+                    child: new Text(datetimeformat(widget.date),
                         textAlign: TextAlign.left,
                         style: GoogleFonts.inter(
                             letterSpacing: 1,
@@ -124,15 +122,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                         fontWeight: FontWeight.w500,)),
                     ),
                   ),
-                  ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      //padding: const EdgeInsets.all(8),
-                      itemCount: 5,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Comment();
-                      }
-                  ),
+                  CommentGrab(),
 
                 ],
 
@@ -151,5 +141,53 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
       ),
 
     );
+  }
+
+
+
+
+
+  String datetimeformat(String date){
+    String month = date.substring(5,7);
+    int m =int.parse(month);
+    switch (m) {
+      case 1:
+        month = "January";
+        break;
+      case 2:
+        month = "February";
+        break;
+      case 3:
+        month = "March";
+        break;
+      case 4:
+        month = "April";
+        break;
+      case 5:
+        month = "May";
+        break;
+      case 6:
+        month = "June";
+        break;
+      case 7:
+        month = "July";
+        break;
+      case 8:
+        month = "August";
+        break;
+      case 9:
+        month = "September";
+        break;
+      case 10:
+        month = "October";
+        break;
+      case 11:
+        month = "November";
+        break;
+      case 12:
+        month = "December";
+        break;
+    }
+    return date.substring(8,10) +"th "+month+" "+date.substring(0,4);
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:proapp/Screens/SignedIn/Feed/PostLayout/ExpandedTextImagePost.dart';
+import 'package:proapp/Screens/SignedIn/Feed/PostLayout/ExpandedTextPost.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/readmore.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 
@@ -75,7 +75,7 @@ class _TextPostState extends State<TextPost> {
               Spacer(),
               GestureDetector(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Postdetails()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Postdetails(name: widget.name,description: widget.description,upvote: widget.upvote,downvote: widget.downvote,tag: widget.tag,date: widget.datetime,)));
                   },
                   child: Text("View Comments", style: GoogleFonts.inter(letterSpacing: .5, fontSize: 12,fontWeight: FontWeight.w600, color: Color(0XFF20BAA2)))),
 

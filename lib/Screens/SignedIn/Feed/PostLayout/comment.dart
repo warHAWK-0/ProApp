@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class Comment extends StatefulWidget {
+  final String name, description, date;
+
+  const Comment({Key key, this.name, this.description, this.date}) : super(key: key);
   @override
   _CommentState createState() => _CommentState();
 }
@@ -136,7 +139,7 @@ class _CommentState extends State<Comment> {
                 SizedBox(
                   width: 16,
                 ),
-                Text("Anonymous Name",
+                Text(widget.name,
                     style: GoogleFonts.inter(
                       letterSpacing: .25,
                       fontSize: 16,
@@ -171,13 +174,16 @@ class _CommentState extends State<Comment> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 47, right: 16),
-              child: Text(
-                'It is a long established fact that a has a morearch for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',
-                style: GoogleFonts.inter(
-                    letterSpacing: .25,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color.fromRGBO(0, 0, 0, 0.65)),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.description,
+                  style: GoogleFonts.inter(
+                      letterSpacing: .25,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromRGBO(0, 0, 0, 0.65)),
+                ),
               ),
             ),
             SizedBox(height: 5,),
@@ -185,11 +191,11 @@ class _CommentState extends State<Comment> {
               padding: EdgeInsets.only(left: 47),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: new Text("28th September 2020",
+                child: new Text(datetimeformat(widget.date),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.inter(
                         letterSpacing: 1,
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color.fromRGBO(0, 0, 0, 0.65))),
               ),
@@ -202,4 +208,49 @@ class _CommentState extends State<Comment> {
       ),
     );
   }
+
+  String datetimeformat(String date){
+    String month = date.substring(5,7);
+    int m =int.parse(month);
+    switch (m) {
+      case 1:
+        month = "January";
+        break;
+      case 2:
+        month = "February";
+        break;
+      case 3:
+        month = "March";
+        break;
+      case 4:
+        month = "April";
+        break;
+      case 5:
+        month = "May";
+        break;
+      case 6:
+        month = "June";
+        break;
+      case 7:
+        month = "July";
+        break;
+      case 8:
+        month = "August";
+        break;
+      case 9:
+        month = "September";
+        break;
+      case 10:
+        month = "October";
+        break;
+      case 11:
+        month = "November";
+        break;
+      case 12:
+        month = "December";
+        break;
+    }
+    return date.substring(8,10) +"th "+month+" "+date.substring(0,4);
+  }
+
 }
