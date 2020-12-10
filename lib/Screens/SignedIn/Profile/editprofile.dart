@@ -11,12 +11,14 @@ import 'package:proapp/Models/UserDetails.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/otp.dart';
 import 'package:proapp/Widgets/themes.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class EditProfile extends StatefulWidget {
   final UserDetails userDetails;
   final String uid;
   String userProfileUrl;
-  EditProfile({Key key, this.userDetails, this.uid, this.userProfileUrl}) : super(key: key);
+  EditProfile({Key key, this.userDetails, this.uid, this.userProfileUrl})
+      : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -26,16 +28,33 @@ class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
   bool loading = true;
   FocusNode f1, f2;
+  Map<String, String> selectedValueMap = Map();
   TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
-  String newMobNo,newAddress;
+  String newMobNo, newAddress;
+  final List<String> _states = [
+    'A',
+    'B',
+    'C',
+  ];
+  final List<String> _city = [
+    'A',
+    'B',
+    'C',
+  ];
+  final List<String> _pincode = [
+    'A',
+    'B',
+    'C',
+  ];
 
   @override
   void initState() {
     super.initState();
     f1 = FocusNode();
     f2 = FocusNode();
+    selectedValueMap["department"] = null;
   }
 
   submit(String oldAddress, String oldMobileNo) {
@@ -44,16 +63,17 @@ class _EditProfileState extends State<EditProfile> {
       form.save();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OTP(
-          prevMobNo: widget.userDetails.mobileNo,
-          uid: widget.uid,
-          newUserDetails: UserDetails(
-            email: widget.userDetails.email,
-            name: widget.userDetails.name,
-            address: newAddress == null ? oldAddress : newAddress,
-            mobileNo: newMobNo == null ? oldMobileNo : newMobNo,
-          ),
-        )),
+        MaterialPageRoute(
+            builder: (context) => OTP(
+                  prevMobNo: widget.userDetails.mobileNo,
+                  uid: widget.uid,
+                  newUserDetails: UserDetails(
+                    email: widget.userDetails.email,
+                    name: widget.userDetails.name,
+                    address: newAddress == null ? oldAddress : newAddress,
+                    mobileNo: newMobNo == null ? oldMobileNo : newMobNo,
+                  ),
+                )),
       );
     }
   }
@@ -144,6 +164,41 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  Widget getSearchableDropdown(List<String> listData, mapKey) {
+    List<DropdownMenuItem> items = [];
+    for (int i = 0; i < listData.length; i++) {
+      items.add(DropdownMenuItem(
+        child: Text(
+          listData[i],
+        ),
+        value: listData[i],
+      ));
+    }
+    return SearchableDropdown(
+      underline: Container(),
+      items: items,
+      value: selectedValueMap[mapKey],
+      isExpanded: true,
+      isCaseSensitiveSearch: false,
+      closeButton: 'Close',
+      hint: Text(
+        'Select ' + mapKey,
+        // style: Heading3(
+        //   Color.fromRGBO(0, 0, 0, 0.45),
+        // ),
+      ),
+      searchHint: Text(
+        'Select ' + mapKey,
+        style: TextStyle(fontSize: 20),
+      ),
+      onChanged: (value) {
+        setState(() {
+          selectedValueMap[mapKey] = value;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     databaseService = new DatabaseService(uid: widget.uid);
@@ -153,8 +208,13 @@ class _EditProfileState extends State<EditProfile> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           leading: InkWell(
-            onTap: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileMain(uid: widget.uid,)));
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfileMain(
+                            uid: widget.uid,
+                          )));
             },
             child: Icon(
               Icons.arrow_back_ios,
@@ -290,8 +350,50 @@ class _EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 32.0,
                         ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[350],
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(6.0),
+                          ),
+                          child: getSearchableDropdown(_states, "State"),
+                        ),
+                        SizedBox(
+                          height: 32.0,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[350],
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(6.0),
+                          ),
+                          child: getSearchableDropdown(_city, "City"),
+                        ),
+                        SizedBox(
+                          height: 32.0,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[350],
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(6.0),
+                          ),
+                          child: getSearchableDropdown(_pincode, "Postal Code"),
+                        ),
+                        SizedBox(
+                          height: 32.0,
+                        ),
                         InkWell(
-                          onTap: loading ? null : submit(widget.userDetails.address,widget.userDetails.mobileNo),
+                          onTap: loading
+                              ? null
+                              : submit(widget.userDetails.address,
+                                  widget.userDetails.mobileNo),
                           child: Container(
                             //Sign up button
                             width: double.infinity,
@@ -301,15 +403,15 @@ class _EditProfileState extends State<EditProfile> {
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             child: Center(
-                                    child: Text(
-                                      'SAVE',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Intern',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
+                              child: Text(
+                                'SAVE',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Intern',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -322,38 +424,36 @@ class _EditProfileState extends State<EditProfile> {
 
   // retrieving image url from firebase storage
   _showProfilePicture() {
-    return Stack(
-      children: [
+    return Stack(children: [
       CircleAvatar(
         backgroundImage: NetworkImage(widget.userProfileUrl),
         maxRadius: 50,
       ),
-        Positioned(
-          bottom: 3.0,
-          right: 3.0,
-          child: InkWell(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                builder: ((builder) => bottomSheet()),
-              );
-            },
-            child: Container(
-              padding: EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: primarygreen,
-              ),
-              child: Icon(
-                EvaIcons.edit,
-                color: Colors.black, //to change the picture
-                size: 20.0,
-              ),
+      Positioned(
+        bottom: 3.0,
+        right: 3.0,
+        child: InkWell(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              builder: ((builder) => bottomSheet()),
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: primarygreen,
+            ),
+            child: Icon(
+              EvaIcons.edit,
+              color: Colors.black, //to change the picture
+              size: 20.0,
             ),
           ),
         ),
-      ]
-    );
+      ),
+    ]);
   }
 
   Widget bottomSheet() {

@@ -7,21 +7,27 @@ class complaintCreated extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(left: 16,right: 16),
+        padding: EdgeInsets.only(left: 16, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Complaint Created",style: GoogleFonts.inter(textStyle:TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-                fontWeight: FontWeight.w400
-            )),),
-            Text("Complaint #208",style: GoogleFonts.inter(textStyle:TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w500
-            )),),
+            Text(
+              "Complaint Created",
+              style: GoogleFonts.inter(
+                  textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400)),
+            ),
+            Text(
+              "Complaint #208",
+              style: GoogleFonts.inter(
+                  textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500)),
+            ),
             SizedBox(
               height: 24,
             ),
@@ -29,28 +35,28 @@ class complaintCreated extends StatelessWidget {
             SizedBox(
               height: 32,
             ),
-          SpinKitRing(
-            color: Color(0xffA0AEC0),
-            size: 50.0,
-          ),
+            SpinKitRing(
+              color: Color(0xffA0AEC0),
+              size: 50.0,
+            ),
             SizedBox(
               height: 16,
             ),
             InkWell(
-              onTap: (){
+              onTap: () {
                 //code to navigate
               },
-              child: Text("Back to complaints",style: GoogleFonts.inter(textStyle: TextStyle(
-                color: Color(0xffA0AEC0),
-                fontSize: 12,
-                fontWeight: FontWeight.w400
-              )),),
-            )
-
-
-
+              child: Text(
+                "Back to complaints",
+                style: GoogleFonts.inter(
+                  textStyle: TextStyle(
+                      color: Color(0xffA0AEC0),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400),
+                ),
+              ),
+            ),
           ],
-
         ),
       ),
     );
