@@ -70,7 +70,7 @@ class _FeedMainState extends State<FeedMain> {
                                   datetime:snapshot.data.documents[index]['DateTime'],
                                   description:snapshot.data.documents[index]['Description'],
                                   downvote: snapshot.data.documents[index]['Downvote'],
-                                  options:snapshot.data.documents[index]['options'],
+                                  options:snapshot.data.documents[index]['Options'],
                                   postid:snapshot.data.documents[index].documentID,
                                   tag:snapshot.data.documents[index]['Tag'],
                                   upvote:snapshot.data.documents[index]['Upvote'],
@@ -86,7 +86,7 @@ class _FeedMainState extends State<FeedMain> {
                                 datetime:snapshot.data.documents[index]['DateTime'],
                                 description:snapshot.data.documents[index]['Description'],
                                 downvote: snapshot.data.documents[index]['Downvote'],
-                                options:snapshot.data.documents[index]['options'],
+                                options:snapshot.data.documents[index]['Options'],
                                 postid:snapshot.data.documents[index].documentID,
                                 tag:snapshot.data.documents[index]['Tag'],
                                 upvote:snapshot.data.documents[index]['Upvote'],
@@ -94,13 +94,20 @@ class _FeedMainState extends State<FeedMain> {
                             );
                           }
                           else{return PollPost(
-                            description: snapshot.data.documents[index]['Description'],
-                            name: snapshot.data.documents[index]['Name'],
-                            datetime: snapshot.data.documents[index]['DateTime'],
-                            tag: snapshot.data.documents[index]['Tag'],
-                            options: snapshot.data.documents[index]['Options'],
+                              feed: FeedModel(
+                              uid: snapshot.data.documents[index]['uid'],
+                              name:snapshot.data.documents[index]['Name'],
+                                type:snapshot.data.documents[index]['Type'],
+                                datetime:snapshot.data.documents[index]['DateTime'],
+                              description:snapshot.data.documents[index]['Description'],
+                              downvote: snapshot.data.documents[index]['Downvote'],
+                              options:snapshot.data.documents[index]['Options'],
+                              postid:snapshot.data.documents[index].documentID,
+                              tag:snapshot.data.documents[index]['Tag'],
+                              upvote:snapshot.data.documents[index]['Upvote'],
 
-                          );}
+                          ));
+                          }
                        }
                    );
                 }

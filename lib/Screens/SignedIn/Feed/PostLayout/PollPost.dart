@@ -1,14 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Feed.dart';
+import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:recase/recase.dart';
 import 'readmore.dart';
 
 class PollPost extends StatefulWidget {
-  final String description, name, tag, datetime;
-  final Map options;
-  const PollPost({Key key, this.description, this.name, this.tag, this.datetime, this.options}) : super(key: key);
+  final FeedModel feed;
+ //   final String description, name, tag, datetime,uid,postid;
+ // final int upvote, downvote;
+ // final Map options;
+
+  const PollPost({Key key, this.feed, }) : super(key: key);
   @override
   _PollPostState createState() => _PollPostState();
 }
@@ -32,7 +38,7 @@ class _PollPostState extends State<PollPost> {
               SizedBox(
                 width: 10,
               ),
-              new Text(widget.name,
+              new Text(widget.feed.name,
                   style: GoogleFonts.inter(
                     letterSpacing: .25,
                     fontSize: 16,
@@ -48,7 +54,7 @@ class _PollPostState extends State<PollPost> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, right :10),
                   child: Center(
-                    child: Text(widget.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                    child: Text(widget.feed.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
                         fontWeight: FontWeight.w500, color: Colors.white) ),
                   ),
                 ),
@@ -61,7 +67,7 @@ class _PollPostState extends State<PollPost> {
           Align(
             alignment: Alignment.centerLeft,
             child: ReadMoreText(
-              widget.description+"\n",
+              widget.feed.description+"\n",
               style: GoogleFonts.inter(
                   letterSpacing: .25,
                   fontSize: 14,
@@ -80,68 +86,34 @@ class _PollPostState extends State<PollPost> {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: widget.options.length,
+            itemCount: widget.feed.options.length,
               itemBuilder: (BuildContext context, index){
                 return SizedBox(
                   width: double.infinity,
                   child: OutlineButton(
                     child: Text(
-                      widget.options.keys.elementAt(index).toString().pascalCase,
+                      widget.feed.options.keys.elementAt(index).toString().pascalCase,
                       style: TextStyle(color: Color(0xff20BAA2)),
                     ),
+                    onPressed: ()async{
 
+
+
+                      await Firestore.instance.collection('Post').document(widget.feed.postid).updateData({
+
+                        "Options."+widget.feed.options.keys.elementAt(index).toString(): FieldValue.arrayUnion([widget.feed.uid]),
+                      });
+
+                      //print(widget.feed.options.values.elementAt(index));
+                    },
                   ),
                 );
               }
           ),
-          // Column(
-          //   children: <Widget>[
-          //     SizedBox(
-          //       width: double.infinity,
-          //       child: OutlineButton(
-          //         child: Text(
-          //           "Option1",
-          //           style: TextStyle(color: Color(0xff20BAA2)),
-          //         ),
-          //
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       width: double.infinity,
-          //       child: OutlineButton(
-          //         child: Text(
-          //           "Option1",
-          //           style: TextStyle(color: Color(0xff20BAA2)),
-          //         ),
-          //
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       width: double.infinity,
-          //       child: OutlineButton(
-          //         child: Text(
-          //           "Option1",
-          //           style: TextStyle(color: Color(0xff20BAA2)),
-          //         ),
-          //
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       width: double.infinity,
-          //       child: OutlineButton(
-          //         child: Text(
-          //           "Option1",
-          //           style: TextStyle(color: Color(0xff20BAA2)),
-          //         ),
-          //
-          //       ),
-          //     ),
-          //   ],
-          // ),
           SizedBox(height: 10,),
           Align(
             alignment: Alignment.centerLeft,
-            child: new Text(datetimeformat(widget.datetime),
+            child: new Text(datetimeformat(widget.feed.datetime),
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter(
                     letterSpacing: 1,

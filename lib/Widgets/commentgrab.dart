@@ -30,6 +30,7 @@ class _CommentGrabState extends State<CommentGrab> {
           else{
             return snapshot.data.documents.length ==0 ? _noCommentsFoundContainer() :
                 ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data.documents.length,
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
@@ -165,12 +167,6 @@ class _PostdetailsState extends State<Postdetails> {
                   labelStyle: TextStyle(
                     color: primarygreen,
                   ),
-//                  suffixIcon: hastext==false?IconButton(
-//                    icon:Icon(FlevaIcons.paper_plane,color: Colors.grey),
-//                    onPressed: (){
-//
-//                    },
-//                  ):
                    suffixIcon:IconButton(
                     icon:Icon(FlevaIcons.paper_plane,color: primarygreen),
                     onPressed: ()async{
@@ -180,6 +176,9 @@ class _PostdetailsState extends State<Postdetails> {
                           name: "Pikachu",
                           date: DateTime.now().toString().substring(0, 16),
                         );
+                        this.setState(() {
+                          _commentController.clear();
+                        });
                         await db.post.document(widget.feed.postid).collection(
                             "comments").document().setData(_comment.toJson());
                       }
@@ -215,6 +214,8 @@ class _PostdetailsState extends State<Postdetails> {
 
     );
   }
+
+
 
 
 
