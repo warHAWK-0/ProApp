@@ -16,6 +16,8 @@ class DatabaseService{
   CollectionReference complaint = firestore.collection("Complaint");
   CollectionReference userDetails = firestore.collection("UserDetails");
   CollectionReference allComplaints = firestore.collection("AllComplaints");
+  CollectionReference post = firestore.collection("Post");
+
 
   //get username for profile
   Future getUserName() async{

@@ -1,8 +1,8 @@
-class Comment{
+class CommentModel{
   String name, commentdes, date;
 
 
-  Comment({
+  CommentModel({
     this.name,
     this.commentdes,
     this.date
