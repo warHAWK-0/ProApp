@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:proapp/Models/address.dart';
 import 'package:proapp/Screens/NotSIgnedIn/Login/LoginMain.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
@@ -291,10 +292,14 @@ class _SignUpState extends State<SignUp> {
                 "name":_name,
                 "email":_email,
                 "mobileNo": "",
-                "address": "",
+                "address": Address(
+                  addressline1: "",
+                  city: "",
+                  state: "",
+                  pincode: ""
+                ).toJson(),
+                "verified" : false
               });
-
-
 
               showGeneralDialog(
                 context: context,

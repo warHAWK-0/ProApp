@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:proapp/Models/UserDetails.dart';
+import 'package:proapp/Screens/SignedIn/HomePage.dart';
 import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/Twilio/send_sms.dart';
@@ -26,6 +27,7 @@ class _OTPState extends State<OTP> {
   void initState() {
     super.initState();
     _generateOTP();
+    print(widget.newUserDetails.mobileNo);
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -222,16 +224,66 @@ class _OTPState extends State<OTP> {
                                 loading = true;
                               });
                               if (userEnteredOTP == otp){
-                                print(widget.newUserDetails.mobileNo);
                                 DatabaseService db = DatabaseService(uid: widget.uid);
                                 db.updateUserDB(widget.newUserDetails);
                                 Navigator.pop(context);
                                 Navigator.pop(context);
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
                               }
                               else{
-                                // TODO: reset timer
-                                // resend otp
-
+                                // resend OTP
+                                _generateOTP();
+                                // creating page again after resending
+                                showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel:
+                                  MaterialLocalizations.of(context).modalBarrierDismissLabel,
+                                  barrierColor: Colors.black45,
+                                  transitionDuration: const Duration(milliseconds: 500),
+                                  pageBuilder: (BuildContext buildContext, Animation animation,
+                                      Animation secondaryAnimation) {
+                                    return Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width - 30,
+                                        height: 80,
+                                        margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                                        padding: EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(45, 55, 72, 0.9),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Incorrect OTP. New OTP sent to your Mobile Number ${widget.newUserDetails.mobileNo}.',
+                                              textAlign: TextAlign.justify,
+                                              softWrap: true,
+                                              style: TextStyle(
+                                                decoration: TextDecoration.none,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 20,
+                                                color: Color(0xFFFFFFFF),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  transitionBuilder: (context, anim1, anim2, child) {
+                                    return SlideTransition(
+                                      position:
+                                      Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+                                      child: child,
+                                    );
+                                  },
+                                );
+                                //
                               }
                               setState(() {
                                 loading = false;

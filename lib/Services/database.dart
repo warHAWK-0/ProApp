@@ -39,10 +39,13 @@ class DatabaseService{
 
   }
 
-   Future updateUserDB(UserDetails userDetails) async {
-    return await Firestore.instance
-        .collection("UserDetails")
+   Future updateUserDB(UserDetails details) async {
+    return await userDetails
         .document(uid)
-        .updateData(userDetails.toJson());
+        .updateData({
+      'verified' : details.verified,
+      'mobileNo' : details.mobileNo,
+      'address' : details.address,
+    });
   }
 }

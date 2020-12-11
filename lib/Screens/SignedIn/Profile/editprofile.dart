@@ -3,12 +3,12 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:proapp/Models/address.dart';
 import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/UserDetails.dart';
-import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/otp.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -32,7 +32,8 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
-  String newMobNo, newAddress;
+  String newMobNo, addressLine1;
+
   final List<String> _states = [
     'A',
     'B',
@@ -54,13 +55,21 @@ class _EditProfileState extends State<EditProfile> {
     super.initState();
     f1 = FocusNode();
     f2 = FocusNode();
-    selectedValueMap["department"] = null;
+    selectedValueMap["state"] = widget.userDetails.address.state;
+    selectedValueMap["city"] = widget.userDetails.address.city;
+    selectedValueMap["pincode"] = widget.userDetails.address.pincode;
   }
 
-  submit(String oldAddress, String oldMobileNo) {
+  submit(Address oldAddress, String oldMobileNo) {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
+      Address newAddress = Address(
+        addressline1: addressLine1,
+        state: selectedValueMap["state"],
+        city: selectedValueMap["city"],
+        pincode: selectedValueMap["pincode"]
+      );
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -72,8 +81,61 @@ class _EditProfileState extends State<EditProfile> {
                     name: widget.userDetails.name,
                     address: newAddress == null ? oldAddress : newAddress,
                     mobileNo: newMobNo == null ? oldMobileNo : newMobNo,
+                    verified: true,
                   ),
-                )),
+                ),
+        ),
+      );
+    }
+    else{
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel:
+        MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.black45,
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (BuildContext buildContext, Animation animation,
+            Animation secondaryAnimation) {
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: MediaQuery.of(context).size.width - 30,
+              height: 120,
+              margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(45, 55, 72, 0.9),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Please fill the fields correctly.',
+                    textAlign: TextAlign.justify,
+                    softWrap: true,
+                    style: TextStyle(
+                      decoration: TextDecoration.none,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 20,
+                      color: Color(0xFFFFFFFF),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        transitionBuilder: (context, anim1, anim2, child) {
+          return SlideTransition(
+            position:
+            Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+            child: child,
+          );
+        },
       );
     }
   }
@@ -88,10 +150,8 @@ class _EditProfileState extends State<EditProfile> {
         onChanged: (value) {
           setState(() {
             newMobNo = value;
-            loading = false;
           });
         },
-        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f1),
         keyboardType: TextInputType.number,
         validator: (val) =>
             val.length != 10 ? "Enter a valid phone number" : null,
@@ -123,21 +183,19 @@ class _EditProfileState extends State<EditProfile> {
   Widget showAddressField() {
     return Container(
       //input fields email
-      height: 81,
+      height: 80,
       width: double.infinity,
       child: TextFormField(
-        initialValue: widget.userDetails.address,
+        initialValue: widget.userDetails.address.addressline1,
         onChanged: (value) {
           setState(() {
-            newAddress = value;
-            loading = false;
+            addressLine1 = value;
           });
         },
-        maxLines: 4,
+        maxLines: 1,
         autofocus: false,
-        validator: (value) =>
-            value.length <= 0 ? "Enter a valid address" : null,
-        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f2),
+        validator: (val) =>
+        val.length == 0 ? "Enter a address" : null,
         keyboardType: TextInputType.streetAddress,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -166,6 +224,7 @@ class _EditProfileState extends State<EditProfile> {
 
   Widget getSearchableDropdown(List<String> listData, mapKey) {
     List<DropdownMenuItem> items = [];
+    String hint = mapKey;
     for (int i = 0; i < listData.length; i++) {
       items.add(DropdownMenuItem(
         child: Text(
@@ -183,13 +242,6 @@ class _EditProfileState extends State<EditProfile> {
       closeButton: 'Close',
       hint: Text(
         'Select ' + mapKey,
-        // style: Heading3(
-        //   Color.fromRGBO(0, 0, 0, 0.45),
-        // ),
-      ),
-      searchHint: Text(
-        'Select ' + mapKey,
-        style: TextStyle(fontSize: 20),
       ),
       onChanged: (value) {
         setState(() {
@@ -202,19 +254,13 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     databaseService = new DatabaseService(uid: widget.uid);
-
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           leading: InkWell(
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ProfileMain(
-                            uid: widget.uid,
-                          )));
+              Navigator.pop(context);
             },
             child: Icon(
               Icons.arrow_back_ios,
@@ -229,197 +275,203 @@ class _EditProfileState extends State<EditProfile> {
             ),
           ),
         ),
-        body: Builder(
-          builder: (context) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 32),
-                  width: double.infinity,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        _showProfilePicture(),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        Text(
-                          widget.userDetails.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Inter',
-                            fontSize: 24,
-                            letterSpacing: 0.18,
-                          ),
-                        ),
-                        SizedBox(height: 19),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height: 12,
-                          child: Text(
-                            "EMAIL",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              letterSpacing: 1.5,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: TextFormField(
-                            enabled: false,
-                            initialValue: widget.userDetails.email,
-                            decoration: InputDecoration(
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      end: 12.0),
-                                  child: Icon(
-                                    Icons.done,
-                                    color: Colors.green,
-                                  ), // myIcon is a 48px-wide widget.
-                                ),
-                                contentPadding: EdgeInsets.only(
-                                    left: 12, top: 0, bottom: 0),
-                                filled: true,
-                                fillColor: Colors.white,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                errorBorder: InputBorder
-                                    .none, //for error write code change color to red
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                hintStyle: TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45))),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height: 12,
-                          child: Text(
-                            "PHONE NUMBER",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              letterSpacing: 1.5,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        showphoneField(),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height: 12,
-                          child: Text(
-                            "ADDRESS",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              letterSpacing: 1.5,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        showAddressField(),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey[350],
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                          child: getSearchableDropdown(_states, "State"),
-                        ),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey[350],
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                          child: getSearchableDropdown(_city, "City"),
-                        ),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey[350],
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                          child: getSearchableDropdown(_pincode, "Postal Code"),
-                        ),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        InkWell(
-                          onTap: loading
-                              ? null
-                              : submit(widget.userDetails.address,
-                                  widget.userDetails.mobileNo),
-                          child: Container(
-                            //Sign up button
-                            width: double.infinity,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: loading ? Colors.grey[300] : primarygreen,
-                              borderRadius: BorderRadius.circular(6.0),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'SAVE',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Intern',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 32),
+              width: double.infinity,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    _showProfilePicture(),
+                    SizedBox(
+                      height: 8,
                     ),
-                  )),
-            );
-          },
-        ));
+                    Text(
+                      widget.userDetails.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Inter',
+                        fontSize: 24,
+                        letterSpacing: 0.18,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      widget.userDetails.email,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        letterSpacing: 0.18,
+                      ),
+                    ),
+                    SizedBox(height: 32,),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      height: 12,
+                      child: Text(
+                        "EMAIL",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          letterSpacing: 1.5,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: TextFormField(
+                        enabled: false,
+                        initialValue: widget.userDetails.email,
+                        decoration: InputDecoration(
+                            suffixIcon: Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                  end: 12.0),
+                              child: Icon(
+                                Icons.done,
+                                color: Colors.green,
+                              ), // myIcon is a 48px-wide widget.
+                            ),
+                            contentPadding: EdgeInsets.only(
+                                left: 12, top: 0, bottom: 0),
+                            filled: true,
+                            fillColor: Colors.white,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                              borderSide:
+                              BorderSide(color: Color(0xffCBD5E0)),
+                            ),
+                            errorBorder: InputBorder
+                                .none, //for error write code change color to red
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                              borderSide:
+                              BorderSide(color: Color(0xffCBD5E0)),
+                            ),
+                            hintStyle: TextStyle(
+                                fontSize: 16,
+                                color: Color.fromRGBO(0, 0, 0, 0.45))),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      height: 12,
+                      child: Text(
+                        "PHONE NUMBER",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          letterSpacing: 1.5,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    showphoneField(),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      height: 12,
+                      child: Text(
+                        "ADDRESS",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          letterSpacing: 1.5,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    showAddressField(),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[350],
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                      child: getSearchableDropdown(_states, "state"),
+                    ),
+                    SizedBox(
+                      height: 32.0,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[350],
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                      child: getSearchableDropdown(_city, "city"),
+                    ),
+                    SizedBox(
+                      height: 32.0,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[350],
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                      child: getSearchableDropdown(_pincode, "pincode"),
+                    ),
+                    SizedBox(
+                      height: 32.0,
+                    ),
+                    InkWell(
+                      onTap: (){
+                        submit(widget.userDetails.address,
+                            widget.userDetails.mobileNo);
+                      },
+                      child: Container(
+                        //Sign up button
+                        width: double.infinity,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          color: primarygreen,
+                          borderRadius: BorderRadius.circular(6.0),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'SAVE',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Intern',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ),
+    );
   }
 
   // retrieving image url from firebase storage

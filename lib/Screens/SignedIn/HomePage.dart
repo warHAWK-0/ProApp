@@ -15,13 +15,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  AuthService _authService = new AuthService();
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
       Container(child: Text('Home')),
-      // FeedMain(uid: widget.uid),
-      // Container(child: Text('Complaint')),
       ComplaintMain(uid: widget.uid),
       ProfileMain(uid: widget.uid),
     ];
