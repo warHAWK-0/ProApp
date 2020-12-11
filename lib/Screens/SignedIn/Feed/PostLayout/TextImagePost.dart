@@ -13,7 +13,8 @@ import 'readmore.dart';
 
 class TextImagePost extends StatefulWidget {
   final FeedModel feed;
-  const TextImagePost({Key key, this.feed}) : super(key: key);
+  final String uid;
+  const TextImagePost({Key key, this.feed,this.uid}) : super(key: key);
 
   @override
   _TextPostState createState() => _TextPostState();
@@ -108,7 +109,7 @@ class _TextPostState extends State<TextImagePost> {
               Spacer(),
               GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostdetailsImage(feed:widget.feed,url: url)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostdetailsImage(feed:widget.feed,url: url,uid: widget.uid,)));
                 },
                   child: Text("View Comments", style: GoogleFonts.inter(letterSpacing: .5, fontSize: 12,fontWeight: FontWeight.w600, color: Color(0XFF20BAA2)))),
 

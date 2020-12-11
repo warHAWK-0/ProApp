@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Comment.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/comment.dart';
 
 
 class CommentGrab extends StatefulWidget {
-  final String pid;
+  final String pid,uid;
 
-  const CommentGrab({Key key, this.pid}) : super(key: key);
+  const CommentGrab({Key key, this.pid,this.uid}) : super(key: key);
   @override
   _CommentGrabState createState() => _CommentGrabState();
 }
@@ -36,9 +37,15 @@ class _CommentGrabState extends State<CommentGrab> {
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index){
                       return Comment(
-                        name: snapshot.data.documents[index]["Name"],
-                        description: snapshot.data.documents[index]["Description"],
-                        date: snapshot.data.documents[index]["DateTime"]
+                        comment: CommentModel(
+                          name: snapshot.data.documents[index]["Name"],
+                          date: snapshot.data.documents[index]["DateTime"],
+                          commentdes: snapshot.data.documents[index]["Description"],
+                          flagedUid: snapshot.data.documents[index]["FlagedUid"],
+                        ),
+                        pid:widget.pid,
+                        cid:snapshot.data.documents[index].documentID,
+                        uid: widget.uid,
                       );
                     }
                 );

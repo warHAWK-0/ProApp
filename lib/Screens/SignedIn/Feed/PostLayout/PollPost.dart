@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:proapp/Models/Feed.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
+import 'package:proapp/Widgets/themes.dart';
 import 'package:recase/recase.dart';
 import 'readmore.dart';
 
 class PollPost extends StatefulWidget {
   final FeedModel feed;
- //   final String description, name, tag, datetime,uid,postid;
- // final int upvote, downvote;
- // final Map options;
-
-  const PollPost({Key key, this.feed, }) : super(key: key);
+  final bool checker;
+  final String myuid;
+  const PollPost({Key key, this.feed,this.checker,this.myuid }) : super(key: key);
   @override
   _PollPostState createState() => _PollPostState();
 }
@@ -22,6 +22,18 @@ class PollPost extends StatefulWidget {
 class _PollPostState extends State<PollPost> {
   bool isPressed = false;
   bool isPressed1 = false;
+  bool showpolls=false;
+  var percent ;
+  void calculatePercent(){
+    percent = new List(widget.feed.options.values.toList().length);
+    int sum=0;
+    for (int i =0;i<widget.feed.options.values.toList().length;i++){
+      sum+=widget.feed.options.values.toList()[i].length;
+    }
+    for (int i =0;i<widget.feed.options.values.toList().length;i++){
+     percent[i]=widget.feed.options.values.toList()[i].length/sum;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -83,7 +95,49 @@ class _PollPostState extends State<PollPost> {
           SizedBox(
             height: 10,
           ),
-          ListView.builder(
+          (showpolls||widget.checker)?  ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: widget.feed.options.length,
+              itemBuilder: (BuildContext context, index){
+                calculatePercent();
+                return Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[300],
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(32.0),
+                      ),
+                      //padding: EdgeInsets.only(bottom: 8),
+                      child: LinearPercentIndicator(
+                        backgroundColor: Colors.white,
+                        width: MediaQuery.of(context).size.width-64,
+                        animation: true,
+                        animationDuration: 1000,
+                        lineHeight: 46.0,
+                        percent: percent[index],
+                        center: Row(
+                          children: [
+                            Text(widget.feed.options.keys.elementAt(index).toString(),style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.65)),),
+                            Spacer(),
+                            Text((percent[index]*100).toString().substring(0,4)+"%"),
+                          ],
+                        ),
+                        linearStrokeCap: LinearStrokeCap.roundAll,
+                        progressColor: primarygreen,
+                      ),
+
+                    ),
+                    SizedBox(
+                      height: 8,
+                    )
+                  ],
+                );
+              })
+              :ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: widget.feed.options.length,
@@ -97,12 +151,14 @@ class _PollPostState extends State<PollPost> {
                     ),
                     onPressed: ()async{
 
-
-
                       await Firestore.instance.collection('Post').document(widget.feed.postid).updateData({
 
-                        "Options."+widget.feed.options.keys.elementAt(index).toString(): FieldValue.arrayUnion([widget.feed.uid]),
+                        "Options."+widget.feed.options.keys.elementAt(index).toString(): FieldValue.arrayUnion([widget.myuid]),
                       });
+                      setState(() {
+                        showpolls=true;
+                      });
+                      calculatePercent();
 
                       //print(widget.feed.options.values.elementAt(index));
                     },

@@ -91,9 +91,25 @@ class _FeedMainState extends State<FeedMain> {
                                 tag:snapshot.data.documents[index]['Tag'],
                                 upvote:snapshot.data.documents[index]['Upvote'],
                               ),
+                              uid: widget.uid,
                             );
                           }
-                          else{return PollPost(
+                          else{
+                            bool checkvoted=false;
+                            DateTime temp=DateTime.parse(snapshot.data.documents[index]['DateTime']);
+                            //41:41:40.778347
+                            if(DateTime.now().difference(temp)>Duration(days: 1)){    //checks if the posst is more than a day old
+                            checkvoted=true;
+                            }
+                            print(DateTime.now().difference(temp));
+                            for (int i =0;i<snapshot.data.documents[index]['Options'].values.toList().length;i++){ //checks if the user has voted or not
+                              if (snapshot.data.documents[index]['Options'].values.toList()[i].contains(widget.uid)){
+                                checkvoted=true;
+                              }
+                            }
+
+                            return PollPost(
+                              myuid: widget.uid,
                               feed: FeedModel(
                               uid: snapshot.data.documents[index]['uid'],
                               name:snapshot.data.documents[index]['Name'],
@@ -106,7 +122,8 @@ class _FeedMainState extends State<FeedMain> {
                               tag:snapshot.data.documents[index]['Tag'],
                               upvote:snapshot.data.documents[index]['Upvote'],
 
-                          ));
+                          ),
+                            checker: checkvoted,);
                           }
                        }
                    );

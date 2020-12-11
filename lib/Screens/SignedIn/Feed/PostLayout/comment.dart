@@ -1,13 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Comment.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class Comment extends StatefulWidget {
-  final String name, description, date;
+  final CommentModel comment;
+  final String pid,cid,uid; // pid- post, cid - comment , uid - user
 
-  const Comment({Key key, this.name, this.description, this.date}) : super(key: key);
+  const Comment({Key key, this.comment,this.pid,this.cid,this.uid}) : super(key: key);
   @override
   _CommentState createState() => _CommentState();
 }
@@ -63,8 +66,12 @@ class _CommentState extends State<Comment> {
                   ),
                   splashColor: _splashcolor,
                   onPressed: () {
-                    if (_unflagged == false) {
+                    if (_unflagged == false) { //flagging it
                       setState(() {
+                        Firestore.instance.collection("Post").document(widget.pid).collection("comments").document(widget.cid).updateData({
+                          "FlaggedUid": FieldValue.arrayUnion([widget.uid]),
+                        });
+                        
                         _iconcolor = Colors.orange;
                         _opacityNum = 0.3;
                         _flagged = true;
@@ -139,7 +146,7 @@ class _CommentState extends State<Comment> {
                 SizedBox(
                   width: 16,
                 ),
-                Text(widget.name,
+                Text(widget.comment.name,
                     style: GoogleFonts.inter(
                       letterSpacing: .25,
                       fontSize: 16,
@@ -177,7 +184,7 @@ class _CommentState extends State<Comment> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  widget.description,
+                  widget.comment.commentdes,
                   style: GoogleFonts.inter(
                       letterSpacing: .25,
                       fontSize: 14,
@@ -191,7 +198,7 @@ class _CommentState extends State<Comment> {
               padding: EdgeInsets.only(left: 47),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: new Text(datetimeformat(widget.date),
+                child: new Text(datetimeformat(widget.comment.date),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.inter(
                         letterSpacing: 1,

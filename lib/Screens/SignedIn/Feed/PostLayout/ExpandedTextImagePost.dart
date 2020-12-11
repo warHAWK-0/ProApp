@@ -18,9 +18,9 @@ import 'package:proapp/Widgets/themes.dart';
 
 class PostdetailsImage extends StatefulWidget {
   final FeedModel feed;
-  final String url;
+  final String url,uid;
 
-  const PostdetailsImage({Key key, this.feed,this.url}) : super(key: key);
+  const PostdetailsImage({Key key, this.feed,this.url,this.uid}) : super(key: key);
 
 
   @override
@@ -160,7 +160,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                           fontWeight: FontWeight.w500,)),
                       ),
                     ),
-                    CommentGrab(pid: widget.feed.postid,),
+                    CommentGrab(pid: widget.feed.postid,uid: widget.uid,),
 
                   ],
 

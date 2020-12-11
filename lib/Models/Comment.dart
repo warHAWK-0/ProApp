@@ -1,11 +1,13 @@
 class CommentModel{
   String name, commentdes, date;
+  var flagedUid;
 
 
   CommentModel({
     this.name,
     this.commentdes,
-    this.date
+    this.date,
+    this.flagedUid
   });
 
 
@@ -14,6 +16,7 @@ class CommentModel{
     'Name': name,
     'Description': commentdes,
     'DateTime': date,
+    'FlagedUid':flagedUid
 
   };
 }
