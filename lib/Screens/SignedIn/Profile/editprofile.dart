@@ -10,6 +10,7 @@ import 'package:proapp/Services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proapp/Models/UserDetails.dart';
+import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/otp.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -181,6 +182,22 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  Future getCity() async {
+    var docref = await Firestore.instance.collection("Utils").document("CityName");
+    DocumentSnapshot doc = await docref.get();
+    return doc;
+  }
+  Future getState() async {
+    var docref = await Firestore.instance.collection("Utils").document("StateName");
+    DocumentSnapshot doc = await docref.get();
+    return doc;
+  }
+  Future getPincode() async {
+    var docref = await Firestore.instance.collection("Utils").document("Pincode");
+    DocumentSnapshot doc = await docref.get();
+    return doc;
+  }
+
   Widget showAddressField(String address_initial) {
     return Container(
       //input fields email
@@ -260,16 +277,23 @@ class _EditProfileState extends State<EditProfile> {
     String selectedPinCode = addressVal.pincode;
     String selectedaddressLine1 = addressVal.addressline1;
     List<String> city;
+    List<String> state;
+    List<String> pincode;
     databaseService = new DatabaseService(uid: widget.uid);
-    return StreamBuilder(
-      stream: Firestore.instance.collection("Utils").document("CityName").snapshots(),
-      builder: (context,snapshot) {
-       if(snapshot.hasData) {
-             city = snapshot.data["CityName"].cast<String>();
-      }
-      else {
-        //loading screen
-      }
+                     return FutureBuilder(
+                        //future: getCity(),
+                        future: Future.wait([getCity(),getState(),getPincode()]),
+                         builder: (context,AsyncSnapshot<List<dynamic>> snapshot) {
+                           if(snapshot.connectionState == ConnectionState.waiting){
+                             return Loading();
+                           }
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            city = snapshot.data[0]["CityName"].cast<String>();
+                            state = snapshot.data[1]["StateName"].cast<String>();
+                            pincode = snapshot.data[2]["Pincode"].cast<String>();
+                            print(city);
+                          } 
+                          
           return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
@@ -427,7 +451,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           borderRadius: BorderRadius.circular(6.0),
                         ),
-                        child: getSearchableDropdown(_states, selectedState),
+                        child: getSearchableDropdown(state, selectedState),
                       ),
                       SizedBox(
                         height: 32.0,
@@ -453,7 +477,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           borderRadius: BorderRadius.circular(6.0),
                         ),
-                        child: getSearchableDropdown(_pincode, selectedPinCode),
+                        child: getSearchableDropdown(pincode, selectedPinCode),
                       ),
                       SizedBox(
                         height: 32.0,
@@ -488,8 +512,8 @@ class _EditProfileState extends State<EditProfile> {
                 )),
           ),
       );
-      }
-    );
+       }
+   );
   }
 
   // retrieving image url from firebase storage
