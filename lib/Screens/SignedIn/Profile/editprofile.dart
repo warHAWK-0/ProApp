@@ -181,13 +181,13 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget showAddressField() {
+  Widget showAddressField(String address_initial) {
     return Container(
       //input fields email
       height: 80,
       width: double.infinity,
       child: TextFormField(
-        initialValue: widget.userDetails.address.addressline1,
+        initialValue: address_initial,
         onChanged: (value) {
           setState(() {
             addressLine1 = value;
@@ -242,7 +242,7 @@ class _EditProfileState extends State<EditProfile> {
       isCaseSensitiveSearch: false,
       closeButton: 'Close',
       hint: Text(
-        'Select ' + mapKey,
+        hint,
       ),
       onChanged: (value) {
         setState(() {
@@ -254,6 +254,11 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
+    Address addressVal = widget.userDetails.address;
+    String selectedCity = addressVal.city;
+    String selectedState = addressVal.state;
+    String selectedPinCode = addressVal.pincode;
+    String selectedaddressLine1 = addressVal.addressline1;
     List<String> city;
     databaseService = new DatabaseService(uid: widget.uid);
     return StreamBuilder(
@@ -413,7 +418,7 @@ class _EditProfileState extends State<EditProfile> {
                       SizedBox(
                         height: 8,
                       ),
-                      showAddressField(),
+                      showAddressField(selectedaddressLine1),
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
@@ -422,7 +427,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           borderRadius: BorderRadius.circular(6.0),
                         ),
-                        child: getSearchableDropdown(_states, "state"),
+                        child: getSearchableDropdown(_states, selectedState),
                       ),
                       SizedBox(
                         height: 32.0,
@@ -435,7 +440,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           borderRadius: BorderRadius.circular(6.0),
                         ),
-                        child: getSearchableDropdown(city, "city"),
+                        child: getSearchableDropdown(city, selectedCity),
                       ),
                       SizedBox(
                         height: 32.0,
@@ -448,7 +453,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           borderRadius: BorderRadius.circular(6.0),
                         ),
-                        child: getSearchableDropdown(_pincode, "pincode"),
+                        child: getSearchableDropdown(_pincode, selectedPinCode),
                       ),
                       SizedBox(
                         height: 32.0,
