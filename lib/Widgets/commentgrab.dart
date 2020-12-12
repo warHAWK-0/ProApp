@@ -48,7 +48,7 @@ class _CommentGrabState extends State<CommentGrab> {
                             commentdes: snapshot.data
                                 .documents[index]["Description"],
                             flaggedUid: snapshot.data
-                                .documents[index]["FlagedUid"],
+                                .documents[index]["FlaggedUid"],
                           ),
                           pid: widget.pid,
                           cid: snapshot.data.documents[index].documentID,

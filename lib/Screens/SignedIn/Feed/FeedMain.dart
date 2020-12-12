@@ -5,6 +5,7 @@ import 'package:proapp/Models/Feed.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/PollPost.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/TextImagePost.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/TextPost.dart';
+import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/themes.dart';
 
@@ -21,8 +22,53 @@ class FeedMain extends StatefulWidget {
 }
 
 class _FeedMainState extends State<FeedMain> {
+
+  ScrollController _scrollController = ScrollController();
+  List<DocumentSnapshot> posts = [];
+  bool hasMore =false;
+  bool loading =false;
+  DocumentSnapshot lastdocument;
+  int doclimit=10;
+
+  getfeed() async{
+    if(!hasMore){
+      return;
+    }
+    if(loading){
+      return;
+    }
+    setState(() {
+      loading=true;
+    });
+    QuerySnapshot querySnapshot;
+    if(lastdocument==null){
+      querySnapshot = await DatabaseService.firestore.collection('Post').limit(doclimit).getDocuments();
+    }else{
+      querySnapshot =await DatabaseService.firestore.collection('Post').limit(doclimit).getDocuments();
+    }
+    if(querySnapshot.documents.length < doclimit){
+      hasMore =false;
+    }
+    lastdocument =querySnapshot.documents[querySnapshot.documents.length -1];
+    posts.addAll(querySnapshot.documents);
+    setState(() {
+      loading=false;
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
+    _scrollController.addListener(() {
+      double maxScroll = _scrollController.position.maxScrollExtent;
+      double currentScroll = _scrollController.position.pixels;
+      double delta =MediaQuery.of(context).size.height *0.2;
+      if(maxScroll-currentScroll<=delta){
+        getfeed();
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(

@@ -18,9 +18,9 @@ import 'package:proapp/Widgets/themes.dart';
 
 class Postdetails extends StatefulWidget {
   final FeedModel feed;
+  final String uid,pid;
 
-
-  const Postdetails({Key key, this.feed}) : super(key: key);@override
+  const Postdetails({Key key, this.feed, this.uid, this.pid}) : super(key: key);@override
   _PostdetailsState createState() => _PostdetailsState();
 }
 
@@ -133,7 +133,7 @@ class _PostdetailsState extends State<Postdetails> {
                           fontWeight: FontWeight.w500,)),
                       ),
                     ),
-                    CommentGrab(pid: widget.feed.postid,),
+                    CommentGrab(pid: widget.feed.postid,uid: widget.uid),
 
                   ],
 
@@ -175,6 +175,7 @@ class _PostdetailsState extends State<Postdetails> {
                           commentdes: _commentController.text,
                           name: "Pikachu",
                           date: DateTime.now().toString().substring(0, 16),
+                            flaggedUid: []
                         );
                         this.setState(() {
                           _commentController.clear();
