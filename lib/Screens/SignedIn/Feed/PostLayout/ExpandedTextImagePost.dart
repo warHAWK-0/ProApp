@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:english_words/english_words.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fleva_icons/fleva_icons.dart';
@@ -204,9 +207,12 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                   icon:Icon(FlevaIcons.paper_plane,color: primarygreen),
                   onPressed: ()async{
                     if (_commentController.text!=""){ //creating a new document for comment
-                    CommentModel _comment =new CommentModel(
+                      final wordPair = WordPair.random();
+                      var rng = new Random();
+                      String nickname = wordPair.asPascalCase+(random(1000,9999).toString());
+                      CommentModel _comment =new CommentModel(
                       commentdes: _commentController.text,
-                      name: "Pikachu",
+                      name: nickname,
                       date: DateTime.now().toString().substring(0,16),
                       flaggedUid: [],
                     );
@@ -214,7 +220,9 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                       _commentController.clear();
                     });
                     await db.post.document(widget.feed.postid).collection("comments").document().setData(_comment.toJson());
-                       }
+
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    }
 
                   },
                 )
@@ -248,6 +256,12 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
 
     );
   }
+
+   random(min, max){
+    var rn = new Random();
+    return min + rn.nextInt(max - min);
+  }
+
   String datetimeformat(String date){
     String month = date.substring(5,7);
     int m =int.parse(month);

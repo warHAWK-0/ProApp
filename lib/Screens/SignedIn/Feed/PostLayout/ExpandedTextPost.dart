@@ -1,5 +1,7 @@
 import 'dart:ffi';
+import 'dart:math';
 
+import 'package:english_words/english_words.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
@@ -170,18 +172,21 @@ class _PostdetailsState extends State<Postdetails> {
                    suffixIcon:IconButton(
                     icon:Icon(FlevaIcons.paper_plane,color: primarygreen),
                     onPressed: ()async{
-                      if(_commentController.text!="") { //creating a new document for comment
+                      if(_commentController.text!="") {
+                        final wordPair = WordPair.random();
+                        var rng = new Random();
+                        String nickname = wordPair.asPascalCase+(random(1000,9999).toString());//creating a new document for comment
                         CommentModel _comment = new CommentModel(
                           commentdes: _commentController.text,
-                          name: "Pikachu",
+                          name: nickname,
                           date: DateTime.now().toString().substring(0, 16),
                             flaggedUid: []
                         );
                         this.setState(() {
                           _commentController.clear();
                         });
-                        await db.post.document(widget.feed.postid).collection(
-                            "comments").document().setData(_comment.toJson());
+                        await db.post.document(widget.feed.postid).collection("comments").document().setData(_comment.toJson());
+                        FocusScope.of(context).requestFocus(new FocusNode());
                       }
 
                     },
@@ -219,7 +224,10 @@ class _PostdetailsState extends State<Postdetails> {
 
 
 
-
+  random(min, max){
+    var rn = new Random();
+    return min + rn.nextInt(max - min);
+  }
 
 
   String datetimeformat(String date){
