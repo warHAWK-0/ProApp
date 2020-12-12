@@ -208,7 +208,11 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                       commentdes: _commentController.text,
                       name: "Pikachu",
                       date: DateTime.now().toString().substring(0,16),
+                      flaggedUid: [],
                     );
+                    this.setState(() {
+                      _commentController.clear();
+                    });
                     await db.post.document(widget.feed.postid).collection("comments").document().setData(_comment.toJson());
                        }
 

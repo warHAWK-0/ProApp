@@ -7,16 +7,17 @@ import 'package:proapp/Models/Comment.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class Comment extends StatefulWidget {
+  final bool initialflag;
   final CommentModel comment;
   final String pid,cid,uid; // pid- post, cid - comment , uid - user
 
-  const Comment({Key key, this.comment,this.pid,this.cid,this.uid}) : super(key: key);
+  const Comment({Key key, this.comment,this.pid,this.cid,this.uid,this.initialflag}) : super(key: key);
   @override
   _CommentState createState() => _CommentState();
 }
 
 class _CommentState extends State<Comment> {
-  bool _flagged = false;
+  bool _flagged=false;
   Color _splashcolor = Colors.red;
   Color _buttoncolor = Color(0xffFF4128);
   Color _iconcolor = Colors.grey;
@@ -66,17 +67,20 @@ class _CommentState extends State<Comment> {
                   ),
                   splashColor: _splashcolor,
                   onPressed: () {
-                    if (_unflagged == false) { //flagging it
+                    if (_unflagged == false) {
+                      Firestore.instance.collection("Post").document(widget.pid).collection("comments").document(widget.cid).updateData({
+                        "FlaggedUid": FieldValue.arrayUnion([widget.uid]),
+                      });
+                      //flagging it
                       setState(() {
-                        Firestore.instance.collection("Post").document(widget.pid).collection("comments").document(widget.cid).updateData({
-                          "FlaggedUid": FieldValue.arrayUnion([widget.uid]),
-                        });
-                        
                         _iconcolor = Colors.orange;
                         _opacityNum = 0.3;
                         _flagged = true;
                       });
                     } else {
+                      Firestore.instance.collection("Post").document(widget.pid).collection("comments").document(widget.cid).updateData({
+                        "FlaggedUid": FieldValue.arrayRemove([widget.uid]),
+                      });
                       setState(() {
                         _iconcolor = Colors.grey;
                         _opacityNum = 1.0;
@@ -128,6 +132,13 @@ class _CommentState extends State<Comment> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.initialflag);
+    if(widget.initialflag==true){
+      _flagged=true;
+      _opacityNum=0.3;
+      _iconcolor = Colors.orange;
+
+    }
     return Opacity(
       opacity: _opacityNum,
       child: Container(

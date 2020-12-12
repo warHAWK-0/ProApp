@@ -17,6 +17,7 @@ class CommentGrab extends StatefulWidget {
 }
 
 class _CommentGrabState extends State<CommentGrab> {
+  Comment c =new Comment();
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -36,17 +37,28 @@ class _CommentGrabState extends State<CommentGrab> {
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index){
-                      return Comment(
-                        comment: CommentModel(
-                          name: snapshot.data.documents[index]["Name"],
-                          date: snapshot.data.documents[index]["DateTime"],
-                          commentdes: snapshot.data.documents[index]["Description"],
-                          flagedUid: snapshot.data.documents[index]["FlagedUid"],
-                        ),
-                        pid:widget.pid,
-                        cid:snapshot.data.documents[index].documentID,
-                        uid: widget.uid,
-                      );
+                      if(snapshot.data.documents[index]["FlaggedUid"].length<2) { //TODO: change it to 5% of the user base
+                        bool initialflag=false;
+                        if (snapshot.data.documents[index]["FlaggedUid"].contains(widget.uid))
+                          {initialflag=true;}
+                        return Comment(
+                          comment: CommentModel(
+                            name: snapshot.data.documents[index]["Name"],
+                            date: snapshot.data.documents[index]["DateTime"],
+                            commentdes: snapshot.data
+                                .documents[index]["Description"],
+                            flaggedUid: snapshot.data
+                                .documents[index]["FlagedUid"],
+                          ),
+                          pid: widget.pid,
+                          cid: snapshot.data.documents[index].documentID,
+                          uid: widget.uid,
+                          initialflag: initialflag,
+                        );
+                      }
+                      else{
+                        return Container();
+                      }
                     }
                 );
           }
