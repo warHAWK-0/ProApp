@@ -2,6 +2,7 @@ import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Screens/SignedIn/HomePage.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/themes.dart';
@@ -414,6 +415,8 @@ class _FilterAllComplaintState extends State<FilterAllComplaint> {
                     ),
                     onPressed: () {
                       //apply
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
                     },
                   ),
                 ),

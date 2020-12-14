@@ -12,9 +12,10 @@ import 'package:proapp/Widgets/ToastMessage.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
-
-
 class CreateComplaint extends StatefulWidget {
+  final String uid;
+
+  const CreateComplaint({Key key, this.uid}) : super(key: key);
   @override
   _CreateComplaintState createState() => _CreateComplaintState();
 }
@@ -37,7 +38,6 @@ class _CreateComplaintState extends State<CreateComplaint> {
     'Complaint 201'
   ];
 
-
   @override
   void initState() {
     selectedValueMap["department"] = null;
@@ -47,7 +47,11 @@ class _CreateComplaintState extends State<CreateComplaint> {
 
   //Upload Image
   Future pickCameraImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 75,maxHeight: 600,maxWidth: 600);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: 75,
+        maxHeight: 600,
+        maxWidth: 600);
 
     setState(() {
       _imageFile = File(pickedFile.path);
@@ -55,7 +59,11 @@ class _CreateComplaintState extends State<CreateComplaint> {
   }
 
   Future pickGalleryImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 75, maxWidth: 600,maxHeight: 600);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.gallery,
+        imageQuality: 75,
+        maxWidth: 600,
+        maxHeight: 600);
 
     setState(() {
       _imageFile = File(pickedFile.path);
@@ -74,7 +82,6 @@ class _CreateComplaintState extends State<CreateComplaint> {
       ));
     }
     return SearchableDropdown(
-
       underline: Container(),
       items: items,
       value: selectedValueMap[mapKey],
@@ -101,8 +108,6 @@ class _CreateComplaintState extends State<CreateComplaint> {
 
   DatabaseService _initiateDBService() => new DatabaseService();
 
-
-
   Widget bottomSheet(BuildContext context) {
     return Container(
       height: 100.0,
@@ -119,7 +124,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
                     pickCameraImage();
                   },
@@ -137,13 +142,17 @@ class _CreateComplaintState extends State<CreateComplaint> {
                             size: 30,
                           ),
                         ),
-                        Text('CAMERA',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
+                        Text(
+                          'CAMERA',
+                          style: TextStyle(
+                              color: Colors.grey, fontWeight: FontWeight.w500),
+                        )
                       ],
                     ),
                   ),
                 ),
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
                     pickGalleryImage();
                   },
@@ -161,13 +170,16 @@ class _CreateComplaintState extends State<CreateComplaint> {
                             size: 30,
                           ),
                         ),
-                        Text('GALLERY',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500),)
+                        Text(
+                          'GALLERY',
+                          style: TextStyle(
+                              color: Colors.grey, fontWeight: FontWeight.w500),
+                        )
                       ],
                     ),
                   ),
                 ),
-              ]
-          ),
+              ]),
           Spacer(),
         ],
       ),
@@ -182,7 +194,7 @@ class _CreateComplaintState extends State<CreateComplaint> {
       appBar: CustomAppBar(
         child: Text(
           'Create a Complaint',
-          style: Heading2(Colors.black,letterSpace: 1.0),
+          style: Heading2(Colors.black, letterSpace: 1.0),
         ),
         elevation: true,
         backIcon: true,
@@ -190,12 +202,14 @@ class _CreateComplaintState extends State<CreateComplaint> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8,16, 8, 12),
+          padding: const EdgeInsets.fromLTRB(8, 16, 8, 12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: _height/45,),
+              SizedBox(
+                height: _height / 45,
+              ),
               // Dropdown Search for Department
               Container(
                 decoration: BoxDecoration(
@@ -207,7 +221,9 @@ class _CreateComplaintState extends State<CreateComplaint> {
                 ),
                 child: getSearchableDropdown(_department, "department"),
               ),
-              SizedBox(height: _height/50,),
+              SizedBox(
+                height: _height / 50,
+              ),
               // Dropdown Search for Complaint
               Container(
                 decoration: BoxDecoration(
@@ -217,9 +233,11 @@ class _CreateComplaintState extends State<CreateComplaint> {
                   ),
                   borderRadius: BorderRadius.circular(6.0),
                 ),
-                child: getSearchableDropdown(_complaint,"complaint"),
+                child: getSearchableDropdown(_complaint, "complaint"),
               ),
-              SizedBox(height: _height/50,),
+              SizedBox(
+                height: _height / 50,
+              ),
               //Description Box
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
@@ -243,68 +261,87 @@ class _CreateComplaintState extends State<CreateComplaint> {
                     border: InputBorder.none,
                     hintText: 'Description',
                   ),
-                  onChanged: (text){
+                  onChanged: (text) {
                     setState(() {
                       _description = text;
                     });
                   },
                 ),
               ),
-              SizedBox(height: _height/50,),
-              // Upload Button
-              _imageFile == null ? InkWell(
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: ((builder) => bottomSheet(context)),
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4,vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey[350],
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(6.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(FlevaIcons.upload,size: 24,color: Color.fromRGBO(0, 0, 0, 0.45),),
-                      SizedBox(width: 4,),
-                      Text(
-                        'Upload',
-                        style: Heading3(
-                          Color.fromRGBO(0, 0, 0, 0.45),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ) : Stack(
-
-                children: [Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4,vertical: 8),
-                  height: MediaQuery.of(context).size.width/3,
-                  width: MediaQuery.of(context).size.width/2,
-                  child: new Image.file(_imageFile),
-                ),
-                Positioned(
-                  left: MediaQuery.of(context).size.width/2-65,
-                  bottom: MediaQuery.of(context).size.width/3-25,
-                  child: InkWell(
-
-                      child: Icon(FlevaIcons.close_circle,size:25 ,color: Color(0xff404040),),
-                  onTap:() {
-                    setState(() {
-                      _imageFile=null;
-                    });
-                  },),
-                )],
+              SizedBox(
+                height: _height / 50,
               ),
+              // Upload Button
+              _imageFile == null
+                  ? InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: ((builder) => bottomSheet(context)),
+                        );
+                      },
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey[350],
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(6.0),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(
+                              FlevaIcons.upload,
+                              size: 24,
+                              color: Color.fromRGBO(0, 0, 0, 0.45),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              'Upload',
+                              style: Heading3(
+                                Color.fromRGBO(0, 0, 0, 0.45),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  : Stack(
+                      children: [
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                          height: MediaQuery.of(context).size.width / 3,
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: new Image.file(_imageFile),
+                        ),
+                        Positioned(
+                          left: MediaQuery.of(context).size.width / 2 - 65,
+                          bottom: MediaQuery.of(context).size.width / 3 - 25,
+                          child: InkWell(
+                            child: Icon(
+                              FlevaIcons.close_circle,
+                              size: 25,
+                              color: Color(0xff404040),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _imageFile = null;
+                              });
+                            },
+                          ),
+                        )
+                      ],
+                    ),
 
-              SizedBox(height: _height/50,),
+              SizedBox(
+                height: _height / 50,
+              ),
 
               InkWell(
                 child: Container(
@@ -315,18 +352,29 @@ class _CreateComplaintState extends State<CreateComplaint> {
                     borderRadius: BorderRadius.circular(6.0),
                   ),
                   child: Center(
-                    child: Text('CONTINUE',style: Heading4(Colors.white),),
+                    child: Text(
+                      'CONTINUE',
+                      style: Heading4(Colors.white),
+                    ),
                   ),
                 ),
-                onTap: (){
-                  if(selectedValueMap["department"]!=null && selectedValueMap["complaint"]!=null && _description.isNotEmpty){
-                    Navigator.push(context , MaterialPageRoute(builder: (context)=> ConfirmLocation(description: _description,selectedValueMap: selectedValueMap,imageFile: _imageFile,)));
+                onTap: () {
+                  if (selectedValueMap["department"] != null &&
+                      selectedValueMap["complaint"] != null &&
+                      _description.isNotEmpty) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ConfirmLocation(
+                                  description: _description,
+                                  selectedValueMap: selectedValueMap,
+                                  imageFile: _imageFile,
+                                  uid: widget.uid,
+                                )));
+                  } else {
+                    ToastUtils.showCustomToast(context,
+                        "An error has occurred, please recheck and do no leave anything blank");
                   }
-                  else{
-                    ToastUtils.showCustomToast(
-                        context, "An error has occurred, please recheck and do no leave anything blank");
-                  }
-
                 },
               ),
             ],
@@ -336,4 +384,3 @@ class _CreateComplaintState extends State<CreateComplaint> {
     );
   }
 }
-

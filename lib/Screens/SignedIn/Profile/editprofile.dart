@@ -36,20 +36,14 @@ class _EditProfileState extends State<EditProfile> {
   PickedFile _imageFile;
   String newMobNo, addressLine1;
 
-  final List<String> _states = [
-    'A',
-    'B',
-    'C',
+  List<String> _states = [
+
   ];
-  final List<String> _city = [
-    'A',
-    'B',
-    'C',
+  List<String> _city = [
+    '....loding...'
   ];
-  final List<String> _pincode = [
-    'A',
-    'B',
-    'C',
+  List<String> _pincode = [
+
   ];
 
   @override
@@ -57,44 +51,44 @@ class _EditProfileState extends State<EditProfile> {
     super.initState();
     f1 = FocusNode();
     f2 = FocusNode();
-    selectedValueMap["state"] = widget.userDetails.address.state;
-    selectedValueMap["city"] = widget.userDetails.address.city;
-    selectedValueMap["pincode"] = widget.userDetails.address.pincode;
+    // print('EDIT' + widget.uid);
+    selectedValueMap["state"] = widget.userDetails.address['State'];
+    selectedValueMap["city"] = widget.userDetails.address['City'];
+    selectedValueMap["pincode"] = widget.userDetails.address['Pincode'];
   }
 
-  submit(Address oldAddress, String oldMobileNo) {
+  submit(Map oldAddress, String oldMobileNo) {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
       Address newAddress = Address(
-        addressline1: addressLine1,
-        state: selectedValueMap["state"],
-        city: selectedValueMap["city"],
-        pincode: selectedValueMap["pincode"]
-      );
+          addressline1: addressLine1 == null ? widget.userDetails.address['AddressLine1'] : addressLine1,
+          state: selectedValueMap["state"],
+          city: selectedValueMap["city"],
+          pincode: selectedValueMap["pincode"]);
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => OTP(
-                  prevMobNo: widget.userDetails.mobileNo,
-                  uid: widget.uid,
-                  newUserDetails: UserDetails(
-                    email: widget.userDetails.email,
-                    name: widget.userDetails.name,
-                    address: newAddress == null ? oldAddress : newAddress,
-                    mobileNo: newMobNo == null ? oldMobileNo : newMobNo,
-                    verified: true,
-                  ),
-                ),
+          builder: (context) => OTP(
+            prevMobNo: widget.userDetails.mobileNo,
+            uid: widget.uid,
+            newUserDetails: UserDetails(
+              email: widget.userDetails.email,
+              name: widget.userDetails.name,
+              address: newAddress.toJson(),
+              mobileNo: newMobNo == null ? oldMobileNo : newMobNo,
+              verified: true,
+            ),
+          ),
         ),
       );
     }
-    else{
+    else {
       showGeneralDialog(
         context: context,
         barrierDismissible: true,
         barrierLabel:
-        MaterialLocalizations.of(context).modalBarrierDismissLabel,
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
         barrierColor: Colors.black45,
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (BuildContext buildContext, Animation animation,
@@ -134,7 +128,7 @@ class _EditProfileState extends State<EditProfile> {
         transitionBuilder: (context, anim1, anim2, child) {
           return SlideTransition(
             position:
-            Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+                Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
             child: child,
           );
         },
@@ -182,21 +176,37 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Future getCity() async {
-    var docref = await Firestore.instance.collection("Utils").document("CityName");
-    DocumentSnapshot doc = await docref.get();
-    return doc;
+  Future getDetails() async{
+    var cityDoc = await Firestore.instance.collection("Utils").document("CityName").get();
+    _city = cityDoc.data['CityName'].cast<String>();
+    var stateDoc =
+    await Firestore.instance.collection("Utils").document("StateName").get();
+    _states = stateDoc.data['StateName'].cast<String>();
+    var pinDoc =
+    await Firestore.instance.collection("Utils").document("Pincode").get();
+    _pincode = pinDoc.data['Pincode'].cast<String>();
   }
-  Future getState() async {
-    var docref = await Firestore.instance.collection("Utils").document("StateName");
-    DocumentSnapshot doc = await docref.get();
-    return doc;
-  }
-  Future getPincode() async {
-    var docref = await Firestore.instance.collection("Utils").document("Pincode");
-    DocumentSnapshot doc = await docref.get();
-    return doc;
-  }
+  //
+  // Future getCity() async {
+  //   var docref =
+  //       await Firestore.instance.collection("Utils").document("CityName");
+  //   DocumentSnapshot doc = await docref.get();
+  //   return doc;
+  // }
+  //
+  // Future getState() async {
+  //   var docref =
+  //       await Firestore.instance.collection("Utils").document("StateName");
+  //   DocumentSnapshot doc = await docref.get();
+  //   return doc;
+  // }
+  //
+  // Future getPincode() async {
+  //   var docref =
+  //       await Firestore.instance.collection("Utils").document("Pincode");
+  //   DocumentSnapshot doc = await docref.get();
+  //   return doc;
+  // }
 
   Widget showAddressField(String address_initial) {
     return Container(
@@ -212,8 +222,7 @@ class _EditProfileState extends State<EditProfile> {
         },
         maxLines: 1,
         autofocus: false,
-        validator: (val) =>
-        val.length == 0 ? "Enter a address" : null,
+        validator: (val) => val.length == 0 ? "Enter a address" : null,
         keyboardType: TextInputType.streetAddress,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -271,249 +280,198 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    Address addressVal = widget.userDetails.address;
-    String selectedCity = addressVal.city;
-    String selectedState = addressVal.state;
-    String selectedPinCode = addressVal.pincode;
-    String selectedaddressLine1 = addressVal.addressline1;
-    List<String> city;
-    List<String> state;
-    List<String> pincode;
+    Map addressVal = widget.userDetails.address;
+    String selectedCity = addressVal['City'] == '' ? 'Select City' : addressVal['City'];
+    String selectedState = addressVal['State'] == '' ? 'Select State' : addressVal['State'];
+    String selectedPinCode = addressVal['Pincode'] == '' ? 'Select Pincode' : addressVal['Pincode'];
+    String selectedaddressLine1 = addressVal['AddressLine1'] == '' ? 'Enter address' : addressVal['AddressLine1'];
     databaseService = new DatabaseService(uid: widget.uid);
-                     return FutureBuilder(
-                        //future: getCity(),
-                        future: Future.wait([getCity(),getState(),getPincode()]),
-                         builder: (context,AsyncSnapshot<List<dynamic>> snapshot) {
-                           if(snapshot.connectionState == ConnectionState.waiting){
-                             return Loading();
-                           }
-                          if (snapshot.connectionState == ConnectionState.done) {
-                            city = snapshot.data[0]["CityName"].cast<String>();
-                            state = snapshot.data[1]["StateName"].cast<String>();
-                            pincode = snapshot.data[2]["Pincode"].cast<String>();
-                            print(city);
-                          } 
-                          
-          return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            leading: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: Colors.black,
-                size: 20,
-              ),
-            ),
-            title: Center(
-              child: Text(
-                'Edit your profile       ',
-                style: Heading2(Colors.black, letterSpace: 1.15),
-              ),
-            ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+            size: 20,
           ),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-                padding: EdgeInsets.only(left: 20, right: 20, top: 32),
-                width: double.infinity,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      _showProfilePicture(),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        widget.userDetails.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Inter',
-                          fontSize: 24,
-                          letterSpacing: 0.18,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        widget.userDetails.email,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Inter',
-                          fontSize: 14,
-                          letterSpacing: 0.18,
-                        ),
-                      ),
-                      SizedBox(height: 32,),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        height: 12,
-                        child: Text(
-                          "EMAIL",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            letterSpacing: 1.5,
-                            fontFamily: 'Inter',
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: TextFormField(
-                          enabled: false,
-                          initialValue: widget.userDetails.email,
-                          decoration: InputDecoration(
-                              suffixIcon: Padding(
-                                padding: const EdgeInsetsDirectional.only(
-                                    end: 12.0),
-                                child: Icon(
-                                  Icons.done,
-                                  color: Colors.green,
-                                ), // myIcon is a 48px-wide widget.
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                  left: 12, top: 0, bottom: 0),
-                              filled: true,
-                              fillColor: Colors.white,
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                borderSide:
-                                BorderSide(color: Color(0xffCBD5E0)),
-                              ),
-                              errorBorder: InputBorder
-                                  .none, //for error write code change color to red
-                              disabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                borderSide:
-                                BorderSide(color: Color(0xffCBD5E0)),
-                              ),
-                              hintStyle: TextStyle(
-                                  fontSize: 16,
-                                  color: Color.fromRGBO(0, 0, 0, 0.45))),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        height: 12,
-                        child: Text(
-                          "PHONE NUMBER",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            letterSpacing: 1.5,
-                            fontFamily: 'Inter',
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      showphoneField(),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        height: 12,
-                        child: Text(
-                          "ADDRESS",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            letterSpacing: 1.5,
-                            fontFamily: 'Inter',
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      showAddressField(selectedaddressLine1),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey[350],
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(6.0),
-                        ),
-                        child: getSearchableDropdown(state, selectedState),
-                      ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey[350],
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(6.0),
-                        ),
-                        child: getSearchableDropdown(city, selectedCity),
-                      ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey[350],
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(6.0),
-                        ),
-                        child: getSearchableDropdown(pincode, selectedPinCode),
-                      ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
-                      InkWell(
-                        onTap: (){
-                          submit(widget.userDetails.address,
-                              widget.userDetails.mobileNo);
-                        },
-                        child: Container(
-                          //Sign up button
-                          width: double.infinity,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            color: primarygreen,
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'SAVE',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Intern',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+        ),
+        title: Center(
+          child: Text(
+            'Edit your profile       ',
+            style: Heading2(Colors.black, letterSpace: 1.15),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+            padding: EdgeInsets.only(left: 20, right: 20, top: 32),
+            width: double.infinity,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  _showProfilePicture(),
+                  SizedBox(
+                    height: 8,
                   ),
-                )),
-          ),
-      );
-       }
-   );
+                  Text(
+                    widget.userDetails.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Inter',
+                      fontSize: 24,
+                      letterSpacing: 0.18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    widget.userDetails.email,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      letterSpacing: 0.18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    height: 12,
+                    child: Text(
+                      "PHONE NUMBER",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                        letterSpacing: 1.5,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  showphoneField(),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    height: 12,
+                    child: Text(
+                      "ADDRESS",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                        letterSpacing: 1.5,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  showAddressField(selectedaddressLine1),
+                  FutureBuilder(
+                      future: getDetails(),
+                          // Future.wait([getCity(), getState(), getPincode()]),
+                      // ignore: missing_return
+                      builder:
+                          (context,snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // TODO: edit loading screen for dropdown future builder
+                          return Loading();
+                        } else {
+                          return Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey[350],
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                child:
+                                    getSearchableDropdown(_states, selectedState),
+                              ),
+                              SizedBox(
+                                height: 32.0,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey[350],
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                child:
+                                    getSearchableDropdown(_city, selectedCity),
+                              ),
+                              SizedBox(
+                                height: 32.0,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey[350],
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                child: getSearchableDropdown(
+                                    _pincode, selectedPinCode),
+                              ),
+                              SizedBox(
+                                height: 32.0,
+                              ),
+                            ],
+                          );
+                        }
+                      }),
+                  InkWell(
+                    onTap: () {
+                      submit(widget.userDetails.address,
+                          widget.userDetails.mobileNo);
+                    },
+                    child: Container(
+                      //Sign up button
+                      width: double.infinity,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: primarygreen,
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'SAVE',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Intern',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+      ),
+    );
   }
 
   // retrieving image url from firebase storage

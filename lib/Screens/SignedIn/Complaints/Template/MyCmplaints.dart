@@ -59,7 +59,7 @@ class _MyComplaintState extends State<MyComplaint> {
   }
 
   _showFetchComplaintContainer() {
-    Container(
+    return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -117,51 +117,48 @@ class _MyComplaintState extends State<MyComplaint> {
 
     db = new DatabaseService(uid: widget.uid);
 
-    return Container(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: db.myComplaint().snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return _showFetchComplaintContainer();
-          } else {
-            return snapshot.data.documents.length == 0
-                ? _noCompalaintFoundContainer()
-                :
-                // map complaints to complaint card
-                ListView.builder(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data.documents.length,
-                    itemBuilder: (context, index) {
-                      return ComplaintCard(
-                        complaint: Complaint(
-                          complaintType: snapshot.data.documents[index]
-                              ['ComplaintType'],
-                          complaintId:
-                              snapshot.data.documents[index].documentID,
-                          departmentName: snapshot.data.documents[index]
-                              ['DepartmentName'],
-                          description: snapshot.data.documents[index]
-                              ['Description'],
-                          status: snapshot.data.documents[index]['Status'],
-                          uid: snapshot.data.documents[index]['UID'],
-                          location: snapshot.data.documents[index]['Location'],
-                          start: snapshot.data.documents[index]['Start'],
-                          end: snapshot.data.documents[index]['End'],
-                          verification: snapshot.data.documents[index]
-                              ['Verification'],
-                          assigned: snapshot.data.documents[index]['Assigned'],
-                          upvote: snapshot.data.documents[index]['Upvote'],
-                          likedByUsers: snapshot.data.documents[index]
-                              ['LikedByUsers'],
-                        ),
-                        uid: widget.uid,
-                      );
-                    });
-          }
-        },
-      ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: db.myComplaint().snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _showFetchComplaintContainer();
+        } else {
+          return snapshot.data.documents.length == 0
+              ? _noCompalaintFoundContainer()
+              :
+              ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.documents.length,
+                  itemBuilder: (context, index) {
+                    return ComplaintCard(
+                      complaint: Complaint(
+                        complaintType: snapshot.data.documents[index]
+                            ['ComplaintType'],
+                        complaintId:
+                            snapshot.data.documents[index].documentID,
+                        departmentName: snapshot.data.documents[index]
+                            ['DepartmentName'],
+                        description: snapshot.data.documents[index]
+                            ['Description'],
+                        status: snapshot.data.documents[index]['Status'],
+                        uid: snapshot.data.documents[index]['UID'],
+                        location: snapshot.data.documents[index]['Location'],
+                        start: snapshot.data.documents[index]['Start'],
+                        end: snapshot.data.documents[index]['End'],
+                        verification: snapshot.data.documents[index]
+                            ['Verification'],
+                        assigned: snapshot.data.documents[index]['Assigned'],
+                        upvote: snapshot.data.documents[index]['Upvote'],
+                        likedByUsers: snapshot.data.documents[index]
+                            ['LikedByUsers'],
+                      ),
+                      uid: widget.uid,
+                    );
+                  });
+        }
+      },
     );
   }
 }

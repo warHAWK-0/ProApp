@@ -40,8 +40,9 @@ class DatabaseService{
   }
 
    Future updateUserDB(UserDetails details) async {
+     String uid = await _auth.getCurrentUID();
     return await userDetails
-        .document(uid)
+        .document(uid.toString())
         .updateData({
       'verified' : details.verified,
       'mobileNo' : details.mobileNo,

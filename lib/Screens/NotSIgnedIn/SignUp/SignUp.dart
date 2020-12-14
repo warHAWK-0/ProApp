@@ -301,6 +301,11 @@ class _SignUpState extends State<SignUp> {
                 "verified" : false
               });
 
+              // initialising user documents for MyComplaint
+              await Firestore.instance.collection("Complaint").document("MyComplaint").setData({});
+
+              Firestore.instance.collection("Complaint").document("MyComplaint").collection(uid);
+
               showGeneralDialog(
                 context: context,
                 barrierDismissible: true,

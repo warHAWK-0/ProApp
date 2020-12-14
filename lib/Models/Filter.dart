@@ -1,4 +1,5 @@
 class Filter {
+  final String pincode;
   final String departmentFilter;
   final String complaintFilter;
   final String statusFilter;
@@ -6,11 +7,13 @@ class Filter {
   final String toDateFilter;
   final String sortByFilter;
 
-  Filter(
-      {this.departmentFilter,
-      this.complaintFilter,
-      this.statusFilter,
-      this.fromDateFilter,
-      this.toDateFilter,
-      this.sortByFilter});
+  Filter({
+    this.pincode,
+    this.departmentFilter,
+    this.complaintFilter,
+    this.statusFilter,
+    this.fromDateFilter,
+    this.toDateFilter,
+    this.sortByFilter
+  });
 }

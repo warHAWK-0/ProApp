@@ -52,10 +52,13 @@ class _ProfileMainState extends State<ProfileMain> {
             ),
           );
         else{
-          userDetails.email = snapshot.data['email'];
-          userDetails.name = snapshot.data['name'];
-          userDetails.address = Address().getMap(snapshot.data['address']);
-          userDetails.verified = snapshot.data['verified'];
+          userDetails = UserDetails(
+            email: snapshot.data['email'],
+            name : snapshot.data['name'],
+            mobileNo: snapshot.data['mobileNo'],
+            address : snapshot.data['address'],
+            verified : snapshot.data['verified']
+          );
           return Column(
             children: [
               Text(
@@ -160,6 +163,8 @@ class _ProfileMainState extends State<ProfileMain> {
                   highlightColor: Colors.transparent,
                   splashColor: Colors.transparent,
                   onTap: () {
+                    print('here');
+                    print(widget.uid);
                     Navigator.push(
                         context,
                         MaterialPageRoute(

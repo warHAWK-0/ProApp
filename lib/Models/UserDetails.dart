@@ -4,7 +4,7 @@ class UserDetails{
   String name,
       mobileNo,
       email;
-  Address address;
+  Map address;
   bool verified;
 
   UserDetails({

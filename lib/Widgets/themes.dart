@@ -10,7 +10,7 @@ Color progressYellow=Color(0xFFFFD400);
 const String TWILIO_SMS_API_BASE_URL = 'https://api.twilio.com/2010-04-01';
 // twilio auth creds
 String twilioSID = 'AC1dd40e33c2749b102472de1264b8fd34';
-String twilioAuthToken = 'e338f4cc2bc70790fccb12fe2a1628b6';
+String twilioAuthToken = '835b2ab23edce4462634a8b57d6c1630';
 String twilioMyPhoneNumber = '+18503066184';
 
 //textstyle with fontsize 20

@@ -33,8 +33,6 @@ class _ComplaintMainState extends State<ComplaintMain> {
         elevation: true,
         backIcon: false,
       ),
-      //body: Padding(
-      //padding: EdgeInsets.only(bottom: 8),
       body: Column(
         children: [
           Container(
@@ -109,11 +107,15 @@ class _ComplaintMainState extends State<ComplaintMain> {
           SizedBox(
             height: 10,
           ),
-          widget.myComplaint
-              ? MyComplaint(
-                  uid: widget.uid,
-                )
-              : AllComplaint(),
+          Expanded(
+            child: widget.myComplaint
+                ? MyComplaint(
+                    uid: widget.uid,
+                  )
+                : AllComplaint(
+                    uid: widget.uid,
+                  ),
+          ),
         ],
       ),
 
@@ -138,8 +140,12 @@ class _ComplaintMainState extends State<ComplaintMain> {
         onPressed: () {
           print(widget.uid);
           widget.myComplaint
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CreateComplaint()))
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CreateComplaint(
+                            uid: widget.uid,
+                          )))
               : Navigator.push(
                   context,
                   MaterialPageRoute(

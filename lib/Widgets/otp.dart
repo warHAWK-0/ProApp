@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:proapp/Models/UserDetails.dart';
 import 'package:proapp/Screens/SignedIn/HomePage.dart';
-import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/Twilio/send_sms.dart';
 import 'package:proapp/Widgets/loading.dart';
@@ -27,7 +26,8 @@ class _OTPState extends State<OTP> {
   void initState() {
     super.initState();
     _generateOTP();
-    print(widget.newUserDetails.mobileNo);
+    print('OTP INIT');
+    print(widget.uid);
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -37,7 +37,8 @@ class _OTPState extends State<OTP> {
 
   _generateOTP(){
     Random random = new Random();
-    otp = random.nextInt(999999).toString();
+    int min = 100000, max = 999999;
+    otp = (min + random.nextInt(max-min)).toString();
     String OTPmessage = "[ProApp]Here's the verification code for changing your profile: $otp. This code will expire in 60 seconds.";
     sendSMS(widget.newUserDetails.mobileNo, OTPmessage);
   }
@@ -266,7 +267,7 @@ class _OTPState extends State<OTP> {
                                                 decoration: TextDecoration.none,
                                                 fontFamily: 'Inter',
                                                 fontWeight: FontWeight.w400,
-                                                fontSize: 20,
+                                                fontSize: 16,
                                                 color: Color(0xFFFFFFFF),
                                               ),
                                             ),
