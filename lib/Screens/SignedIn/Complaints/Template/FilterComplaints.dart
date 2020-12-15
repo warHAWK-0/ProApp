@@ -2,17 +2,18 @@ import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Screens/SignedIn/HomePage.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/Tag.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
-class Filter extends StatefulWidget {
+class FilterAllComplaint extends StatefulWidget {
   @override
-  _FilterState createState() => _FilterState();
+  _FilterAllComplaintState createState() => _FilterAllComplaintState();
 }
 
-class _FilterState extends State<Filter> {
+class _FilterAllComplaintState extends State<FilterAllComplaint> {
   DateTime fromDate = DateTime.now();
   DateTime toDate = DateTime.now();
   Color wProgress = Colors.black;
@@ -110,6 +111,11 @@ class _FilterState extends State<Filter> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            getSearchableDropdown(_complaint, "complaint"),
+            Divider(
+              thickness: 1,
+              height: 24,
+            ),
             Text(
               "Department",
               //style: complaintCardHeading,
@@ -409,6 +415,8 @@ class _FilterState extends State<Filter> {
                     ),
                     onPressed: () {
                       //apply
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
                     },
                   ),
                 ),

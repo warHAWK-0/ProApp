@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Models/UserDetails.dart';
+import 'package:proapp/Models/address.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
+import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:recase/recase.dart';
 
@@ -24,41 +26,56 @@ class ProfileMain extends StatefulWidget {
 class _ProfileMainState extends State<ProfileMain> {
   Auth auth = new AuthService();
   DatabaseService db = new DatabaseService();
-
+  bool _fetchingDetails = true;
   UserDetails userDetails = UserDetails();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void onSignOut() async {
     try {
       await auth.signOut();
-    } catch (e) {
-      print("Error: $e");
-    }
+    } catch (e) {}
   }
 
-  _showUserName() {
-    String username;
+  _showUserDetails() {
     return FutureBuilder(
       future: db.getUserName(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
+        if(snapshot.connectionState == ConnectionState.waiting)
           return Container(
             child: SpinKitChasingDots(
               color: Colors.black,
               size: 24,
             ),
           );
-        else {
-          String retrieved_username = snapshot.data['name'];
-          username = retrieved_username.pascalCase;
-          // print(widget.uid);
-
-          userDetails.email = snapshot.data['email'];
-          userDetails.name = snapshot.data['name'];
-          userDetails.mobileNo = snapshot.data['mobileNo'];
-          userDetails.address = snapshot.data['address'];
-          return Text(
-            '${username}',
-            style: Heading1(Colors.black),
+        else{
+          userDetails = UserDetails(
+            email: snapshot.data['email'],
+            name : snapshot.data['name'],
+            mobileNo: snapshot.data['mobileNo'],
+            address : snapshot.data['address'],
+            verified : snapshot.data['verified']
+          );
+          return Column(
+            children: [
+              Text(
+              '${snapshot.data['name']}',
+                style: Heading1(Colors.black),
+              ),
+              SizedBox(height: 4),
+              Text(
+                '${snapshot.data['email']}',
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Inter',
+                  fontSize: 16,
+                  letterSpacing: 0.18,
+                ),
+              ),
+            ],
           );
         }
       },
@@ -76,7 +93,6 @@ class _ProfileMainState extends State<ProfileMain> {
           FirebaseStorage.instance.ref().child('Profile/profilepic.png');
       url = await ref.getDownloadURL();
     }
-    // url = await ref.getDownloadURL();
   }
 
   _showProfilePicture() {
@@ -122,8 +138,11 @@ class _ProfileMainState extends State<ProfileMain> {
             children: [
               _showProfilePicture(),
               SizedBox(height: 16),
-              _showUserName(),
-              SizedBox(height: 16),
+              _showUserDetails(),
+              Divider(
+                color: Color.fromRGBO(0, 0, 0, 0.25),
+                height: 48,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -144,6 +163,8 @@ class _ProfileMainState extends State<ProfileMain> {
                   highlightColor: Colors.transparent,
                   splashColor: Colors.transparent,
                   onTap: () {
+                    print('here');
+                    print(widget.uid);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -198,7 +219,6 @@ class _ProfileMainState extends State<ProfileMain> {
                 color: Color.fromRGBO(0, 0, 0, 0.25),
                 height: 32,
               ),
-              SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

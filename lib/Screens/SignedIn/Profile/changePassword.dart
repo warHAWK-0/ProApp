@@ -7,9 +7,7 @@ import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class ChangePassword extends StatefulWidget {
-  final AuthService auth;
-
-  const ChangePassword({Key key,@required  this.auth}) : super(key: key);
+  const ChangePassword({Key key}) : super(key: key);
 
   @override
   _ChangePasswordState createState() => _ChangePasswordState();
@@ -20,10 +18,10 @@ class _ChangePasswordState extends State<ChangePassword> {
   String password = "";
   String error = "";
   bool loading = false;
-  bool _showPassword = false;
   String _emailpassword;
   FocusNode focusNode;
   int count = 0;
+  Auth auth = AuthService();
 
   void _passwordReset() async {
     final form = _formKey.currentState;
@@ -31,7 +29,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       form.save();
       print(_emailpassword);
       try {
-        await widget.auth.resetPassword(_emailpassword);
+        await auth.resetPassword(_emailpassword);
         showGeneralDialog(
           context: context,
           barrierDismissible: false,
@@ -92,20 +90,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             );
           },
         );
-        //Navigator.of(context).pop();
-         // AlertDialog(
-        //   title: Text("Password Reset Email Sent"),
-        // );
-        // final snackBar = SnackBar(content: Text("Password Reset Email Sent"));
-        // scaffoldKey.currentState.showSnackBar(snackBar);
-        //Navigator.of(context).pushNamed('/ForgotPassConfirm');
       } catch (e) {
-        // Fluttertoast.showToast(
-        //     msg: "Invalid Input!",
-        //     toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.BOTTOM,
-        // );
-        print(e);
       }
     }
   }
@@ -139,7 +124,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               borderRadius: BorderRadius.circular(6.0),
               borderSide: BorderSide(color: Color(0xffCBD5E0)),
             ),
-            hintText: 'Email ID',
+            hintText: 'Confirm your Email Id',
             hintStyle:
                 TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.45))),
       ),

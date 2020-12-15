@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:proapp/Models/address.dart';
 import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,12 +13,14 @@ import 'package:proapp/Models/UserDetails.dart';
 import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/otp.dart';
 import 'package:proapp/Widgets/themes.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class EditProfile extends StatefulWidget {
   final UserDetails userDetails;
   final String uid;
   String userProfileUrl;
-  EditProfile({Key key, this.userDetails, this.uid, this.userProfileUrl}) : super(key: key);
+  EditProfile({Key key, this.userDetails, this.uid, this.userProfileUrl})
+      : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -26,34 +30,108 @@ class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
   bool loading = true;
   FocusNode f1, f2;
+  Map<String, String> selectedValueMap = Map();
   TextEditingController phoneController;
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFile;
-  String newMobNo,newAddress;
+  String newMobNo, addressLine1;
+
+  List<String> _states = [
+
+  ];
+  List<String> _city = [
+    '....loding...'
+  ];
+  List<String> _pincode = [
+
+  ];
 
   @override
   void initState() {
     super.initState();
     f1 = FocusNode();
     f2 = FocusNode();
+    // print('EDIT' + widget.uid);
+    selectedValueMap["state"] = widget.userDetails.address['State'];
+    selectedValueMap["city"] = widget.userDetails.address['City'];
+    selectedValueMap["pincode"] = widget.userDetails.address['Pincode'];
   }
 
-  void submit() {
+  submit(Map oldAddress, String oldMobileNo) {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
+      Address newAddress = Address(
+          addressline1: addressLine1 == null ? widget.userDetails.address['AddressLine1'] : addressLine1,
+          state: selectedValueMap["state"],
+          city: selectedValueMap["city"],
+          pincode: selectedValueMap["pincode"]);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OTP(
-          prevMobNo: widget.userDetails.mobileNo,
-          uid: widget.uid,
-          newUserDetails: UserDetails(
-            email: widget.userDetails.email,
-            name: widget.userDetails.name,
-            address: newAddress,
-            mobileNo: newMobNo,
+        MaterialPageRoute(
+          builder: (context) => OTP(
+            prevMobNo: widget.userDetails.mobileNo,
+            uid: widget.uid,
+            newUserDetails: UserDetails(
+              email: widget.userDetails.email,
+              name: widget.userDetails.name,
+              address: newAddress.toJson(),
+              mobileNo: newMobNo == null ? oldMobileNo : newMobNo,
+              verified: true,
+            ),
           ),
-        )),
+        ),
+      );
+    }
+    else {
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.black45,
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (BuildContext buildContext, Animation animation,
+            Animation secondaryAnimation) {
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: MediaQuery.of(context).size.width - 30,
+              height: 120,
+              margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(45, 55, 72, 0.9),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Please fill the fields correctly.',
+                    textAlign: TextAlign.justify,
+                    softWrap: true,
+                    style: TextStyle(
+                      decoration: TextDecoration.none,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 20,
+                      color: Color(0xFFFFFFFF),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        transitionBuilder: (context, anim1, anim2, child) {
+          return SlideTransition(
+            position:
+                Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+            child: child,
+          );
+        },
       );
     }
   }
@@ -68,10 +146,8 @@ class _EditProfileState extends State<EditProfile> {
         onChanged: (value) {
           setState(() {
             newMobNo = value;
-            loading = false;
           });
         },
-        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f1),
         keyboardType: TextInputType.number,
         validator: (val) =>
             val.length != 10 ? "Enter a valid phone number" : null,
@@ -100,24 +176,53 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget showAddressField() {
+  Future getDetails() async{
+    var cityDoc = await Firestore.instance.collection("Utils").document("CityName").get();
+    _city = cityDoc.data['CityName'].cast<String>();
+    var stateDoc =
+    await Firestore.instance.collection("Utils").document("StateName").get();
+    _states = stateDoc.data['StateName'].cast<String>();
+    var pinDoc =
+    await Firestore.instance.collection("Utils").document("Pincode").get();
+    _pincode = pinDoc.data['Pincode'].cast<String>();
+  }
+  //
+  // Future getCity() async {
+  //   var docref =
+  //       await Firestore.instance.collection("Utils").document("CityName");
+  //   DocumentSnapshot doc = await docref.get();
+  //   return doc;
+  // }
+  //
+  // Future getState() async {
+  //   var docref =
+  //       await Firestore.instance.collection("Utils").document("StateName");
+  //   DocumentSnapshot doc = await docref.get();
+  //   return doc;
+  // }
+  //
+  // Future getPincode() async {
+  //   var docref =
+  //       await Firestore.instance.collection("Utils").document("Pincode");
+  //   DocumentSnapshot doc = await docref.get();
+  //   return doc;
+  // }
+
+  Widget showAddressField(String address_initial) {
     return Container(
       //input fields email
-      height: 81,
+      height: 80,
       width: double.infinity,
       child: TextFormField(
-        initialValue: widget.userDetails.address,
+        initialValue: address_initial,
         onChanged: (value) {
           setState(() {
-            newAddress = value;
-            loading = false;
+            addressLine1 = value;
           });
         },
-        maxLines: 4,
+        maxLines: 1,
         autofocus: false,
-        validator: (value) =>
-            value.length <= 0 ? "Enter a valid address" : null,
-        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(f2),
+        validator: (val) => val.length == 0 ? "Enter a address" : null,
         keyboardType: TextInputType.streetAddress,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -144,216 +249,263 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  Widget getSearchableDropdown(List<String> listData, mapKey) {
+    List<DropdownMenuItem> items = [];
+    String hint = mapKey;
+    for (int i = 0; i < listData.length; i++) {
+      items.add(DropdownMenuItem(
+        child: Text(
+          listData[i],
+        ),
+        value: listData[i],
+      ));
+    }
+    return SearchableDropdown(
+      underline: Container(),
+      items: items,
+      value: selectedValueMap[mapKey],
+      isExpanded: true,
+      isCaseSensitiveSearch: false,
+      closeButton: 'Close',
+      hint: Text(
+        hint,
+      ),
+      onChanged: (value) {
+        setState(() {
+          selectedValueMap[mapKey] = value;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Map addressVal = widget.userDetails.address;
+    String selectedCity = addressVal['City'] == '' ? 'Select City' : addressVal['City'];
+    String selectedState = addressVal['State'] == '' ? 'Select State' : addressVal['State'];
+    String selectedPinCode = addressVal['Pincode'] == '' ? 'Select Pincode' : addressVal['Pincode'];
+    String selectedaddressLine1 = addressVal['AddressLine1'] == '' ? 'Enter address' : addressVal['AddressLine1'];
     databaseService = new DatabaseService(uid: widget.uid);
-
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: InkWell(
-            onTap: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileMain(uid: widget.uid,)));
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-              size: 20,
-            ),
-          ),
-          title: Center(
-            child: Text(
-              'Edit your profile       ',
-              style: Heading2(Colors.black, letterSpace: 1.15),
-            ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+            size: 20,
           ),
         ),
-        body: Builder(
-          builder: (context) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 32),
-                  width: double.infinity,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        _showProfilePicture(),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        Text(
-                          widget.userDetails.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Inter',
-                            fontSize: 24,
-                            letterSpacing: 0.18,
-                          ),
-                        ),
-                        SizedBox(height: 19),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height: 12,
-                          child: Text(
-                            "EMAIL",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              letterSpacing: 1.5,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: TextFormField(
-                            enabled: false,
-                            initialValue: widget.userDetails.email,
-                            decoration: InputDecoration(
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      end: 12.0),
-                                  child: Icon(
-                                    Icons.done,
-                                    color: Colors.green,
-                                  ), // myIcon is a 48px-wide widget.
-                                ),
-                                contentPadding: EdgeInsets.only(
-                                    left: 12, top: 0, bottom: 0),
-                                filled: true,
-                                fillColor: Colors.white,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                errorBorder: InputBorder
-                                    .none, //for error write code change color to red
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide:
-                                      BorderSide(color: Color(0xffCBD5E0)),
-                                ),
-                                hintStyle: TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(0, 0, 0, 0.45))),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height: 12,
-                          child: Text(
-                            "PHONE NUMBER",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              letterSpacing: 1.5,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        showphoneField(),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          height: 12,
-                          child: Text(
-                            "ADDRESS",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              letterSpacing: 1.5,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        showAddressField(),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        InkWell(
-                          onTap: loading ? null : submit,
-                          child: Container(
-                            //Sign up button
-                            width: double.infinity,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: loading ? Colors.grey[300] : primarygreen,
-                              borderRadius: BorderRadius.circular(6.0),
-                            ),
-                            child: Center(
-                                    child: Text(
-                                      'SAVE',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Intern',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
+        title: Center(
+          child: Text(
+            'Edit your profile       ',
+            style: Heading2(Colors.black, letterSpace: 1.15),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+            padding: EdgeInsets.only(left: 20, right: 20, top: 32),
+            width: double.infinity,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  _showProfilePicture(),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    widget.userDetails.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Inter',
+                      fontSize: 24,
+                      letterSpacing: 0.18,
                     ),
-                  )),
-            );
-          },
-        ));
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    widget.userDetails.email,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      letterSpacing: 0.18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    height: 12,
+                    child: Text(
+                      "PHONE NUMBER",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                        letterSpacing: 1.5,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  showphoneField(),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    height: 12,
+                    child: Text(
+                      "ADDRESS",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                        letterSpacing: 1.5,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  showAddressField(selectedaddressLine1),
+                  FutureBuilder(
+                      future: getDetails(),
+                          // Future.wait([getCity(), getState(), getPincode()]),
+                      // ignore: missing_return
+                      builder:
+                          (context,snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // TODO: edit loading screen for dropdown future builder
+                          return Loading();
+                        } else {
+                          return Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey[350],
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                child:
+                                    getSearchableDropdown(_states, selectedState),
+                              ),
+                              SizedBox(
+                                height: 32.0,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey[350],
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                child:
+                                    getSearchableDropdown(_city, selectedCity),
+                              ),
+                              SizedBox(
+                                height: 32.0,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey[350],
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                child: getSearchableDropdown(
+                                    _pincode, selectedPinCode),
+                              ),
+                              SizedBox(
+                                height: 32.0,
+                              ),
+                            ],
+                          );
+                        }
+                      }),
+                  InkWell(
+                    onTap: () {
+                      submit(widget.userDetails.address,
+                          widget.userDetails.mobileNo);
+                    },
+                    child: Container(
+                      //Sign up button
+                      width: double.infinity,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: primarygreen,
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'SAVE',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Intern',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+      ),
+    );
   }
 
   // retrieving image url from firebase storage
   _showProfilePicture() {
-    return Stack(
-      children: [
+    return Stack(children: [
       CircleAvatar(
         backgroundImage: NetworkImage(widget.userProfileUrl),
         maxRadius: 50,
       ),
-        Positioned(
-          bottom: 3.0,
-          right: 3.0,
-          child: InkWell(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                builder: ((builder) => bottomSheet()),
-              );
-            },
-            child: Container(
-              padding: EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: primarygreen,
-              ),
-              child: Icon(
-                EvaIcons.edit,
-                color: Colors.black, //to change the picture
-                size: 20.0,
-              ),
+      Positioned(
+        bottom: 3.0,
+        right: 3.0,
+        child: InkWell(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              builder: ((builder) => bottomSheet()),
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: primarygreen,
+            ),
+            child: Icon(
+              EvaIcons.edit,
+              color: Colors.black, //to change the picture
+              size: 20.0,
             ),
           ),
         ),
-      ]
-    );
+      ),
+    ]);
   }
 
   Widget bottomSheet() {
