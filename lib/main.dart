@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proapp/Models/user.dart';
+import 'package:proapp/Screens/SignedIn/HomePage.dart';
 import 'package:proapp/Screens/Wrapper.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       value: AuthService().user,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Wrapper(),
+        home: HomePage(),
       ),
     );
   }

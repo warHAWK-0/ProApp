@@ -16,8 +16,8 @@ class ComplaintExpanded extends StatefulWidget {
   final Complaint complaint;
   final String uid;
 
-
-  const ComplaintExpanded({Key key, this.complaint,this.uid}) : super(key: key);
+  const ComplaintExpanded({Key key, this.complaint, this.uid})
+      : super(key: key);
   @override
   _ComplaintExpandedState createState() => _ComplaintExpandedState();
 }
@@ -46,12 +46,13 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
 
   Future _getImage() async {
     try {
-      final ref =
-      FirebaseStorage.instance.ref().child('complaint/'+widget.uid.toString()+'/'+widget.complaint.complaintId+'.jpg');
+      final ref = FirebaseStorage.instance.ref().child('complaint/' +
+          widget.uid.toString() +
+          '/' +
+          widget.complaint.complaintId +
+          '.jpg');
       url = await ref.getDownloadURL();
     } catch (e) {
-
-
       url = null;
     }
   }
@@ -68,19 +69,20 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
             ),
           );
         else {
-          return  ClipRRect(
+          return ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 url.toString(),
                 fit: BoxFit.fill,
-              )
-            );
+              ));
         }
       },
     );
   }
 
-
+  _getCurrentUpvoteBoolean() {
+    return widget.complaint.likedByUsers.contains(widget.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,96 +90,101 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         child: Text(
-          "Complaint - "+widget.complaint.complaintId,
+          "Complaint - " + widget.complaint.complaintId,
           style: blackBoldLargeStyle,
         ),
       ),
       body: Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 16),
-
         child: SingleChildScrollView(
             child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.complaint.departmentName,
-                  style: complaintCardSubHeading,
-                ),
-                Spacer(),
-                VoteTemplate(type: VoteType.complaintCard, upvoteCount: 254)
-              ],
-            ),
-            Text(
-              widget.complaint.complaintType,
-              style: complaintCardHeading,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Tag(
-                  color: Colors.red,
-                  text: widget.complaint.status,
-                  textColor: Colors.white,
-                  type: TagType.DEFAULT,
-                ),
-                Spacer(),
-                Text(
-                datefor(),
-                  style: complaintCardSubHeading,
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              widget.complaint.description,
-              style: complaintCardSubHeading,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-
-            _showComplaintPicture(),
-
-            SizedBox(height: 20,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  height: 48,
-                  width: MediaQuery.of(context).size.width / 3 >= 122
-                      ? 122
-                      : MediaQuery.of(context).size.width / 3,
-                  child: FlatButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                        side: BorderSide(color: primaryorange)),
-                    color: primaryorange,
-                    child: Row(
-                      children: [
-                        Icon(FlevaIcons.trash_2_outline, color: Colors.white),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text("DELETE",
-                            style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                    fontFamily: 'Intern',
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600))),
-                      ],
+                Row(
+                  children: [
+                    Text(
+                      widget.complaint.departmentName,
+                      style: complaintCardSubHeading,
                     ),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => Dialog(
+                    Spacer(),
+                    VoteTemplate(
+                      uid: widget.uid,
+                      compaintId: widget.complaint.complaintId,
+                      upvote: _getCurrentUpvoteBoolean(),
+                      type: VoteType.complaintCard,
+                      upvoteCount: widget.complaint.upvote,
+                    ),
+                  ],
+                ),
+                Text(
+                  widget.complaint.complaintType,
+                  style: complaintCardHeading,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Tag(
+                      color: Colors.red,
+                      text: widget.complaint.status,
+                      textColor: Colors.white,
+                      type: TagType.DEFAULT,
+                    ),
+                    Spacer(),
+                    Text(
+                      datefor(),
+                      style: complaintCardSubHeading,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  widget.complaint.description,
+                  style: complaintCardSubHeading,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                _showComplaintPicture(),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      height: 48,
+                      width: MediaQuery.of(context).size.width / 3 >= 122
+                          ? 122
+                          : MediaQuery.of(context).size.width / 3,
+                      child: FlatButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                            side: BorderSide(color: primaryorange)),
+                        color: primaryorange,
+                        child: Row(
+                          children: [
+                            Icon(FlevaIcons.trash_2_outline, color: Colors.white),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text("DELETE",
+                                style: GoogleFonts.inter(
+                                    textStyle: TextStyle(
+                                        fontFamily: 'Intern',
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600))),
+                          ],
+                        ),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => Dialog(
                                 insetPadding: EdgeInsets.only(
                                     left: 16, top: 24, right: 16, bottom: 16),
                                 shape: RoundedRectangleBorder(
@@ -195,16 +202,18 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                       ),
                                       Container(
                                         padding:
-                                            EdgeInsets.symmetric(horizontal: 8),
+                                        EdgeInsets.symmetric(horizontal: 8),
                                         child: Center(
                                           child: Text(
-                                              'Are you sure you want to delete complaint - '+widget.complaint.complaintId+" ?",
+                                              'Are you sure you want to delete complaint - ' +
+                                                  widget.complaint.complaintId +
+                                                  " ?",
                                               textAlign: TextAlign.center,
                                               style: GoogleFonts.inter(
                                                   textStyle: TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
-                                                          FontWeight.w500))),
+                                                      FontWeight.w500))),
                                         ),
                                       ),
                                       SizedBox(height: 24),
@@ -214,7 +223,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                         child: FlatButton(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(6.0),
+                                              BorderRadius.circular(6.0),
                                               side: BorderSide(
                                                   color: Color(0xFFFF4128))),
                                           color: Color(0xFFFF4128),
@@ -225,12 +234,18 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                                       fontFamily: 'Intern',
                                                       fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.w600))),
-                                          onPressed: () async{
-                                            await Firestore.instance.collection("Complaint").document(widget.uid).collection(widget.uid).document(widget.complaint.complaintId).delete();
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
+                                                      FontWeight.w600))),
+                                          onPressed: () async {
+                                            DatabaseService db = new DatabaseService(uid: widget.uid);
 
+                                            // delete from my complaint
+                                            await db.myComplaint().document(widget.complaint.complaintId).delete();
+
+                                            //delete from all complaint
+
+
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
                                           },
                                         ),
                                       ),
@@ -240,7 +255,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                         child: FlatButton(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(6.0),
+                                              BorderRadius.circular(6.0),
                                               side: BorderSide(
                                                   color: Colors.white)),
                                           color: Colors.white,
@@ -251,7 +266,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                                       fontFamily: 'Intern',
                                                       fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.w600))),
+                                                      FontWeight.w600))),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
@@ -261,32 +276,41 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                   ),
                                 ),
                               ));
-                    },
-                  ),
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-
+                SizedBox(
+                  height: 16,
+                )
               ],
             ),
-            SizedBox(height: 16,)
-          ],
-        )),
+        ),
       ),
     );
   }
-  String datefor(){
+
+  String datefor() {
     DateTime now = DateTime.now();
     DateTime justNow = now.subtract(Duration(minutes: 1));
-    DateTime localDateTime = DateTime.parse(widget.complaint.start+":00Z");
+    DateTime localDateTime = DateTime.parse(widget.complaint.start + ":00Z");
     if (!localDateTime.difference(justNow).isNegative) {
-      if(widget.complaint.start.toString().substring(11,13).compareTo("12")>0){
-        return widget.complaint.start.toString().substring(11,16);
+      if (widget.complaint.start.toString().substring(11, 13).compareTo("12") >
+          0) {
+        return widget.complaint.start.toString().substring(11, 16);
+      } else {
+        return widget.complaint.start.toString().substring(11, 16);
       }
-      else{return widget.complaint.start.toString().substring(11,16);}
     }
     String roughTimeString = DateFormat('jm').format(now);
-    if (localDateTime.day == now.day && localDateTime.month == now.month && localDateTime.year == now.year) {
+    if (localDateTime.day == now.day &&
+        localDateTime.month == now.month &&
+        localDateTime.year == now.year) {
       return roughTimeString;
     }
-    return localDateTime.toString().substring(8,10)+localDateTime.toString().substring(4,8)+localDateTime.toString().substring(0,4);
+    return localDateTime.toString().substring(8, 10) +
+        localDateTime.toString().substring(4, 8) +
+        localDateTime.toString().substring(0, 4);
   }
 }

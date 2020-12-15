@@ -1,14 +1,18 @@
+import 'address.dart';
+
 class UserDetails{
   String name,
       mobileNo,
-      email,
-  address;
+      email;
+  Map address;
+  bool verified;
 
   UserDetails({
     this.name,
     this.mobileNo,
     this.address,
-    this.email
+    this.email,
+    this.verified
   });
 
 
@@ -16,6 +20,7 @@ class UserDetails{
     "name": name,
     "mobileNo" : mobileNo,
     "email": email,
-    "address":address,
+    "address": address,
+    "verified" : verified
   };
 }

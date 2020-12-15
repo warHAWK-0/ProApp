@@ -13,7 +13,8 @@ class DatabaseService{
 
   static var firestore = Firestore.instance;
   //db references
-  CollectionReference complaint = firestore.collection("Complaint");
+  CollectionReference myComplaint() => firestore.collection("Complaint").document("MyComplaint").collection(uid);
+  CollectionReference allComplaint(String pincode) => firestore.collection("Complaint").document("AllComplaint").collection(pincode);
   CollectionReference userDetails = firestore.collection("UserDetails");
   CollectionReference allComplaints = firestore.collection("AllComplaints");
   CollectionReference post = firestore.collection("Post");
@@ -27,30 +28,28 @@ class DatabaseService{
 
   // get myComplaints for current user stream
   Stream<QuerySnapshot> getMyComplaints(String uid){
-    return complaint.document(uid).collection(uid).snapshots();
+    return myComplaint().snapshots();
   }
 
   //upload Image to firebase storage function
   Future uploadImageToFirebase(BuildContext context,File _imageFile,String complaintId) async {
     String uid = await _auth.getCurrentUID();
     String fileName = basename(_imageFile.path);
-    // update LOCATION field for this complaint
-    await complaint.document(uid.toString()).updateData({
-      'Location' : 'complaint/' + uid.toString() + '/'+ complaintId+'.jpg',
-    });
     // uploading file to storage
     StorageReference firebaseStorageRef =
     FirebaseStorage.instance.ref().child('complaint/' + uid.toString() + '/'+ complaintId+'.jpg');
     firebaseStorageRef.putFile(_imageFile);
 
   }
-   Future updateUserDB(UserDetails userDetails) async {
-    return await Firestore.instance
-        .collection("UserDetails")
-        .document(uid)
-        .updateData(userDetails.toJson());
+
+   Future updateUserDB(UserDetails details) async {
+     String uid = await _auth.getCurrentUID();
+    return await userDetails
+        .document(uid.toString())
+        .updateData({
+      'verified' : details.verified,
+      'mobileNo' : details.mobileNo,
+      'address' : details.address,
+    });
   }
-
-
-
 }
