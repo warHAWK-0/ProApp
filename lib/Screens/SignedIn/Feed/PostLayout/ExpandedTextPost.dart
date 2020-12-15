@@ -1,63 +1,37 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:english_words/english_words.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Models/Comment.dart';
 import 'package:proapp/Models/Feed.dart';
 import 'package:proapp/Screens/SignedIn/Feed/PostLayout/comment.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
+import 'package:proapp/Widgets/commentgrab.dart';
 import 'package:footer/footer.dart';
 import 'package:footer/footer_view.dart';
-import 'package:proapp/Widgets/commentgrab.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 
-class PostdetailsImage extends StatefulWidget {
+class Postdetails extends StatefulWidget {
   final FeedModel feed;
-  final String url,uid;
+  final String uid,pid;
 
-  const PostdetailsImage({Key key, this.feed,this.url,this.uid}) : super(key: key);
-
-
-  @override
-  _PostdetailsImageState createState() => _PostdetailsImageState();
+  const Postdetails({Key key, this.feed, this.uid, this.pid}) : super(key: key);@override
+  _PostdetailsState createState() => _PostdetailsState();
 }
 
-class _PostdetailsImageState extends State<PostdetailsImage> {
+class _PostdetailsState extends State<Postdetails> {
   DatabaseService _initiateDBService() => new DatabaseService();
   bool isPressed = false;
   bool isPressed1 = false;
   TextEditingController _commentController =TextEditingController();
-  _showPostPicture() {
-    return FutureBuilder(
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return Container(
-            child: SpinKitChasingDots(
-              color: Colors.black,
-              size: 24,
-            ),
-          );
-        else {
-          return  ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                widget.url,
-                fit: BoxFit.fill,
-              )
-          );
-        }
-      },
-    );
-  }
-
+  bool hastext=false;
   @override
   Widget build(BuildContext context) {
     DatabaseService db = _initiateDBService();
@@ -71,16 +45,15 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
           color: Color(0xff20BAA2),
           onPressed: () {
             Navigator.pop(context);
-            
+
           },
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            //SingleChildScrollView(
-
-              Container(
+            SingleChildScrollView(
+              child: Container(
                 margin: EdgeInsets.only(top: 15, bottom: 15),
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -122,22 +95,21 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                     SizedBox(
                       height: 10,
                     ),
-                    _showPostPicture(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    VoteTemplate(type: VoteType.feed, upvoteCount: widget.feed.upvote, downvoteCount: widget.feed.downvote,),
-                    SizedBox(
-                      height: 10,
-                    ),
+
                     Text(
-                          widget.feed.description+'\n',style: GoogleFonts.inter(
+                      widget.feed.description+'\n',
+                      style: GoogleFonts.inter(
                           letterSpacing: .25,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Color.fromRGBO(0, 0, 0, 0.65)),
 
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    VoteTemplate(type: VoteType.feed, upvoteCount: widget.feed.upvote, downvoteCount: widget.feed.downvote,),
+
                     SizedBox(
                       height: 10,
                     ),
@@ -163,7 +135,7 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
                           fontWeight: FontWeight.w500,)),
                       ),
                     ),
-                    CommentGrab(pid: widget.feed.postid,uid: widget.uid,),
+                    CommentGrab(pid: widget.feed.postid,uid: widget.uid),
 
                   ],
 
@@ -171,70 +143,63 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
 
               ),
 
-          //  ),
+            ),
           ],
+
         ),
       ),
-        bottomNavigationBar: Padding(padding: MediaQuery.of(context).viewInsets,
-
-          child:Container(
-            decoration: BoxDecoration(
+      bottomNavigationBar: Padding(padding: MediaQuery.of(context).viewInsets,
+            child:Container(
+              decoration: BoxDecoration(
                 border: Border.all(color: Color(0xffdcdcdc))
-            ),
-            padding: EdgeInsets.only(bottom: 8,left: 16,right: 16),
-            child: TextFormField(
-
-              //keyboardType: TextInputType.multiline,
-             maxLines: 1,
-              controller: _commentController,
-              cursorColor:primarygreen,
-              decoration: InputDecoration(
-                icon:CircleAvatar(
-                  radius: 16,
-                  backgroundImage: NetworkImage(
-                      "https://www.woolha.com/media/2020/03/flutter-circleavatar-minradius-maxradius.jpg"),
-                ),
-                labelStyle: TextStyle(
-                  color: primarygreen,
-                ),
-//                  suffixIcon: hastext==false?IconButton(
-//                    icon:Icon(FlevaIcons.paper_plane,color: Colors.grey),
-//                    onPressed: (){
-//
-//                    },
-//                  ):
-                suffixIcon:IconButton(
-                  icon:Icon(FlevaIcons.paper_plane,color: primarygreen),
-                  onPressed: ()async{
-                    if (_commentController.text!=""){ //creating a new document for comment
-                      final wordPair = WordPair.random();
-                      var rng = new Random();
-                      String nickname = wordPair.asPascalCase+(random(1000,9999).toString());
-                      CommentModel _comment =new CommentModel(
-                      commentdes: _commentController.text,
-                      name: nickname,
-                      date: DateTime.now().toString().substring(0,16),
-                      flaggedUid: [],
-                    );
-                    this.setState(() {
-                      _commentController.clear();
-                    });
-                    await db.post.document(widget.feed.postid).collection("comments").document().setData(_comment.toJson());
-
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                    }
-
-                  },
-                )
-                ,
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xffdcdcdc)),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: primarygreen),
-                ),
-                hintText: "Type here",
               ),
+              padding: EdgeInsets.only(bottom: 8,left: 16,right: 16),
+              child: TextFormField(
+
+                keyboardType: TextInputType.multiline,
+
+                controller: _commentController,
+                cursorColor:primarygreen,
+                decoration: InputDecoration(
+                  icon:CircleAvatar(
+                    radius: 16,
+                    backgroundImage: NetworkImage(
+                        "https://www.woolha.com/media/2020/03/flutter-circleavatar-minradius-maxradius.jpg"),
+                  ),
+                  labelStyle: TextStyle(
+                    color: primarygreen,
+                  ),
+                   suffixIcon:IconButton(
+                    icon:Icon(FlevaIcons.paper_plane,color: primarygreen),
+                    onPressed: ()async{
+                      if(_commentController.text!="") {
+                        final wordPair = WordPair.random();
+                        var rng = new Random();
+                        String nickname = wordPair.asPascalCase+(random(1000,9999).toString());//creating a new document for comment
+                        CommentModel _comment = new CommentModel(
+                          commentdes: _commentController.text,
+                          name: nickname,
+                          date: DateTime.now().toString().substring(0, 16),
+                            flaggedUid: []
+                        );
+                        this.setState(() {
+                          _commentController.clear();
+                        });
+                        await db.post.document(widget.feed.postid).collection("comments").document().setData(_comment.toJson());
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      }
+
+                    },
+                  )
+                  ,
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xffdcdcdc)),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primarygreen),
+                  ),
+                  hintText: "Type here",
+                ),
 //                validator: (value){
 //                  if (value.isNotEmpty){
 //                    print(_commentController.toString());
@@ -248,19 +213,22 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
 //
 //                  return null;
 //                },
+              ),
             ),
-          ),
 
-        )
-
+      )
 
     );
   }
 
-   random(min, max){
+
+
+
+  random(min, max){
     var rn = new Random();
     return min + rn.nextInt(max - min);
   }
+
 
   String datetimeformat(String date){
     String month = date.substring(5,7);
@@ -305,7 +273,4 @@ class _PostdetailsImageState extends State<PostdetailsImage> {
     }
     return date.substring(8,10) +"th "+month+" "+date.substring(0,4);
   }
-
-
-
 }

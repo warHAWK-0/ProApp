@@ -5,6 +5,7 @@ import 'package:proapp/Models/address.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'Complaints/ComplaintsMain.dart';
+import 'Feed/FeedMain.dart';
 import 'Profile/ProfileMain.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,32 +23,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
-      InkWell(
-        onTap: ()async{
-          await DatabaseService().myComplaint().document('test').setData(
-            UserDetails(
-              mobileNo: '13y7743y8',
-              name: 'sfahi',
-              verified: true,
-              email: 'fdkhaskbgkjbbdbvis',
-              address: Address(
-                addressline1: 'ad1',
-                city:'city',
-                state: 'state',
-                pincode: 'pin',
-              ).toJson()
-            ).toJson()
-          );
-        },
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Home'),
-            ],
-          ),
-        ),
-      ),
+      FeedMain(uid: widget.uid),
       ComplaintMain(uid: widget.uid),
       ProfileMain(uid: widget.uid),
     ];

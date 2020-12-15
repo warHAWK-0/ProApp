@@ -1,16 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proapp/Models/Comment.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class Comment extends StatefulWidget {
+  final bool initialflag;
+  final CommentModel comment;
+  final String pid,cid,uid; // pid- post, cid - comment , uid - user
+
+  const Comment({Key key, this.comment,this.pid,this.cid,this.uid,this.initialflag}) : super(key: key);
   @override
   _CommentState createState() => _CommentState();
 }
 
 class _CommentState extends State<Comment> {
-  bool _flagged = false;
+  bool _flagged=false;
   Color _splashcolor = Colors.red;
   Color _buttoncolor = Color(0xffFF4128);
   Color _iconcolor = Colors.grey;
@@ -61,12 +68,19 @@ class _CommentState extends State<Comment> {
                   splashColor: _splashcolor,
                   onPressed: () {
                     if (_unflagged == false) {
+                      Firestore.instance.collection("Post").document(widget.pid).collection("comments").document(widget.cid).updateData({
+                        "FlaggedUid": FieldValue.arrayUnion([widget.uid]),
+                      });
+                      //flagging it
                       setState(() {
                         _iconcolor = Colors.orange;
                         _opacityNum = 0.3;
                         _flagged = true;
                       });
                     } else {
+                      Firestore.instance.collection("Post").document(widget.pid).collection("comments").document(widget.cid).updateData({
+                        "FlaggedUid": FieldValue.arrayRemove([widget.uid]),
+                      });
                       setState(() {
                         _iconcolor = Colors.grey;
                         _opacityNum = 1.0;
@@ -118,6 +132,13 @@ class _CommentState extends State<Comment> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.initialflag);
+    if(widget.initialflag==true){
+      _flagged=true;
+      _opacityNum=0.3;
+      _iconcolor = Colors.orange;
+
+    }
     return Opacity(
       opacity: _opacityNum,
       child: Container(
@@ -136,7 +157,7 @@ class _CommentState extends State<Comment> {
                 SizedBox(
                   width: 16,
                 ),
-                Text("Anonymous Name",
+                Text(widget.comment.name,
                     style: GoogleFonts.inter(
                       letterSpacing: .25,
                       fontSize: 16,
@@ -171,13 +192,16 @@ class _CommentState extends State<Comment> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 47, right: 16),
-              child: Text(
-                'It is a long established fact that a has a morearch for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',
-                style: GoogleFonts.inter(
-                    letterSpacing: .25,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color.fromRGBO(0, 0, 0, 0.65)),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.comment.commentdes,
+                  style: GoogleFonts.inter(
+                      letterSpacing: .25,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromRGBO(0, 0, 0, 0.65)),
+                ),
               ),
             ),
             SizedBox(height: 5,),
@@ -185,11 +209,11 @@ class _CommentState extends State<Comment> {
               padding: EdgeInsets.only(left: 47),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: new Text("28th September 2020",
+                child: new Text(datetimeformat(widget.comment.date),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.inter(
                         letterSpacing: 1,
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color.fromRGBO(0, 0, 0, 0.65))),
               ),
@@ -202,4 +226,49 @@ class _CommentState extends State<Comment> {
       ),
     );
   }
+
+  String datetimeformat(String date){
+    String month = date.substring(5,7);
+    int m =int.parse(month);
+    switch (m) {
+      case 1:
+        month = "January";
+        break;
+      case 2:
+        month = "February";
+        break;
+      case 3:
+        month = "March";
+        break;
+      case 4:
+        month = "April";
+        break;
+      case 5:
+        month = "May";
+        break;
+      case 6:
+        month = "June";
+        break;
+      case 7:
+        month = "July";
+        break;
+      case 8:
+        month = "August";
+        break;
+      case 9:
+        month = "September";
+        break;
+      case 10:
+        month = "October";
+        break;
+      case 11:
+        month = "November";
+        break;
+      case 12:
+        month = "December";
+        break;
+    }
+    return date.substring(8,10) +"th "+month+" "+date.substring(0,4);
+  }
+
 }

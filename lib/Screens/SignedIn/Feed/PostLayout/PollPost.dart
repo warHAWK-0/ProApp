@@ -1,11 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:proapp/Models/Feed.dart';
+import 'package:proapp/Widgets/VoteTemplate.dart';
+import 'package:proapp/Widgets/themes.dart';
+import 'package:recase/recase.dart';
 import 'readmore.dart';
 
 class PollPost extends StatefulWidget {
+  final FeedModel feed;
+  final bool checker;
+  final String myuid;
+  const PollPost({Key key, this.feed,this.checker,this.myuid }) : super(key: key);
   @override
   _PollPostState createState() => _PollPostState();
 }
@@ -13,6 +22,18 @@ class PollPost extends StatefulWidget {
 class _PollPostState extends State<PollPost> {
   bool isPressed = false;
   bool isPressed1 = false;
+  bool showpolls=false;
+  var percent ;
+  void calculatePercent(){
+    percent = new List(widget.feed.options.values.toList().length);
+    int sum=0;
+    for (int i =0;i<widget.feed.options.values.toList().length;i++){
+      sum+=widget.feed.options.values.toList()[i].length;
+    }
+    for (int i =0;i<widget.feed.options.values.toList().length;i++){
+     percent[i]=widget.feed.options.values.toList()[i].length/sum;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +50,7 @@ class _PollPostState extends State<PollPost> {
               SizedBox(
                 width: 10,
               ),
-              new Text("Anonymous Name",
+              new Text(widget.feed.name,
                   style: GoogleFonts.inter(
                     letterSpacing: .25,
                     fontSize: 16,
@@ -38,18 +59,16 @@ class _PollPostState extends State<PollPost> {
               Spacer(),
               new Container(
                 height: 25,
-                width: 45,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(13),
                   color: Color(0xFF189F98),
                 ),
-                child: Center(
-                  child: Text("TAGS",
-                      style: GoogleFonts.inter(
-                          letterSpacing: 1.5,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white)),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10, right :10),
+                  child: Center(
+                    child: Text(widget.feed.tag.toUpperCase(), style:GoogleFonts.inter( letterSpacing: 1.5,fontSize: 10,
+                        fontWeight: FontWeight.w500, color: Colors.white) ),
+                  ),
                 ),
               )
             ],
@@ -57,70 +76,100 @@ class _PollPostState extends State<PollPost> {
           SizedBox(
             height: 10,
           ),
-          ReadMoreText(
-            'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\n',
-            style: GoogleFonts.inter(
-                letterSpacing: .25,
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 0.65)),
-            trimLines: 3,
-            colorClickableText: Color(0xFF20BAA2),
-            trimMode: TrimMode.Line,
-            trimCollapsedText: '....\nRead More',
-            trimExpandedText: 'Read less',
+          Align(
+            alignment: Alignment.centerLeft,
+            child: ReadMoreText(
+              widget.feed.description+"\n",
+              style: GoogleFonts.inter(
+                  letterSpacing: .25,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Color.fromRGBO(0, 0, 0, 0.65)),
+              trimLines: 3,
+              colorClickableText: Color(0xFF20BAA2),
+              trimMode: TrimMode.Line,
+              trimCollapsedText: '....\nRead More',
+              trimExpandedText: 'Read less',
+            ),
           ),
           SizedBox(
             height: 10,
           ),
-          Column(
-            children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
-                  ),
+          (showpolls||widget.checker)?  ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: widget.feed.options.length,
+              itemBuilder: (BuildContext context, index){
+                calculatePercent();
+                return Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[300],
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(32.0),
+                      ),
+                      //padding: EdgeInsets.only(bottom: 8),
+                      child: LinearPercentIndicator(
+                        backgroundColor: Colors.white,
+                        width: MediaQuery.of(context).size.width-64,
+                        animation: true,
+                        animationDuration: 1000,
+                        lineHeight: 46.0,
+                        percent: percent[index],
+                        center: Row(
+                          children: [
+                            Text(widget.feed.options.keys.elementAt(index).toString(),style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.65)),),
+                            Spacer(),
+                            Text((percent[index]*100).toString().substring(0,4)+"%"),
+                          ],
+                        ),
+                        linearStrokeCap: LinearStrokeCap.roundAll,
+                        progressColor: primarygreen,
+                      ),
 
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
-                  ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    )
+                  ],
+                );
+              })
+              :ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: widget.feed.options.length,
+              itemBuilder: (BuildContext context, index){
+                return SizedBox(
+                  width: double.infinity,
+                  child: OutlineButton(
+                    child: Text(
+                      widget.feed.options.keys.elementAt(index).toString().pascalCase,
+                      style: TextStyle(color: Color(0xff20BAA2)),
+                    ),
+                    onPressed: ()async{
 
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
-                  ),
+                      await Firestore.instance.collection('Post').document(widget.feed.postid).updateData({
 
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlineButton(
-                  child: Text(
-                    "Option1",
-                    style: TextStyle(color: Color(0xff20BAA2)),
-                  ),
+                        "Options."+widget.feed.options.keys.elementAt(index).toString(): FieldValue.arrayUnion([widget.myuid]),
+                      });
+                      setState(() {
+                        showpolls=true;
+                      });
+                      calculatePercent();
 
-                ),
-              ),
-            ],
+                      //print(widget.feed.options.values.elementAt(index));
+                    },
+                  ),
+                );
+              }
           ),
           SizedBox(height: 10,),
           Align(
             alignment: Alignment.centerLeft,
-            child: new Text("28th September 2020",
+            child: new Text(datetimeformat(widget.feed.datetime),
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter(
                     letterSpacing: 1,
@@ -134,5 +183,48 @@ class _PollPostState extends State<PollPost> {
         ],
       ),
     );
+  }
+  String datetimeformat(String date){
+    String month = date.substring(5,7);
+    int m =int.parse(month);
+    switch (m) {
+      case 1:
+        month = "January";
+        break;
+      case 2:
+        month = "February";
+        break;
+      case 3:
+        month = "March";
+        break;
+      case 4:
+        month = "April";
+        break;
+      case 5:
+        month = "May";
+        break;
+      case 6:
+        month = "June";
+        break;
+      case 7:
+        month = "July";
+        break;
+      case 8:
+        month = "August";
+        break;
+      case 9:
+        month = "September";
+        break;
+      case 10:
+        month = "October";
+        break;
+      case 11:
+        month = "November";
+        break;
+      case 12:
+        month = "December";
+        break;
+    }
+    return date.substring(8,10) +"th "+month+" "+date.substring(0,4);
   }
 }
