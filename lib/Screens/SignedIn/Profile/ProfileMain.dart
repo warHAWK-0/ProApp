@@ -5,15 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Models/UserDetails.dart';
-import 'package:proapp/Models/address.dart';
 import 'package:proapp/Screens/SignedIn/Profile/changePassword.dart';
 import 'package:proapp/Screens/SignedIn/Profile/editprofile.dart';
 import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
-import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
-import 'package:recase/recase.dart';
 
 class ProfileMain extends StatefulWidget {
   final String uid;
@@ -26,7 +23,6 @@ class ProfileMain extends StatefulWidget {
 class _ProfileMainState extends State<ProfileMain> {
   Auth auth = new AuthService();
   DatabaseService db = new DatabaseService();
-  bool _fetchingDetails = true;
   UserDetails userDetails = UserDetails();
 
   @override
@@ -53,16 +49,16 @@ class _ProfileMainState extends State<ProfileMain> {
           );
         else{
           userDetails = UserDetails(
-            email: snapshot.data['email'],
-            name : snapshot.data['name'],
-            mobileNo: snapshot.data['mobileNo'],
-            address : snapshot.data['address'],
-            verified : snapshot.data['verified']
+              email: snapshot.data['email'],
+              name : snapshot.data['name'],
+              mobileNo: snapshot.data['mobileNo'],
+              address : snapshot.data['address'],
+              verified : snapshot.data['verified']
           );
           return Column(
             children: [
               Text(
-              '${snapshot.data['name']}',
+                '${snapshot.data['name']}',
                 style: Heading1(Colors.black),
               ),
               SizedBox(height: 4),
@@ -86,11 +82,11 @@ class _ProfileMainState extends State<ProfileMain> {
   Future _getImage() async {
     try {
       final ref =
-          FirebaseStorage.instance.ref().child('Profile/${widget.uid}.jpg');
+      FirebaseStorage.instance.ref().child('Profile/${widget.uid}.jpg');
       url = await ref.getDownloadURL();
     } catch (e) {
       final ref =
-          FirebaseStorage.instance.ref().child('Profile/profilepic.png');
+      FirebaseStorage.instance.ref().child('Profile/profilepic.png');
       url = await ref.getDownloadURL();
     }
   }
@@ -139,8 +135,7 @@ class _ProfileMainState extends State<ProfileMain> {
               _showProfilePicture(),
               SizedBox(height: 16),
               _showUserDetails(),
-              Divider(
-                color: Color.fromRGBO(0, 0, 0, 0.25),
+              SizedBox(
                 height: 48,
               ),
               Row(
@@ -169,10 +164,10 @@ class _ProfileMainState extends State<ProfileMain> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => EditProfile(
-                                  userDetails: userDetails,
-                                  uid: widget.uid,
-                                  userProfileUrl: url,
-                                )));
+                              userDetails: userDetails,
+                              uid: widget.uid,
+                              userProfileUrl: url,
+                            )));
                   },
                   child: Container(
                     child: Row(
@@ -289,78 +284,78 @@ class _ProfileMainState extends State<ProfileMain> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) => Dialog(
-                            insetPadding: EdgeInsets.only(
-                                left: 16, top: 24, right: 16, bottom: 16),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    12.0)), //this right here
-                            child: Container(
-                              height: 180.0,
-                              width: 328,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 24,
-                                  ),
-                                  Text('Are you sure you want to sign out?',
+                        insetPadding: EdgeInsets.only(
+                            left: 16, top: 24, right: 16, bottom: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                12.0)), //this right here
+                        child: Container(
+                          height: 180.0,
+                          width: 328,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 24,
+                              ),
+                              Text('Are you sure you want to sign out?',
+                                  style: GoogleFonts.inter(
+                                      textStyle: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500))),
+                              SizedBox(height: 16),
+                              Container(
+                                height: 46,
+                                width: 296,
+                                child: FlatButton(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(6.0),
+                                      side: BorderSide(
+                                          color: Color(0xFFFF4128))),
+                                  color: Color(0xFFFF4128),
+                                  textColor: Colors.white,
+                                  child: Text('SIGN OUT',
                                       style: GoogleFonts.inter(
                                           textStyle: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500))),
-                                  SizedBox(height: 16),
-                                  Container(
-                                    height: 46,
-                                    width: 296,
-                                    child: FlatButton(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                          side: BorderSide(
-                                              color: Color(0xFFFF4128))),
-                                      color: Color(0xFFFF4128),
-                                      textColor: Colors.white,
-                                      child: Text('SIGN OUT',
-                                          style: GoogleFonts.inter(
-                                              textStyle: TextStyle(
-                                                  fontFamily: 'Intern',
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.w600))),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        onSignOut();
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: 46,
-                                    width: 296,
-                                    child: FlatButton(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                          side:
-                                              BorderSide(color: Colors.white)),
-                                      color: Colors.white,
-                                      textColor: Color(0xFF718096),
-                                      child: Text('CANCEL',
-                                          style: GoogleFonts.inter(
-                                              textStyle: TextStyle(
-                                                  fontFamily: 'Intern',
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.w600))),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ),
-                                ],
+                                              fontFamily: 'Intern',
+                                              fontSize: 14,
+                                              fontWeight:
+                                              FontWeight.w600))),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    onSignOut();
+                                  },
+                                ),
                               ),
-                            ),
-                          ));
+                              SizedBox(height: 8),
+                              Container(
+                                height: 46,
+                                width: 296,
+                                child: FlatButton(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(6.0),
+                                      side:
+                                      BorderSide(color: Colors.white)),
+                                  color: Colors.white,
+                                  textColor: Color(0xFF718096),
+                                  child: Text('CANCEL',
+                                      style: GoogleFonts.inter(
+                                          textStyle: TextStyle(
+                                              fontFamily: 'Intern',
+                                              fontSize: 14,
+                                              fontWeight:
+                                              FontWeight.w600))),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ));
                 },
                 child: Container(
                   child: Row(
@@ -391,6 +386,4 @@ class _ProfileMainState extends State<ProfileMain> {
       ),
     );
   }
-
-  split(String s) {}
 }

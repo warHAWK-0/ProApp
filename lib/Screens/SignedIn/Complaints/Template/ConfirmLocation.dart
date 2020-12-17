@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Models/Complaint.dart';
-import 'package:proapp/Services/authentication.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
-import 'package:proapp/Widgets/loading.dart';
 import 'package:proapp/Widgets/themes.dart';
 
 class ConfirmLocation extends StatefulWidget {
@@ -19,7 +17,11 @@ class ConfirmLocation extends StatefulWidget {
   final String description;
 
   const ConfirmLocation(
-      {Key key, this.imageFile, this.selectedValueMap, this.description, this.uid})
+      {Key key,
+      this.imageFile,
+      this.selectedValueMap,
+      this.description,
+      this.uid})
       : super(key: key);
   @override
   _ConfirmLocationState createState() => _ConfirmLocationState();
@@ -27,30 +29,27 @@ class ConfirmLocation extends StatefulWidget {
 
 class _ConfirmLocationState extends State<ConfirmLocation> {
   DatabaseService db;
-  String _location;
-  Auth _auth = AuthService();
-  bool _loading = false;
+  bool recievedLocation = false;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
   Position _currentPosition;
-  String _currentAddress, pincode;
+  String pincode, _errorText;
   @override
   void initState() {
     locationController = TextEditingController();
     super.initState();
   }
 
-  Future _getCurrentLocation() {
+  _getCurrentLocation() async {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
+        .then((Position position) async {
       setState(() {
         _currentPosition = position;
       });
-
-      _getAddressFromLatLng();
+      await _getAddressFromLatLng();
     }).catchError((e) {
-      print(e);
+
     });
   }
 
@@ -58,34 +57,29 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
     try {
       List<Placemark> p = await geolocator.placemarkFromCoordinates(
           _currentPosition.latitude, _currentPosition.longitude);
-
       Placemark place = p[0];
-
+      locationController.text = "   ${place.name} " +
+          ", " +
+          "${place.locality}" +
+          ", " +
+          "${place.subAdministrativeArea} " +
+          ", " +
+          "${place.administrativeArea} " +
+          ", " +
+          " ${place.country} " +
+          ", " +
+          "${place.postalCode}";
+      locationController.selection = TextSelection.fromPosition(TextPosition(offset: locationController.text.length));
       setState(() {
         pincode = place.postalCode;
-        _currentAddress = "   ${place.name} " +
-            ", " +
-            "${place.locality}" +
-            ", " +
-            " ${place.subLocality}" +
-            ", " +
-            "${place.administrativeArea} " +
-            ", " +
-            "${place.subAdministrativeArea} " +
-            ", " +
-            " ${place.thoroughfare} " +
-            ", " +
-            " ${place.country} " +
-            ", " +
-            "${place.postalCode}";
+        _errorText = null;
+        recievedLocation = true;
       });
     } catch (e) {
-      print(e);
+
     }
   }
 
-  String _buttontext = "GET LOCATION";
-  int _buttonflag = 1;
   TextEditingController locationController;
 
   @override
@@ -112,20 +106,9 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
                 "If your location is incorrect, enter the location of the complaint.",
                 style: GoogleFonts.inter(
                     textStyle: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    )),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              _currentPosition == null ? Container() : Text(
-                _currentAddress,
-                style: GoogleFonts.inter(
-                    textStyle: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    )),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                )),
               ),
               SizedBox(
                 height: 16,
@@ -138,66 +121,44 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Color.fromRGBO(0, 0, 0, 0.45))),
+                          BorderSide(color: Color.fromRGBO(0, 0, 0, 0.45))),
                   hintStyle: Heading3(
                     Color.fromRGBO(0, 0, 0, 0.45),
                   ),
                   border: InputBorder.none,
-                  hintText: 'Location',
+                  hintText: 'Type your Location',
+                  errorText: _errorText,
                 ),
-                onChanged: (text) {
-                  setState(() {
-                    _location = text;
-                  });
-                },
+                controller: locationController,
               ),
               SizedBox(
                 height: 16,
               ),
               InkWell(
-                onTap: (){
-                  _getCurrentLocation();
-                },
-                child: Container(
-                  height: 45,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: primarygreen,
-                    borderRadius: BorderRadius.circular(6.0),
-                  ),
-                  child: Center(
-                    child: Text(
-                      _buttontext,
-                      style: Heading4(Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 8,),
-              InkWell(
-                onTap: () async{
+                onTap: () async {
                   bool serviceStatus = await Geolocator().isLocationServiceEnabled();
-                  if(serviceStatus){
+                  if (serviceStatus) {
                     // gps is on
-
+                    await _getCurrentLocation();
                   }
-                  else{
+                  else {
                     // gps is off
                     showGeneralDialog(
                       context: context,
                       barrierDismissible: true,
-                      barrierLabel:
-                      MaterialLocalizations.of(context).modalBarrierDismissLabel,
+                      barrierLabel: MaterialLocalizations.of(context)
+                          .modalBarrierDismissLabel,
                       barrierColor: Colors.black45,
                       transitionDuration: const Duration(milliseconds: 500),
-                      pageBuilder: (BuildContext buildContext, Animation animation,
-                          Animation secondaryAnimation) {
+                      pageBuilder: (BuildContext buildContext,
+                          Animation animation, Animation secondaryAnimation) {
                         return Align(
                           alignment: Alignment.bottomCenter,
                           child: Container(
                             width: MediaQuery.of(context).size.width - 30,
                             height: 150,
-                            margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+                            margin: EdgeInsets.only(
+                                bottom: 50, left: 12, right: 12),
                             padding: EdgeInsets.all(20),
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(45, 55, 72, 0.9),
@@ -238,7 +199,8 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
                       transitionBuilder: (context, anim1, anim2, child) {
                         return SlideTransition(
                           position:
-                          Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+                              Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                                  .animate(anim1),
                           child: child,
                         );
                       },
@@ -254,7 +216,70 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
                   ),
                   child: Center(
                     child: Text(
-                      _buttontext,
+                      "GET LOCATION",
+                      style: Heading4(Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              InkWell(
+                onTap: !recievedLocation ? (){
+                  if (locationController.text.isEmpty)
+                    setState(() {
+                      _errorText = "Please enter location or get your current location";
+                    });
+                } : () async {
+                  if (locationController.text.isEmpty)
+                    setState(() {
+                      _errorText = "Please enter location or get your current location";
+                    });
+                  else{
+                    _errorText = null;
+                    Random random = new Random();
+                    String cid = random.nextInt(99999999).toString();
+                    Complaint _complaint = new Complaint(
+                      complaintId: cid,
+                      departmentName: widget.selectedValueMap['department'],
+                      complaintType: widget.selectedValueMap['complaint'],
+                      description: widget.description,
+                      status: 'RAISED',
+                      uid: widget.uid.toString(),
+                      location: locationController.text,
+                      start: DateTime.now().toString().substring(0, 16),
+                      end: null,
+                      verification: null,
+                      assigned: null,
+                      upvote: 1,
+                      likedByUsers: [widget.uid],
+                    );
+
+                    //creating document for new complaint in DATABASE
+                    await db.myComplaint()
+                        .document(cid.toString())
+                        .setData(_complaint.toJson());
+
+                    // creating a document in all complaints
+                    await db.allComplaint(pincode).document(cid.toString()).setData(_complaint.toJson());
+
+                    //adding image to STORAGE
+                    db.uploadImageToFirebase(context, widget.imageFile, cid.toString());
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Container(
+                  height: 45,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: recievedLocation ? primarygreen : Colors.grey[350],
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "CREATE",
                       style: Heading4(Colors.white),
                     ),
                   ),
@@ -265,107 +290,6 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
         ),
       ),
     );
-  }
-
-  Widget createButton() {
-    return _buttonflag == 1
-        ? InkWell(
-            onTap: () {
-              _getCurrentLocation();
-              setState(() {
-                _buttonflag = 0;
-                _buttontext = "CREATE";
-              });
-            },
-            child: Container(
-              height: 45,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: primarygreen,
-                borderRadius: BorderRadius.circular(6.0),
-              ),
-              child: Center(
-                child: Text(
-                  _buttontext,
-                  style: Heading4(Colors.white),
-                ),
-              ),
-            ),
-          )
-        : createComplaintButton();
-  }
-
-  Widget createComplaintButton() {
-    return _loading
-        ? Loading()
-        : InkWell(
-            splashColor: Colors.transparent,
-            onTap: () async {
-              //disable the button and show loading animation
-              setState(() {
-                _loading = true;
-              });
-
-              if (true) {
-                String uid = await _auth.getCurrentUID();
-                String loc;
-                if (locationController.text.isEmpty) {
-                  loc = _currentAddress;
-                } else {
-                  loc = locationController.text;
-                }
-
-                Random random = new Random();
-                String cid = random.nextInt(99999999).toString();
-                Complaint _complaint = new Complaint(
-                  complaintId: cid,
-                  departmentName: widget.selectedValueMap['department'],
-                  complaintType: widget.selectedValueMap['complaint'],
-                  description: widget.description,
-                  status: 'RAISED',
-                  uid: uid.toString(),
-                  location: loc,
-                  start: DateTime.now().toString().substring(0, 16),
-                  end: null,
-                  verification: null,
-                  assigned: null,
-                  upvote: 1,
-                  likedByUsers: [uid],
-                );
-
-                //creating document for new complaint in DATABASE
-                await db.myComplaint()
-                    .document(cid.toString())
-                    .setData(_complaint.toJson());
-
-                // creating a document in all complaints
-                await db.allComplaint(pincode).document(cid.toString()).setData(_complaint.toJson());
-
-                //adding image to STORAGE
-                db.uploadImageToFirebase(context, widget.imageFile, cid.toString());
-                Navigator.pop(context);
-                Navigator.pop(context);
-              }
-
-              setState(() {
-                _loading = false;
-              });
-            },
-            child: Container(
-              height: 45,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: primarygreen,
-                borderRadius: BorderRadius.circular(6.0),
-              ),
-              child: Center(
-                child: Text(
-                  _buttontext,
-                  style: Heading4(Colors.white),
-                ),
-              ),
-            ),
-          );
   }
 }
 

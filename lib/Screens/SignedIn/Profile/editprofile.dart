@@ -5,7 +5,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:proapp/Models/address.dart';
-import 'package:proapp/Screens/SignedIn/Profile/ProfileMain.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
@@ -186,27 +185,6 @@ class _EditProfileState extends State<EditProfile> {
     await Firestore.instance.collection("Utils").document("Pincode").get();
     _pincode = pinDoc.data['Pincode'].cast<String>();
   }
-  //
-  // Future getCity() async {
-  //   var docref =
-  //       await Firestore.instance.collection("Utils").document("CityName");
-  //   DocumentSnapshot doc = await docref.get();
-  //   return doc;
-  // }
-  //
-  // Future getState() async {
-  //   var docref =
-  //       await Firestore.instance.collection("Utils").document("StateName");
-  //   DocumentSnapshot doc = await docref.get();
-  //   return doc;
-  // }
-  //
-  // Future getPincode() async {
-  //   var docref =
-  //       await Firestore.instance.collection("Utils").document("Pincode");
-  //   DocumentSnapshot doc = await docref.get();
-  //   return doc;
-  // }
 
   Widget showAddressField(String address_initial) {
     return Container(

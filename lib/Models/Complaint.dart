@@ -8,7 +8,8 @@ class Complaint{
   String uid;
   num upvote;
   String location;
-  String start,end,verification,assigned;
+  String start,end,verification;
+  Map assigned;
   List<dynamic> likedByUsers;
 
   Complaint({

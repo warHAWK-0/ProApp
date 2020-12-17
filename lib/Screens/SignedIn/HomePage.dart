@@ -37,37 +37,38 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         selectedItemColor: primarygreen,
+        unselectedItemColor: Colors.black,
         onTap: (index) {
           setState(() {
             selectedIndex = index;
           });
         },
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         items: [
           BottomNavigationBarItem(
             icon: Icon(
-              EvaIcons.starOutline,
-              size: 22,
+              selectedIndex == 0 ? EvaIcons.star : EvaIcons.starOutline,
+              size: selectedIndex == 0 ? 28 : 22,
             ),
-            title: Text("Feed"),
-            //label : "Feed"
+            label : "Feed",
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              EvaIcons.alertCircleOutline,
-              size: 22,
+              selectedIndex == 1 ? EvaIcons.alertCircle : EvaIcons.alertCircleOutline,
+              size: selectedIndex == 1 ? 28 : 22,
             ),
-            //label: "Complaints"
-            title: Text("Complaints"),
+            label: "Complaints"
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              EvaIcons.personOutline,
-              size: 22,
+              selectedIndex == 2 ?  EvaIcons.person : EvaIcons.personOutline,
+              size: selectedIndex == 2 ? 28 : 22,
             ),
-            //label: "User Profile"
-            title: Text("User Profile"),
+            label: "User Profile"
           ),
         ],
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
