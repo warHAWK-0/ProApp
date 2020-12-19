@@ -31,7 +31,10 @@ class _PollPostState extends State<PollPost> {
       sum+=widget.feed.options.values.toList()[i].length;
     }
     for (int i =0;i<widget.feed.options.values.toList().length;i++){
-     percent[i]=widget.feed.options.values.toList()[i].length/sum;
+      if(widget.feed.options.values.toList()[i].isEmpty) {percent[i]=0.00001;}
+      else{
+        percent[i]=widget.feed.options.values.toList()[i].length/sum;
+      }
     }
   }
   @override
