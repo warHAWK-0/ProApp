@@ -64,6 +64,7 @@ class ComplaintCard extends StatelessWidget {
                   upvote: _getCurrentUpvoteBoolean(),
                   type: VoteType.complaintCard,
                   upvoteCount: complaint.upvote,
+                  complaint: complaint,
                 ),
               ],
             ),

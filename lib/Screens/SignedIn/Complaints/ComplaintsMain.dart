@@ -120,38 +120,22 @@ class _ComplaintMainState extends State<ComplaintMain> {
       ),
 
       //),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: widget.myComplaint ? FloatingActionButton.extended(
         backgroundColor: primarygreen,
-        label: widget.myComplaint
-            ? Text('CREATE')
-            : Text(
-                'FILTER',
-                style: TextStyle(color: Colors.white),
-              ),
-        icon: widget.myComplaint
-            ? Icon(
+        label: Text('CREATE'),
+        icon: Icon(
                 Icons.add,
-                color: Colors.white,
-              )
-            : Icon(
-                Icons.filter,
                 color: Colors.white,
               ),
         onPressed: () {
-          print(widget.uid);
-          widget.myComplaint
-              ? Navigator.push(
+          Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => CreateComplaint(
                             uid: widget.uid,
-                          )))
-              : Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FilterAllComplaint()));
+                          )));
         },
-      ),
+      ) : Container(),
     );
   }
 }

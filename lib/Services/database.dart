@@ -13,8 +13,9 @@ class DatabaseService{
 
   static var firestore = Firestore.instance;
   //db references
-  CollectionReference myComplaint() => firestore.collection("Complaint").document("MyComplaint").collection(uid);
+  CollectionReference myComplaint({String currUid}) => firestore.collection("Complaint").document("MyComplaint").collection(currUid == null ? uid : currUid);
   CollectionReference allComplaint(String pincode) => firestore.collection("Complaint").document("AllComplaint").collection(pincode);
+  CollectionReference assignedComplaint({String currUid}) => firestore.collection("Complaint").document("AssignedComplaint").collection(currUid == null ? uid : currUid);
   CollectionReference userDetails = firestore.collection("UserDetails");
   CollectionReference allComplaints = firestore.collection("AllComplaints");
   CollectionReference post = firestore.collection("Post");

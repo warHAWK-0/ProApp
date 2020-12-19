@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Services/database.dart';
 import 'package:proapp/Widgets/themes.dart';
 
@@ -18,10 +19,12 @@ class VoteTemplate extends StatefulWidget {
   final bool downvote;
   final int upvoteCount;
   final int downvoteCount;
+  Complaint complaint;
 
-  const VoteTemplate({
+  VoteTemplate({
     @required this.type,
     this.upvote = false,
+    this.complaint,
     this.downvote = false,
     @required this.upvoteCount,
     this.downvoteCount = 0,
@@ -45,6 +48,7 @@ class _VoteTemplateState extends State<VoteTemplate> {
       uid: widget.uid,
       upvoteCount: widget.upvoteCount,
       upvote: widget.upvote,
+      complaint: widget.complaint,
     );
   }
 }
@@ -161,56 +165,96 @@ class ComplaintVote extends StatefulWidget {
   final String uid;
   bool upvote;
   int upvoteCount;
+  final Complaint complaint;
 
   ComplaintVote({
     this.upvote = false,
     @required this.upvoteCount,
     this.uid,
-    this.complaintId,
+    this.complaintId, this.complaint,
   });
   @override
   _ComplaintVoteState createState() => _ComplaintVoteState();
 }
 
 class _ComplaintVoteState extends State<ComplaintVote> {
-
-  DatabaseService db ;
   Future<void> updateVoteCount(int upvoteCount) async {
+    DatabaseService db = DatabaseService(uid: widget.uid);
     // updating value in complaint document
-    await db.myComplaint().document(widget.complaintId)
+    db.myComplaint(currUid: widget.complaint.uid).document(widget.complaintId)
         .updateData({
       'Upvote': upvoteCount,
     });
+
+    // update all complaint
+    String pincode = widget.complaint.location.substring(widget.complaint.location.length - 6);
+    db.allComplaint(pincode).document(widget.complaintId)
+        .updateData({
+      'Upvote': upvoteCount,
+    });
+
+    // update assigned (if any)
+    if(widget.complaint.assigned != null)
+      db.assignedComplaint(currUid: widget.complaint.assigned['By']).document(widget.complaintId)
+          .updateData({
+        'Upvote': upvoteCount,
+      });
   }
 
   Future<void> updateListOfLikedComplaints() async{
-    if(widget.upvote){
+    DatabaseService db = DatabaseService(uid: widget.uid);
+    if(temp){
       // update likedComplaint field
-      await db.myComplaint().document(widget.complaintId).updateData({
+      await db.myComplaint(currUid: widget.complaint.uid).document(widget.complaintId).updateData({
+        'LikedByUsers': FieldValue.arrayRemove([widget.uid]),
+      });
+
+      // update all complaint documnet
+      String pincode = widget.complaint.location.substring(widget.complaint.location.length - 6);
+      db.allComplaint(pincode).document(widget.complaintId).updateData({
+        'LikedByUsers': FieldValue.arrayRemove([widget.uid]),
+      });
+
+      // update assigned complaint
+      if(widget.complaint.assigned != null)
+      db.assignedComplaint(currUid: widget.complaint.assigned['By']).document(widget.complaintId).updateData({
         'LikedByUsers': FieldValue.arrayRemove([widget.uid]),
       });
     }
     else{
       // update likedComplaint field
-      await db.myComplaint().document(widget.complaintId).updateData({
+      await db.myComplaint(currUid: widget.complaint.uid).document(widget.complaintId).updateData({
+        'LikedByUsers': FieldValue.arrayUnion([widget.uid]),
+      });
+
+      // all complaint
+      String pincode = widget.complaint.location.substring(widget.complaint.location.length - 6);
+      db.allComplaint(pincode).document(widget.complaintId).updateData({
+        'LikedByUsers': FieldValue.arrayUnion([widget.uid]),
+      });
+
+      // assigned
+      if(widget.complaint.assigned != null)
+        db.assignedComplaint(currUid: widget.complaint.assigned['By']).document(widget.complaintId).updateData({
         'LikedByUsers': FieldValue.arrayUnion([widget.uid]),
       });
     }
   }
 
+  //temporary variable that stores previous state of widget.upvote(boolean value)
+  bool temp;
+
   @override
   Widget build(BuildContext context) {
-    db = DatabaseService(uid: widget.uid);
     return InkWell(
       onTap: () async{
         setState(() {
           widget.upvoteCount = widget.upvote ? widget.upvoteCount-1 : widget.upvoteCount+1;
+          temp = widget.upvote;
+          widget.upvote = !widget.upvote;
         });
         updateVoteCount(widget.upvoteCount);
         updateListOfLikedComplaints();
-        setState(() {
-          widget.upvote = !widget.upvote;
-        });
       },
       child: Container(
         width: 74,

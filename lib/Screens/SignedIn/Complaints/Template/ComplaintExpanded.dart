@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fleva_icons/fleva_icons.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proapp/Models/Complaint.dart';
 import 'package:proapp/Widgets/CustomAppBar.dart';
 import 'package:proapp/Widgets/Tag.dart';
+import 'package:proapp/Widgets/ToastMessage.dart';
 import 'package:proapp/Widgets/VoteTemplate.dart';
 import 'package:proapp/Widgets/themes.dart';
 import 'package:intl/intl.dart';
@@ -114,6 +114,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                       upvote: _getCurrentUpvoteBoolean(),
                       type: VoteType.complaintCard,
                       upvoteCount: widget.complaint.upvote,
+                      complaint: widget.complaint,
                     ),
                   ],
                 ),
@@ -127,7 +128,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                 Row(
                   children: [
                     Tag(
-                      color: Colors.red,
+                      color: widget.complaint.status == 'RAISED' ? Colors.red : widget.complaint.status == 'IN PROGRESS' ? progressYellow : primarygreen,
                       text: widget.complaint.status,
                       textColor: Colors.white,
                       type: TagType.DEFAULT,
@@ -153,7 +154,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                 SizedBox(
                   height: 20,
                 ),
-                Row(
+                widget.complaint.uid == widget.uid ? Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
@@ -192,8 +193,8 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                         12.0)), //this right here
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 8),
-                                  height: 200.0,
-                                  width: 328,
+                                  height: MediaQuery.of(context).size.height / 4.5,
+                                  width: MediaQuery.of(context).size.width / 1.1,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
@@ -218,8 +219,8 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                       ),
                                       SizedBox(height: 24),
                                       Container(
-                                        height: 46,
-                                        width: 296,
+                                        height: 45,
+                                        width: MediaQuery.of(context).size.width/1.25,
                                         child: FlatButton(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -241,17 +242,25 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                                             // delete from my complaint
                                             await db.myComplaint().document(widget.complaint.complaintId).delete();
 
-                                            //delete from all complaint
+                                            String pincode = widget.complaint.location.substring(widget.complaint.location.length - 6);
+                                            // delete from all complaint
+                                            await db.allComplaint(pincode).document(widget.complaint.complaintId).delete();
 
+                                            // delete from assigned complaint
+                                            if(widget.complaint.assigned != null)
+                                              await db.assignedComplaint(currUid: widget.complaint.assigned['By']).document(widget.complaint.complaintId).delete();
 
                                             Navigator.pop(context);
                                             Navigator.pop(context);
+
+                                            ToastUtils.showCustomToast(context, "Complaint Successfully Deleted.");
                                           },
                                         ),
                                       ),
+                                      SizedBox(height: 8,),
                                       Container(
-                                        height: 46,
-                                        width: 296,
+                                        height: 45,
+                                        width: MediaQuery.of(context).size.width / 1.25,
                                         child: FlatButton(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -280,7 +289,7 @@ class _ComplaintExpandedState extends State<ComplaintExpanded> {
                       ),
                     ),
                   ],
-                ),
+                ) : Container(),
                 SizedBox(
                   height: 16,
                 )
